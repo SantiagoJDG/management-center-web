@@ -36,5 +36,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 Our Documentation is making
 
-This project has mirroring between GCP and BitBucket
+This project has mirroring between GCP and BitBucket 
 https://cloud.google.com/build/docs/automating-builds/bitbucket/build-repos-from-bitbucket-cloud
