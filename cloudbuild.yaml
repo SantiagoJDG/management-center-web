@@ -45,5 +45,5 @@ steps:
 timeout: '1600s'
 availableSecrets:
   secretManager:
-  - versionName: projects/40846289904/secrets/management-center-api-bitbucket-key/versions/1
+  - versionName: projects/40846289904/secrets/management-center-web-bitbucket-key/versions/1
     env: SSHKEY
