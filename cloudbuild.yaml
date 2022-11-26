@@ -1,8 +1,49 @@
 steps:
+# first, setup SSH:
+# 1- save the SSH key from Secret Manager to a file
+# 2- add the host key to the known_hosts file
+- name: gcr.io/cloud-builders/git
+  args:
+    - '-c'
+    - |
+      echo "$$SSHKEY" > /root/.ssh/id_rsa
+      chmod 400 /root/.ssh/id_rsa
+      ssh-keyscan bitbucket.org > /root/.ssh/known_hosts
+  entrypoint: bash
+  secretEnv:
+    - SSHKEY
+  volumes:
+    - name: ssh
+      path: /root/.ssh
+# second, clone the repository
+- name: gcr.io/cloud-builders/git
+  args:
+    - clone
+    - '-n'
+    - 'git@bitbucket.org:consultec-ti/management-center-api.git'
+    - .
+  volumes:
+    - name: ssh
+      path: /root/.ssh
+# third, checkout the specific commit that invoked this build
+- name: gcr.io/cloud-builders/git
+  args:
+    - checkout
+    - $_BRANCH
+#forth, install the app.
 - name: node
   entrypoint: npm
   args: ['install']
+#fith, build the app.
 - name: node
   entrypoint: npm
   args: ['run', 'build']
+#sixth, deploy the app.
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'bash'
+  args: ['-c', 'gcloud config set app/cloud_build_timeout 1600 && gcloud app deploy']
 timeout: '1600s'
+availableSecrets:
+  secretManager:
+  - versionName: projects/40846289904/secrets/management-center-api-bitbucket-key/versions/1
+    env: SSHKEY
