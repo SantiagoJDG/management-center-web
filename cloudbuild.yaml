@@ -37,7 +37,7 @@ steps:
 #fith, build the app.
 - name: node
   entrypoint: npm
-  args: ['run', 'build']
+  args: ['run', 'prod-build']
 #sixth, deploy the app.
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'bash'
