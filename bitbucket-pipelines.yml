@@ -18,7 +18,14 @@ pipelines:
                 - npm test
   branches:
     development:
-    master:
+      - parallel:
+          - step:
+              name: Build and Test
+              caches:
+                - node
+              script:
+                - npm install
+                - npm test
     release/*:
       - parallel:
           - step:
@@ -28,3 +35,13 @@ pipelines:
               script:
                 - npm install
                 - npm test
+    master:
+      - parallel:
+          - step:
+              name: Build and Test
+              caches:
+                - node
+              script:
+                - npm install
+                - npm test
+
