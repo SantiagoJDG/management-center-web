@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import React from 'react';
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
@@ -9,5 +9,5 @@ export default function Home() {
         Waiting for the new tool from <a href="https://www.consultec-ti.com/">Consultec!</a>
       </h1>
     </>
-  )
+  );
 }
