@@ -1,13 +1,7 @@
 import Head from 'next/head';
-import Script from 'next/script'
 import MainHeader from '../components/MainHeader'
-import useAuth from "../hooks/useAuth";
 
 const MainLayout = props => {
-
-  const {
-    googleRef,
-    setGoogleRef } = useAuth();
 
   return (
     <>
