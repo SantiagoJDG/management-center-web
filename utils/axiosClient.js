@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = process.env.PUBLIC_MANAGEMENT_CENTER_API_ENDPOINT ?? "https://performance-centec.uk.r.appspot.com/";
+const baseUrl = process.env.PUBLIC_MANAGEMENT_CENTER_API_ENDPOINT ?? "http://localhost:3001";
 
 const axiosClient = axios.create({
   baseURL: baseUrl
