@@ -2,10 +2,18 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    loader: "akamai",
-    path: "/",
-    trailingSlash: true
+    loader: 'akamai',
+    path: '/',
+    trailingSlash: true,
+    // async redirects(){
+    //   return [
+    //     {
+    //       source: '/',
+    //       destination: '/'
+    //     }
+    //   ]
+    // }
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
