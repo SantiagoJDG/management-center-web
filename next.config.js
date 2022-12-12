@@ -5,14 +5,6 @@ const nextConfig = {
     loader: 'akamai',
     path: '/',
     trailingSlash: true,
-    // async redirects(){
-    //   return [
-    //     {
-    //       source: '/',
-    //       destination: '/'
-    //     }
-    //   ]
-    // }
   },
 };
 

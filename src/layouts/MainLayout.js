@@ -37,7 +37,7 @@ const MainLayout = (props) => {
               client_id:
                 process.env.MANAGEMENT_CENTER_CLIENT_ID ??
                 '40846289904-t2cb0fvm6ttte1ksfoms7t197e68ddch.apps.googleusercontent.com',
-              callback: saveToken,
+              callback: saveToken
             });
 
             const token = sessionStorage.getItem('center-token');
@@ -51,7 +51,7 @@ const MainLayout = (props) => {
                   text: 'continue_with',
                   shape: 'pill',
                   width: '150',
-                  select_by: 'auto',
+                  select_by: 'auto'
                 }
               );
 
