@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import MainHeader from '../components/MainHeader';
+import MainHeader from '../components/MainHeader/MainHeader';
 import Script from 'next/script';
 import useAuth from '../hooks/useAuth';
 

@@ -1,17 +1,26 @@
 
 import React from 'react';
-import styles from '../styles/Home.module.css';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+
+import CollaboratorFilter from 'components/CollaboratorFilter/CollaboratorFilter';
+import CollaboratorTable from 'components/CollaboratorTable/CollaboratorTable';
+import CollaboratorSearch from 'components/CollaboratorSearch/CollaboratorSearch'
+
 
 export default function Home() {
 
   return (
-    <>
-
-      <h1 className={styles.title}>
-        Waiting for the new tool from <a href="https://www.consultec-ti.com/">Consultec!</a>
-      </h1>
-
-      <div style={{}} id="buttonDiv"></div>
-    </>
+    <React.Fragment>
+      <CollaboratorSearch></CollaboratorSearch>
+      <Container maxWidth="lm" sx={{ display: 'flex', }}>
+        <Box sx={{ bgcolor: '#cfe8fc', width: '70vw', height: '70vh' }}>
+          <CollaboratorTable></CollaboratorTable>
+        </Box>
+        <Box sx={{ bgcolor: '#006400', width: '30vw', height: '70vh' }}>
+          <CollaboratorFilter></CollaboratorFilter>
+        </Box>
+      </Container>
+    </React.Fragment>
   );
 }
