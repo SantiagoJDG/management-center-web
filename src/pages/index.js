@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
+import { Box, Container } from '@mui/material';
 import { getAxiosInstance } from '../utils/axiosClient';
 import useAuth from '../hooks/useAuth';
 
@@ -10,8 +9,12 @@ import CollaboratorTable from 'components/CollaboratorTable/CollaboratorTable';
 import CollaboratorSearch from 'components/CollaboratorSearch/CollaboratorSearch';
 
 export default function Home() {
-  const { userToken, getUserData, waitingUser } = useAuth();
+  const { userToken, waitingUser } = useAuth();
   const [collaborators, setCollaborators] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [dropdownItem, setItem] = React.useState([]);
+  const countries = ['Argentina', 'Venezuela', 'Panama', 'Espana', 'France'];
+  let searchedCollaborators = [];
 
   const getCollaborators = async () => {
     try {
@@ -28,15 +31,38 @@ export default function Home() {
     getCollaborators();
   }, [waitingUser]);
 
+  if (!searchValue.length >= 1 && !dropdownItem >= 1) {
+    searchedCollaborators = collaborators;
+  } else {
+    searchedCollaborators = collaborators.filter((collaborator) => {
+      const collaboratorLowerCase = collaborator.name.toLowerCase();
+      const searchTextLowerCase = searchValue.toLowerCase();
+      return (
+        collaboratorLowerCase.includes(searchTextLowerCase) &&
+        collaborator.country_contract.includes(dropdownItem)
+      );
+    });
+  }
+
   return (
     <React.Fragment>
-      <CollaboratorSearch></CollaboratorSearch>
+      <CollaboratorSearch
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+      />
       <Container maxWidth="lm" sx={{ display: 'flex' }}>
         <Box sx={{ bgcolor: '#cfe8fc', width: '70vw', height: '70vh' }}>
-          <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
+          <CollaboratorTable
+            collaborators={searchedCollaborators}
+          ></CollaboratorTable>
         </Box>
-        <Box sx={{ bgcolor: '#006400', width: '30vw', height: '70vh' }}>
-          <CollaboratorFilter></CollaboratorFilter>
+        <Box sx={{ bgcolor: 'white', width: '30vw', height: '70vh' }}>
+          <CollaboratorFilter
+            item={dropdownItem}
+            setItem={setItem}
+            title={'Paises'}
+            dropdownData={countries}
+          />
         </Box>
       </Container>
     </React.Fragment>

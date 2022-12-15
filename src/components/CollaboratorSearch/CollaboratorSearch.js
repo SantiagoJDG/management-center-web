@@ -1,10 +1,21 @@
-import TextField from '@mui/material/TextField';
+import { TextField } from '@mui/material';
+import React from 'react';
 
+const CollaboratorSearch = ({ searchValue, setSearchValue }) => {
+  const onSearchValueChange = (event) => {
+    setSearchValue(event.target.value);
+  };
 
-const CollaboratorSearch = () => {
   return (
-    <TextField sx={{ input: { color: 'white' },  }} id="filled-basic" label="Filled" variant="filled" />
-  )
-}
+    <TextField
+      sx={{ input: { color: 'white' } }}
+      id="filled-basic"
+      label="Name"
+      variant="filled"
+      value={searchValue}
+      onChange={onSearchValueChange}
+    />
+  );
+};
 
-export default CollaboratorSearch
+export default CollaboratorSearch;
