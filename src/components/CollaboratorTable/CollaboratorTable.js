@@ -36,7 +36,6 @@ const columns = [
     minWidth: 170,
     align: 'right'
   },
-  ,
   {
     id: 'salary',
     label: 'Tarifa mensual bruta',
@@ -72,8 +71,9 @@ const CollaboratorTable = (props) => {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                {columns.map((column) => (
+                {columns.map((column, index) => (
                   <TableCell
+                    key={index}
                     align={column.align}
                     style={{ minWidth: column.minWidth }}
                   >

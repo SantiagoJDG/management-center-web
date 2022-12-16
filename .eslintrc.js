@@ -7,11 +7,11 @@ module.exports = {
     es6: true,
   },
   extends: [
+    'next/core-web-vitals',
+    'next',
     'eslint:recommended',
     'plugin:jsx-a11y/recommended',
-    'plugin:prettier/recommended',
-    'next',
-    'next/core-web-vitals'
+    'plugin:prettier/recommended'
   ],
   rules: {
     semi: ['error', 'always'],
