@@ -1,22 +1,11 @@
 import Head from 'next/head';
-import {
-  Grid,
-  Box,
-  CssBaseline,
-  Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemButton,
-  ListItemText
-} from '@mui/material';
+import { Grid, Box, CssBaseline } from '@mui/material';
 
 import Script from 'next/script';
 import useAuth from '../hooks/useAuth';
 
-import Sidebar from '../components/Sidebar';
-import MainHeader from '../components/MainHeader/MainHeader';
+import Sidebar from '../components/Layout/Sidebar';
+import MainHeader from '../components/Layout/MainHeader';
 import { useState } from 'react';
 
 const drawerWidth = 240;

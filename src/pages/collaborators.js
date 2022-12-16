@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, TextField } from '@mui/material';
 import { getAxiosInstance } from '../utils/axiosClient';
 import useAuth from '../hooks/useAuth';
 
-import CollaboratorFilter from 'components/CollaboratorFilter/CollaboratorFilter';
-import CollaboratorTable from 'components/CollaboratorTable/CollaboratorTable';
-import CollaboratorSearch from 'components/CollaboratorSearch/CollaboratorSearch';
+import CollaboratorFilter from 'components/Collaborators/CollaboratorFilter';
+import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
+// import CollaboratorSearch from 'components/CollaboratorSearch/CollaboratorSearch';
 
 const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();
@@ -23,6 +23,10 @@ const Collaborators = () => {
     } catch (error) {
       console.error('Error while get Collaborators..', error);
     }
+  };
+
+  const onSearchValueChange = (event) => {
+    setSearchValue(event.target.value);
   };
 
   useEffect(() => {
@@ -49,9 +53,11 @@ const Collaborators = () => {
       <Grid container direction={'column'} spacing={2}>
         <Grid item rowSpacing={100} sx={{ display: 'flex' }}>
           <Box sx={{ padding: 2 }}>
-            <CollaboratorSearch
-              searchValue={searchValue}
-              setSearchValue={setSearchValue}
+            <TextField
+              id="filled-basic"
+              label="Name"
+              value={searchValue}
+              onChange={onSearchValueChange}
             />
           </Box>
           <Box sx={({ bgcolor: 'white' }, { padding: 2 })}>
