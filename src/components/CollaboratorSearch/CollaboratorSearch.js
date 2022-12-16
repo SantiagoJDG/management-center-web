@@ -8,10 +8,8 @@ const CollaboratorSearch = ({ searchValue, setSearchValue }) => {
 
   return (
     <TextField
-      sx={{ input: { color: 'white' } }}
       id="filled-basic"
       label="Name"
-      variant="filled"
       value={searchValue}
       onChange={onSearchValueChange}
     />

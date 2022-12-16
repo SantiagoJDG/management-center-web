@@ -41,7 +41,7 @@ const CollaboratorFilter = ({ item, setItem, title, dropdownData }) => {
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 300 }}>
+      <FormControl sx={{ width: 300 }}>
         <InputLabel id="multiple-chip-label">{title}</InputLabel>
         <Select
           labelId="multiple-chip-label"
