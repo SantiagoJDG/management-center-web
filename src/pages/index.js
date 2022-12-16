@@ -13,7 +13,7 @@ export default function Home() {
   const [collaborators, setCollaborators] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [dropdownItem, setItem] = React.useState([]);
-  const countries = ['Argentina', 'Venezuela', 'Panama', 'Espana', 'France'];
+  const countries = ['Argentina', 'Venezuela', 'Panamá', 'Espana', 'France'];
   let searchedCollaborators = [];
 
   const getCollaborators = async () => {
@@ -39,7 +39,7 @@ export default function Home() {
       const searchTextLowerCase = searchValue.toLowerCase();
       return (
         collaboratorLowerCase.includes(searchTextLowerCase) &&
-        collaborator.country_contract.includes(dropdownItem)
+        collaborator.residency.includes(dropdownItem)
       );
     });
   }

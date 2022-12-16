@@ -13,19 +13,25 @@ import {
 const columns = [
   { id: 'name', label: 'Nombre', minWidth: 170 },
   {
-    id: 'rollon',
+    id: 'email',
+    label: 'Email',
+    minWidth: 170,
+    align: 'right'
+  },
+  {
+    id: 'admission_date',
     label: 'Fecha de Ingreso',
     minWidth: 170,
     align: 'right'
   },
   {
-    id: 'country_residency',
+    id: 'residency',
     label: 'Pais de Residencia',
     minWidth: 170,
     align: 'right'
   },
   {
-    id: 'country_contract',
+    id: 'office',
     label: 'Pais de Contrato',
     minWidth: 170,
     align: 'right'
@@ -40,12 +46,6 @@ const columns = [
   {
     id: 'supervisor',
     label: 'Supervisor',
-    minWidth: 170,
-    align: 'right'
-  },
-  {
-    id: 'contract_type',
-    label: 'N1 Perfil',
     minWidth: 170,
     align: 'right'
   }
