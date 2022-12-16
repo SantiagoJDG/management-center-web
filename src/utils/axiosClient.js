@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const baseUrl =
-  process.env.PUBLIC_MANAGEMENT_CENTER_API_ENDPOINT ?? 'http://localhost:3001';
+  process.env.NEXT_PUBLIC_MANAGEMENT_CENTER_API_ENDPOINT;
 
 const axiosClient = axios.create({
   baseURL: baseUrl,

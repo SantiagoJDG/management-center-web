@@ -1,4 +1,3 @@
-import '../styles/globals.css';
 import MainLayout from '../layouts/MainLayout';
 import { AuthProvider } from '../context/AuthProvider';
 
