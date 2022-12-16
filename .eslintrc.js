@@ -11,8 +11,7 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'plugin:prettier/recommended',
     'next',
-    'next/core-web-vitals',
-    'next/babel',
+    'next/core-web-vitals'
   ],
   rules: {
     semi: ['error', 'always'],
