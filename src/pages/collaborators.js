@@ -70,9 +70,7 @@ const Collaborators = () => {
         </Grid>
         <Grid item>
           <Box sx={{ width: '70vw', height: '70vh' }}>
-            <CollaboratorTable
-              collaborators={searchedCollaborators}
-            ></CollaboratorTable>
+            <CollaboratorTable collaborators={searchedCollaborators}></CollaboratorTable>
           </Box>
         </Grid>
       </Grid>

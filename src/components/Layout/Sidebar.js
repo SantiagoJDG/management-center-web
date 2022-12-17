@@ -15,8 +15,7 @@ import HomeIcon from '@mui/icons-material/Home';
 
 const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
   const router = useRouter();
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
+  const container = window !== undefined ? () => window().document.body : undefined;
 
   const pagesList = [
     { name: 'Home', path: '/', view: ['administrador'] },

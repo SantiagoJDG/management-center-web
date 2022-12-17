@@ -28,10 +28,7 @@ const MainLayout = (props) => {
         <link rel="apple-touch-icon" href="/favicon-apple.png" />
 
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <meta
-          name="description"
-          content="Management center was created by Consultec-TI"
-        />
+        <meta name="description" content="Management center was created by Consultec-TI" />
       </Head>
 
       <Script
@@ -47,17 +44,14 @@ const MainLayout = (props) => {
           const token = sessionStorage.getItem('center-token');
 
           if (!token) {
-            google.accounts.id.renderButton(
-              document.getElementById('buttonDiv'),
-              {
-                theme: 'filled_blue',
-                size: 'large',
-                text: 'continue_with',
-                shape: 'pill',
-                width: '150',
-                select_by: 'auto'
-              }
-            );
+            google.accounts.id.renderButton(document.getElementById('buttonDiv'), {
+              theme: 'filled_blue',
+              size: 'large',
+              text: 'continue_with',
+              shape: 'pill',
+              width: '150',
+              select_by: 'auto'
+            });
 
             google.accounts.id.prompt();
           }
@@ -67,11 +61,7 @@ const MainLayout = (props) => {
       <Grid container>
         <CssBaseline />
         <MainHeader drawerWidth={drawerWidth} setMobileOpen={setMobileOpen} />
-        <Sidebar
-          drawerWidth={drawerWidth}
-          mobileOpen={mobileOpen}
-          setMobileOpen={setMobileOpen}
-        />
+        <Sidebar drawerWidth={drawerWidth} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
         <Box
           sx={{
             flexGrow: 1,
