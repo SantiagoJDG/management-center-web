@@ -1,4 +1,4 @@
-#  Template NodeJS build
+g#  Template NodeJS build
 
 #  This template allows you to validate your NodeJS code.
 #  The workflow allows running tests and code linting on the default branch.
@@ -21,7 +21,7 @@ pipelines:
               caches:
                 - node
               script:
-                - npm run linst
+                - npm run lint
   branches:
     development:
       - parallel:
@@ -37,7 +37,7 @@ pipelines:
               caches:
                 - node
               script:
-                - npm run linst
+                - npm run lint
     release/*:
       - parallel:
           - step:
@@ -52,7 +52,7 @@ pipelines:
               caches:
                 - node
               script:
-                - npm run linst
+                - npm run lint
     master:
       - parallel:
           - step:
@@ -67,5 +67,5 @@ pipelines:
               caches:
                 - node
               script:
-                - npm run linst
+                - npm run lint
 
