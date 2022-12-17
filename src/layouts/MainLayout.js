@@ -35,6 +35,7 @@ const MainLayout = (props) => {
       </Head>
 
       <Script
+        /*global google */
         src="https://accounts.google.com/gsi/client"
         strategy="beforeInteractive"
         onReady={() => {

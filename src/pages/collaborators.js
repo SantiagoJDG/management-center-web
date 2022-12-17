@@ -6,7 +6,6 @@ import useAuth from '../hooks/useAuth';
 
 import CollaboratorFilter from 'components/Collaborators/CollaboratorFilter';
 import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
-// import CollaboratorSearch from 'components/CollaboratorSearch/CollaboratorSearch';
 
 const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();
