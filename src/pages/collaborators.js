@@ -33,7 +33,7 @@ const Collaborators = () => {
     if (!userToken) return;
 
     getCollaborators();
-  }, [waitingUser]);
+  }, [waitingUser, userToken]);
 
   if (!searchValue.length >= 1 && !dropdownItem >= 1) {
     searchedCollaborators = collaborators;
