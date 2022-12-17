@@ -1,20 +1,20 @@
-import { Box, Grid, AppBar, Toolbar, IconButton, Typography, Button } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
-
 const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   return (
-
-    <AppBar position="static" color="primary"
+    <AppBar
+      position="static"
+      color="primary"
       sx={{
         width: { sm: `calc(100% - ${drawerWidth}px)` },
-        ml: { sm: `${drawerWidth}px` },
-      }}>
+        ml: { sm: `${drawerWidth}px` }
+      }}
+    >
       <Toolbar>
         <IconButton
           size="medium"
@@ -34,7 +34,7 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
         <div style={{}} id="buttonDiv"></div>
       </Toolbar>
     </AppBar>
-  )
-}
+  );
+};
 
 export default MainHeader;

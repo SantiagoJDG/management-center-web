@@ -1,28 +1,25 @@
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext } from 'react';
 import jwt_decode from 'jwt-decode';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-
   const [userToken, setUserToken] = useState();
   const [waitingUser, setWaitingUser] = useState(true);
 
   const getUserData = () => {
-    const responsePayload = jwt_decode(userToken)
+    const responsePayload = jwt_decode(userToken);
     return {
       ID: responsePayload.sub,
       name: responsePayload.name,
       picture: responsePayload.picture,
       email: responsePayload.email
-    }
-  }
+    };
+  };
 
   useEffect(() => {
-
     const authenticatedUser = async () => {
-
-      const token = sessionStorage.getItem("center-token");
+      const token = sessionStorage.getItem('center-token');
 
       if (!token) {
         setWaitingUser(false);
@@ -32,11 +29,10 @@ const AuthProvider = ({ children }) => {
       setUserToken(token);
 
       setWaitingUser(false);
-    }
+    };
 
     authenticatedUser();
-
-  }, [])
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -49,13 +45,10 @@ const AuthProvider = ({ children }) => {
       }}
     >
       {children}
-    </AuthContext.Provider >
+    </AuthContext.Provider>
   );
+};
 
-}
-
-export {
-  AuthProvider
-}
+export { AuthProvider };
 
 export default AuthContext;

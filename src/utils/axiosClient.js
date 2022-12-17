@@ -1,10 +1,9 @@
 import axios from 'axios';
 
-const baseUrl =
-  process.env.NEXT_PUBLIC_MANAGEMENT_CENTER_API_ENDPOINT;
+const baseUrl = process.env.NEXT_PUBLIC_MANAGEMENT_CENTER_API_ENDPOINT;
 
 const axiosClient = axios.create({
-  baseURL: baseUrl,
+  baseURL: baseUrl
 });
 
 function getAxiosInstance() {
