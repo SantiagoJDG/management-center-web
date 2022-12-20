@@ -30,13 +30,21 @@ function getStyles(name, item, theme) {
   };
 }
 
-const CollaboratorFilter = ({ item, setItem, title, dropdownData }) => {
+const CollaboratorFilter = ({
+  title,
+  dropdownData,
+  filterData,
+  collaboratorKey
+}) => {
+  const [item, setItem] = React.useState([]);
   const theme = useTheme();
   const handleChange = (event) => {
     const {
       target: { value }
     } = event;
-    setItem(typeof value === 'string' ? value.split(',') : value);
+    const ternary = typeof value === 'string' ? value.split(',') : value;
+    setItem(ternary);
+    filterData(ternary, collaboratorKey);
   };
 
   return (
@@ -58,9 +66,9 @@ const CollaboratorFilter = ({ item, setItem, title, dropdownData }) => {
           )}
           MenuProps={MenuProps}
         >
-          {dropdownData.map((dropdownItem) => (
+          {dropdownData.map((dropdownItem, i) => (
             <MenuItem
-              key={dropdownItem}
+              key={i}
               value={dropdownItem}
               style={getStyles(dropdownItem, item, theme)}
             >
