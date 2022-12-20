@@ -1,10 +1,12 @@
-import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
+import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip, Avatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 import useAuth from '../../hooks/useAuth';
 
 const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
-  const { getUserData } = useAuth();
+  const { userToken, getUserData, setUserToken } = useAuth();
+  const router = useRouter();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -15,6 +17,9 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
     google.accounts.id.revoke(getUserData().ID, () => {
       sessionStorage.clear();
     });
+    sessionStorage.removeItem('center-token');
+    setUserToken(undefined);
+    router.push('/');
   };
 
   return (
@@ -42,8 +47,17 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
           Sistema de gestion Consultec-TI
         </Typography>
 
-        <div style={{}} id="buttonDiv"></div>
-        <button onClick={logout}>SALIR</button>
+        {!userToken && <div style={{}} id="buttonDiv"></div>}
+
+        {userToken && (
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Cerra sesion">
+              <IconButton onClick={logout} sx={{ p: 0 }}>
+                <Avatar alt="Edgar A Guevara" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );
