@@ -277,7 +277,6 @@ const Collaborator = () => {
   useEffect(() => {
     if (!userToken) return;
 
-    console.log(userToken);
     getCollaborators();
   }, [waitingUser, userToken]);
 
