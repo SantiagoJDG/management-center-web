@@ -72,11 +72,7 @@ const CollaboratorTable = ({ collaborators }) => {
             <TableHead>
               <TableRow>
                 {columns.map((column, index) => (
-                  <TableCell
-                    key={index}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
+                  <TableCell key={index} align={column.align} style={{ minWidth: column.minWidth }}>
                     {column.label}
                   </TableCell>
                 ))}

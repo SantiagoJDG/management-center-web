@@ -16,7 +16,8 @@ const Collaborator = () => {
   };
 
   const logout = () => {
-    google.accounts.id.revoke(getUserData().ID, (done) => {
+    /*global google */
+    google.accounts.id.revoke(getUserData().ID, () => {
       sessionStorage.clear();
     });
   };
@@ -43,7 +44,7 @@ const Collaborator = () => {
     if (!userToken) return;
 
     getCollaborators();
-  }, [waitingUser]);
+  }, [waitingUser, userToken]);
 
   return (
     <>

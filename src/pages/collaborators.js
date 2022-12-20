@@ -53,9 +53,7 @@ const Collaborators = () => {
         </Grid>
         <Grid item>
           <Box sx={{ width: '70vw', height: '70vh' }}>
-            <CollaboratorTable
-              collaborators={collaborators}
-            ></CollaboratorTable>
+            <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
           </Box>
         </Grid>
       </Grid>

@@ -16,6 +16,12 @@ pipelines:
               script:
                 - npm install
                 - npm test
+          - step:
+              name: Code Linting
+              caches:
+                - node
+              script:
+                - npm run lint
   branches:
     development:
       - parallel:
@@ -26,6 +32,12 @@ pipelines:
               script:
                 - npm install
                 - npm test
+          - step:
+              name: Code Linting
+              caches:
+                - node
+              script:
+                - npm run lint
     release/*:
       - parallel:
           - step:
@@ -35,6 +47,12 @@ pipelines:
               script:
                 - npm install
                 - npm test
+          - step:
+              name: Code Linting
+              caches:
+                - node
+              script:
+                - npm run lint
     master:
       - parallel:
           - step:
@@ -44,4 +62,10 @@ pipelines:
               script:
                 - npm install
                 - npm test
+          - step:
+              name: Code Linting
+              caches:
+                - node
+              script:
+                - npm run lint
 
