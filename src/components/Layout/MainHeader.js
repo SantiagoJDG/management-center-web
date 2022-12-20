@@ -1,9 +1,20 @@
 import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
+import useAuth from '../../hooks/useAuth';
+
 const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
+  const { getUserData } = useAuth();
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const logout = () => {
+    /*global google */
+    google.accounts.id.revoke(getUserData().ID, () => {
+      sessionStorage.clear();
+    });
   };
 
   return (
@@ -32,6 +43,7 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
         </Typography>
 
         <div style={{}} id="buttonDiv"></div>
+        <button onClick={logout}>SALIR</button>
       </Toolbar>
     </AppBar>
   );
