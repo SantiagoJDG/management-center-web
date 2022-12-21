@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -194,6 +194,10 @@ const CollaboratorInformation = ({ collaboratorData }) => {
       return 'There is not collaborator';
     }
   };
+
+  useEffect(() => {
+    setCollaborator(collaboratorData);
+  }, [collaboratorData]);
 
   return showInformation();
 };

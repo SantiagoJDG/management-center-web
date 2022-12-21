@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import moment from 'moment';
 import {
   Grid,
@@ -19,7 +19,7 @@ import { Box } from '@mui/system';
 
 const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
   const [collaborator, setCollaborator] = useState(collaboratorData);
-  const [value, setValue] = useState(moment('2014-08-18T21:11:54'));
+  const [value, setValue] = useState(moment().format());
 
   const handleChange = (newValue) => {
     setValue(newValue);
@@ -43,7 +43,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={2}>
+                  <Grid item xs={2}>
                     <TextField
                       size="small"
                       required
@@ -52,7 +52,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={5}>
+                  <Grid item xs={5}>
                     <TextField
                       fullWidth
                       size="small"
@@ -62,7 +62,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={5}>
+                  <Grid item xs={5}>
                     <TextField
                       fullWidth
                       size="small"
@@ -77,7 +77,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <LocalizationProvider dateAdapter={AdapterMoment}>
                       <MobileDatePicker
                         fullWidth
@@ -90,7 +90,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     </LocalizationProvider>
                   </Grid>
 
-                  <Grid item sm={2}>
+                  <Grid item xs={2}>
                     <TextField
                       size="small"
                       fullWidth
@@ -107,7 +107,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -118,7 +118,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -149,7 +149,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={4}>
+                  <Grid item xs={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -162,7 +162,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={4}>
+                  <Grid item xs={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -175,7 +175,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={4}>
+                  <Grid item xs={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -193,7 +193,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -204,7 +204,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={4}>
+                  <Grid item xs={4}>
                     <TextField
                       fullWidth
                       size="small"
@@ -233,7 +233,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -244,7 +244,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -260,7 +260,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -271,7 +271,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -287,7 +287,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={10}>
+                  <Grid item xs={10}>
                     <Autocomplete
                       multiple
                       id="tags-outlined"
@@ -311,7 +311,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={10}>
+                  <Grid item xs={10}>
                     <Autocomplete
                       multiple
                       id="tags-outlined"
@@ -344,7 +344,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={4}>
+                  <Grid item xs={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -355,7 +355,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={4}>
+                  <Grid item xs={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -366,7 +366,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={4}>
+                  <Grid item xs={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -382,7 +382,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <TextField
                       fullWidth
                       size="small"
@@ -392,7 +392,7 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
                     />
                   </Grid>
 
-                  <Grid item sm={6}>
+                  <Grid item xs={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
@@ -413,6 +413,10 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
       </Box>
     );
   };
+
+  useEffect(() => {
+    setCollaborator(collaboratorData);
+  }, [collaboratorData]);
 
   return showInformation();
 };
