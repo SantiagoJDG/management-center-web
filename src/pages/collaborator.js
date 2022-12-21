@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Grid, Card, CardHeader, Avatar, IconButton, CardContent } from '@mui/material';
 import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
+import { getAxiosInstance } from '../utils/axiosClient';
 import useAuth from '../hooks/useAuth';
 import EditableCollaborator from '../components/Collaborators/EditableCollaborator';
 import CollaboratorInformation from '../components/Collaborators/CollaboratorInformation';
@@ -11,16 +12,27 @@ import CollaboratorInformation from '../components/Collaborators/CollaboratorInf
 const Collaborator = () => {
   const router = useRouter();
   const {
-    query: { edit }
+    query: { id, edit }
   } = router;
 
-  const { userToken, waitingUser } = useAuth();
+  const { userToken, waitingUser, getUserData } = useAuth();
+  const [collaboratorData, setCollaboratorData] = useState();
+
+  const getCollaboratorData = async (id) => {
+    try {
+      let path = `/api/collaborator/${id}`;
+      let response = await getAxiosInstance().get(path);
+      setCollaboratorData(response.data);
+    } catch (error) {
+      console.error('Error while get Collaborator..', error);
+    }
+  };
 
   const getInformationView = () => {
-    if (edit) {
-      return <EditableCollaborator />;
+    if (collaboratorData && !edit) {
+      return <CollaboratorInformation collaboratorData={collaboratorData} />;
     } else {
-      return <CollaboratorInformation collaboratorData={{}} />;
+      return <EditableCollaborator />;
     }
   };
 
@@ -28,7 +40,7 @@ const Collaborator = () => {
     if (userToken) {
       return (
         <Grid container>
-          <Grid xs={12}>
+          <Grid item xs={12}>
             <Card>
               <CardHeader
                 avatar={
@@ -57,7 +69,11 @@ const Collaborator = () => {
   useEffect(() => {
     if (waitingUser) return;
     if (!userToken) return;
-  }, [waitingUser, userToken]);
+
+    if (id) {
+      getCollaboratorData(id);
+    }
+  }, [id, waitingUser, userToken]);
 
   return showInformation();
 };
