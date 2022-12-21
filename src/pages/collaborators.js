@@ -25,6 +25,20 @@ const Collaborators = () => {
 
   const onSearchValueChange = (event) => {
     setSearchValue(event.target.value);
+    setCollaborators(filterByName(searchValue, AllCollaborators));
+  };
+
+  const filterByName = (searchValue, filteredCollaborators) => {
+    console.log(searchValue);
+    if (!searchValue.length >= 1 || searchValue === '') {
+      return AllCollaborators;
+    } else {
+      return filteredCollaborators.filter((collaborator) => {
+        const collaboratorLowerCase = collaborator.name.toLowerCase();
+        const searchTextLowerCase = searchValue.toLowerCase();
+        return collaboratorLowerCase.includes(searchTextLowerCase);
+      });
+    }
   };
 
   useEffect(() => {
