@@ -8,7 +8,7 @@ import {
   Select,
   Chip
 } from '@mui/material';
-import * as React from 'react';
+import { useState } from 'react';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -30,13 +30,16 @@ function getStyles(name, item, theme) {
   };
 }
 
-const CollaboratorFilter = ({ item, setItem, title, dropdownData }) => {
+const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }) => {
+  const [item, setItem] = useState([]);
   const theme = useTheme();
   const handleChange = (event) => {
     const {
       target: { value }
     } = event;
-    setItem(typeof value === 'string' ? value.split(',') : value);
+    const ternary = typeof value === 'string' ? value.split(',') : value;
+    setItem(ternary);
+    filterData(ternary, collaboratorKey);
   };
 
   return (
@@ -58,12 +61,8 @@ const CollaboratorFilter = ({ item, setItem, title, dropdownData }) => {
           )}
           MenuProps={MenuProps}
         >
-          {dropdownData.map((dropdownItem) => (
-            <MenuItem
-              key={dropdownItem}
-              value={dropdownItem}
-              style={getStyles(dropdownItem, item, theme)}
-            >
+          {dropdownData.map((dropdownItem, index) => (
+            <MenuItem key={index} value={dropdownItem} style={getStyles(dropdownItem, item, theme)}>
               {dropdownItem}
             </MenuItem>
           ))}

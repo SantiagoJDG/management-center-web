@@ -81,9 +81,9 @@ const CollaboratorTable = ({ collaborators }) => {
             <TableBody>
               {collaborators
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
+                .map((row, i) => {
                   return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={i}>
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (
