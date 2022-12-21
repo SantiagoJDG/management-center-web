@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Grid, Card, CardHeader, Avatar, IconButton, CardContent } from '@mui/material';
 import { red } from '@mui/material/colors';
