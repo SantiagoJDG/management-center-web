@@ -11,13 +11,12 @@ import { useState } from 'react';
 const drawerWidth = 240;
 
 const MainLayout = (props) => {
-  const { setUserToken, setWaitingUser } = useAuth();
+  const { saveUserSession } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const saveToken = async (response) => {
     sessionStorage.setItem('center-token', response.credential);
-    setUserToken(response.credential);
-    setWaitingUser(false);
+    saveUserSession(response.credential);
   };
 
   return (
