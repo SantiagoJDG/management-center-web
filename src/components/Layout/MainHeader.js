@@ -5,7 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import useAuth from '../../hooks/useAuth';
 
 const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
-  const { userToken, getUserData, setUserToken } = useAuth();
+  const { userToken, userData, deleteUserSession } = useAuth();
   const router = useRouter();
 
   const handleDrawerToggle = () => {
@@ -14,11 +14,11 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
 
   const logout = () => {
     /*global google */
-    google.accounts.id.revoke(getUserData().ID, () => {
+    google.accounts.id.revoke(userData.ID, () => {
       sessionStorage.clear();
     });
     sessionStorage.removeItem('center-token');
-    setUserToken(undefined);
+    deleteUserSession();
     router.push('/');
   };
 
@@ -44,7 +44,7 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
         </IconButton>
 
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Sistema de gestion Consultec-TI
+          {userToken ? `Bienvenido ${userData.name}` : 'Sistema de gestion Consultec-TI'}
         </Typography>
 
         {!userToken && <div style={{}} id="buttonDiv"></div>}
@@ -53,7 +53,7 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Cerra sesion">
               <IconButton onClick={logout} sx={{ p: 0 }}>
-                <Avatar alt="Edgar A Guevara" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={userData.name} src={userData.picture} />
               </IconButton>
             </Tooltip>
           </Box>
