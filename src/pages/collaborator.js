@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { Grid, Card, CardHeader, Avatar, IconButton, CardContent } from '@mui/material';
 import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import moment from 'moment';
+import 'moment/locale/es';
 
 import { getAxiosInstance } from '../utils/axiosClient';
 import useAuth from '../hooks/useAuth';
@@ -15,14 +17,17 @@ const Collaborator = () => {
     query: { id, edit }
   } = router;
 
-  const { userToken, waitingUser, getUserData } = useAuth();
+  const { userToken, waitingUser, userData } = useAuth();
   const [collaboratorData, setCollaboratorData] = useState();
+
+  var admissionDateFormated = moment().format('LL');
+  var PrincipalName = 'Nuevo consultor';
 
   const getCollaboratorData = async (id) => {
     try {
       let path = `/api/collaborator/${id}`;
       let response = await getAxiosInstance().get(path);
-      setCollaboratorData(response.data);
+      setCollaboratorData(response.data[0]);
     } catch (error) {
       console.error('Error while get Collaborator..', error);
     }
@@ -32,29 +37,35 @@ const Collaborator = () => {
     if (collaboratorData && !edit) {
       return <CollaboratorInformation collaboratorData={collaboratorData} />;
     } else {
-      return <EditableCollaborator />;
+      return <EditableCollaborator  collaboratorData={collaboratorData} />;
     }
   };
 
   const showInformation = () => {
     if (userToken) {
+      if (collaboratorData) {
+        admissionDateFormated = moment(collaboratorData.admission_date).format('LL');
+        PrincipalName = collaboratorData.name;
+      }
       return (
         <Grid container>
           <Grid item xs={12}>
             <Card>
               <CardHeader
                 avatar={
-                  <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                    EG
-                  </Avatar>
+                  <Avatar
+                    sx={{ bgcolor: red[500] }}
+                    aria-label="recipe"
+                    alt={userData.name}
+                  ></Avatar>
                 }
                 action={
                   <IconButton aria-label="settings">
                     <MoreVertIcon />
                   </IconButton>
                 }
-                title="Edgar Alexander Guevara Naranjo"
-                subheader="Ingreso 15 de Julio 2015"
+                title={PrincipalName}
+                subheader={`Fecha de ingreso: ${admissionDateFormated}`}
               />
               <CardContent>{getInformationView()}</CardContent>
             </Card>
@@ -62,7 +73,7 @@ const Collaborator = () => {
         </Grid>
       );
     } else {
-      return 'There is not collaborator';
+      return 'There is loading page';
     }
   };
 
@@ -70,10 +81,11 @@ const Collaborator = () => {
     if (waitingUser) return;
     if (!userToken) return;
 
-    if (id) {
-      getCollaboratorData(id);
+    let userId = id ? id : userData.consultecId;
+    if (userId) {
+      getCollaboratorData(userId);
     }
-  }, [id, waitingUser, userToken]);
+  }, [userToken,waitingUser, id, userData]);
 
   return showInformation();
 };
