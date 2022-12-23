@@ -29,7 +29,6 @@ const Collaborators = () => {
   };
 
   const filterByName = (searchValue, filteredCollaborators) => {
-    console.log(searchValue);
     if (!searchValue.length >= 1 || searchValue === '') {
       return AllCollaborators;
     } else {
@@ -49,24 +48,27 @@ const Collaborators = () => {
 
   return (
     <>
-      <Grid container direction={'column'} spacing={2}>
-        <Grid item rowSpacing={100} sx={{ display: 'flex' }}>
-          <Box sx={{ padding: 2 }}>
+      <Grid container direction={'column'} spacing={2} sx={{ width: '100%' }}>
+        <Grid item sx={{ display: 'flex', width: '100%' }}>
+          <Box sx={{ width: '25%' }}>
             <TextField
               id="filled-basic"
               label="Name"
               value={searchValue}
               onChange={onSearchValueChange}
+              sx={{ width: '100%', backgroundColor: 'white' }}
             />
           </Box>
-          <CollaboratorBarFilter
-            collaborators={collaborators}
-            setCollaborators={setCollaborators}
-            allCollaborators={AllCollaborators}
-          />
+          <Box sx={{ width: '75%' }}>
+            <CollaboratorBarFilter
+              collaborators={collaborators}
+              setCollaborators={setCollaborators}
+              allCollaborators={AllCollaborators}
+            />
+          </Box>
         </Grid>
         <Grid item>
-          <Box sx={{ width: '70vw', height: '70vh' }}>
+          <Box sx={{ height: '70vh' }}>
             <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
           </Box>
         </Grid>

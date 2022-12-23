@@ -14,15 +14,13 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   };
 
   const executeFilter = (value, collaboratorKey) => {
-    setCollaborators((p) =>
-      filteredCollaborator(allCollaborators, [...p, ...value], collaboratorKey)
-    );
+    setCollaborators(filteredCollaborator(allCollaborators, [...value], collaboratorKey));
   };
   return (
     !!collaborators && (
       <>
-        <Grid container sx={{ display: 'row' }}>
-          <Grid item sx={{ padding: 2 }}>
+        <Grid container sx={{ display: 'row', width: '100%' }}>
+          <Grid item sx={{ width: '33.3%', paddingRight: 1, paddingLeft: 1 }}>
             <CollaboratorFilter
               title={'Paises'}
               dropdownData={countries}
@@ -30,9 +28,17 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'residency'}
             />
           </Grid>
-          <Grid item sx={{ padding: 2 }}>
+          <Grid item sx={{ width: '33.3%', paddingRight: 1 }}>
             <CollaboratorFilter
               title={'Oficina'}
+              dropdownData={officeCountries}
+              filterData={executeFilter}
+              collaboratorKey={'office'}
+            />
+          </Grid>
+          <Grid item sx={{ width: '33.3%', paddingRight: 1 }}>
+            <CollaboratorFilter
+              title={'Otro Filtro'}
               dropdownData={officeCountries}
               filterData={executeFilter}
               collaboratorKey={'office'}
