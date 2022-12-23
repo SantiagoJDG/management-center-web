@@ -7,7 +7,8 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  Chip
+  Chip,
+  Grid
 } from '@mui/material';
 import { Box } from '@mui/system';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -115,50 +116,41 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <Divider />
                 <ListItem>
                   <ListItemText primary="Perfil" secondary={collaborator.profile} />
-                  <ListItemText primary="Cliente" secondary="Banco General Panamá (AUN NO)" />
+                  <ListItemText primary="Cliente" secondary={collaborator.client} />
                 </ListItem>
                 <Divider />
 
                 <ListItem>
-                  <ListItemText
-                    primary="Especialidad (AUN NO)"
-                    secondary={
-                      <>
-                        <Chip label={'Backend'} color="info" variant="outlined" size="small" />
-                        <Chip
-                          label={'Base de datos'}
-                          color="info"
-                          variant="outlined"
-                          size="small"
-                        />
-                        <Chip label={' APIs'} color="info" variant="outlined" size="small" />
-                        <Chip
-                          label={' Frontend Web'}
-                          color="info"
-                          variant="outlined"
-                          size="small"
-                        />
-                        <Chip label={'Full Stack'} color="info" variant="outlined" size="small" />
-                        <Chip label={'Liferay'} color="info" variant="outlined" size="small" />
-                      </>
-                    }
-                  />
+                  <Grid container>
+                    <Grid sm={12}>
+                      <ListItemText primary="Especialidad" />
+                    </Grid>
+                    <Grid sm={12}>
+                      {collaborator.knowledges.map((knowledges) => {
+                        return (
+                          <Chip
+                            label={knowledges.name}
+                            color="info"
+                            variant="outlined"
+                            size="small"
+                          />
+                        );
+                      })}
+                    </Grid>
+                  </Grid>
                 </ListItem>
                 <Divider />
                 <ListItem>
-                  <ListItemText
-                    primary="Tecnologías predominantes (AUN NO)"
-                    secondary={
-                      <>
-                        <Chip label={'Java'} variant="outlined" size="small" />
-                        <Chip label={'NodeJs'} variant="outlined" size="small" />
-                        <Chip label={'Phyton'} variant="outlined" size="small" />
-                        <Chip label={'SQL'} variant="outlined" size="small" />
-                        <Chip label={'React'} variant="outlined" size="small" />
-                        <Chip label={'JavaScript'} variant="outlined" size="small" />
-                      </>
-                    }
-                  />
+                  <Grid container>
+                    <Grid sm={12}>
+                      <ListItemText primary="Tecnologías predominantes" />
+                    </Grid>
+                    <Grid sm={12}>
+                      {collaborator.technologies.map((technology) => {
+                        return <Chip label={technology.name} variant="outlined" size="small" />;
+                      })}
+                    </Grid>
+                  </Grid>
                 </ListItem>
                 <Divider />
               </List>
@@ -213,10 +205,6 @@ const CollaboratorInformation = ({ collaboratorData }) => {
       return 'There is not collaborator';
     }
   };
-
-  useEffect(() => {
-    setCollaborator(collaboratorData);
-  }, [collaboratorData]);
 
   return showInformation();
 };
