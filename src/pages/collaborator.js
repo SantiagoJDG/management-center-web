@@ -27,7 +27,7 @@ const Collaborator = () => {
     try {
       let path = `/api/collaborator/${id}`;
       let response = await getAxiosInstance().get(path);
-      setCollaboratorData(response.data[0]);
+      setCollaboratorData(response.data);
     } catch (error) {
       console.error('Error while get Collaborator..', error);
     }
