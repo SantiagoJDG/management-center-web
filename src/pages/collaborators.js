@@ -48,27 +48,24 @@ const Collaborators = () => {
 
   return (
     <>
-      <Grid container direction={'column'} spacing={2} sx={{ width: '100%' }}>
-        <Grid item sx={{ display: 'flex', width: '100%' }}>
-          <Box sx={{ width: '25%' }}>
+      <Grid container direction={'column'} spacing={2}>
+        <Grid item sx={{ display: 'flex' }}>
+          <Box xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
             <TextField
               id="filled-basic"
               label="Name"
               value={searchValue}
               onChange={onSearchValueChange}
-              sx={{ width: '100%', backgroundColor: 'white' }}
             />
           </Box>
-          <Box sx={{ width: '75%' }}>
-            <CollaboratorBarFilter
-              collaborators={collaborators}
-              setCollaborators={setCollaborators}
-              allCollaborators={AllCollaborators}
-            />
-          </Box>
+          <CollaboratorBarFilter
+            collaborators={collaborators}
+            setCollaborators={setCollaborators}
+            allCollaborators={AllCollaborators}
+          />
         </Grid>
-        <Grid item>
-          <Box sx={{ height: '70vh' }}>
+        <Grid item sx={{ flexWrap: 'wrap' }}>
+          <Box xl={2} lg={2} md={2} sm={1.5}>
             <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
           </Box>
         </Grid>

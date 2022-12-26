@@ -19,8 +19,8 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   return (
     !!collaborators && (
       <>
-        <Grid container sx={{ display: 'row', width: '100%' }}>
-          <Grid item sx={{ width: '33.3%', paddingRight: 1, paddingLeft: 1 }}>
+        <Grid container sx={{ flexWrap: 'wrap' }}>
+          <Grid sx={{ paddingRight: 1, paddingLeft: 1 }} xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
             <CollaboratorFilter
               title={'Paises'}
               dropdownData={countries}
@@ -28,7 +28,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'residency'}
             />
           </Grid>
-          <Grid item sx={{ width: '33.3%', paddingRight: 1 }}>
+          <Grid sx={{ paddingRight: 1 }} xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
             <CollaboratorFilter
               title={'Oficina'}
               dropdownData={officeCountries}
@@ -36,7 +36,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'office'}
             />
           </Grid>
-          <Grid item sx={{ width: '33.3%', paddingRight: 1 }}>
+          <Grid sx={{ paddingRight: 1 }} xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
             <CollaboratorFilter
               title={'Otro Filtro'}
               dropdownData={officeCountries}
