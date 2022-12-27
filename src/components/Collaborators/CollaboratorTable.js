@@ -11,42 +11,42 @@ import {
 } from '@mui/material';
 
 const columns = [
-  { id: 'name', label: 'Nombre', minWidth: 170 },
+  { id: 'name', label: 'Nombre', minWidth: 170, align: 'center' },
   {
     id: 'email',
     label: 'Email',
     minWidth: 170,
-    align: 'right'
+    align: 'center'
   },
   {
     id: 'admission_date',
     label: 'Fecha de Ingreso',
     minWidth: 170,
-    align: 'right'
+    align: 'center'
   },
   {
     id: 'residency',
     label: 'Pais de Residencia',
     minWidth: 170,
-    align: 'right'
+    align: 'center'
   },
   {
     id: 'office',
     label: 'Pais de Contrato',
     minWidth: 170,
-    align: 'right'
+    align: 'center'
   },
   {
     id: 'salary',
     label: 'Tarifa mensual bruta',
     minWidth: 170,
-    align: 'right'
+    align: 'center'
   },
   {
     id: 'supervisor',
     label: 'Supervisor',
     minWidth: 170,
-    align: 'right'
+    align: 'center'
   }
 ];
 
@@ -72,8 +72,12 @@ const CollaboratorTable = ({ collaborators }) => {
             <TableHead>
               <TableRow>
                 {columns.map((column, index) => (
-                  <TableCell key={index} align={column.align} style={{ minWidth: column.minWidth }}>
-                    {column.label}
+                  <TableCell
+                    key={index}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth, background: 'grey' }}
+                  >
+                    <b> {column.label}</b>
                   </TableCell>
                 ))}
               </TableRow>

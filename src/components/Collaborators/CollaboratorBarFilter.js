@@ -14,15 +14,13 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   };
 
   const executeFilter = (value, collaboratorKey) => {
-    setCollaborators((p) =>
-      filteredCollaborator(allCollaborators, [...p, ...value], collaboratorKey)
-    );
+    setCollaborators(filteredCollaborator(allCollaborators, [...value], collaboratorKey));
   };
   return (
     !!collaborators && (
       <>
-        <Grid container sx={{ display: 'row' }}>
-          <Grid item sx={{ padding: 2 }}>
+        <Grid container sx={{ flexWrap: 'wrap' }}>
+          <Grid sx={{ paddingRight: 1, paddingLeft: 1 }} xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
             <CollaboratorFilter
               title={'Paises'}
               dropdownData={countries}
@@ -30,9 +28,17 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'residency'}
             />
           </Grid>
-          <Grid item sx={{ padding: 2 }}>
+          <Grid sx={{ paddingRight: 1 }} xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
             <CollaboratorFilter
               title={'Oficina'}
+              dropdownData={officeCountries}
+              filterData={executeFilter}
+              collaboratorKey={'office'}
+            />
+          </Grid>
+          <Grid sx={{ paddingRight: 1 }} xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
+            <CollaboratorFilter
+              title={'Otro Filtro'}
               dropdownData={officeCountries}
               filterData={executeFilter}
               collaboratorKey={'office'}
