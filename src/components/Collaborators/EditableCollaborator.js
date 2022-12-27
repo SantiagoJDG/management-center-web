@@ -1,24 +1,23 @@
-import { useState, useEffect } from 'react';
-import moment from 'moment';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
-  Grid,
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
+  Autocomplete,
+  Divider,
+  Grid,
   List,
   ListItem,
-  Divider,
-  TextField,
-  Autocomplete
+  TextField
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import { Box } from '@mui/system';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { Box } from '@mui/system';
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import moment from 'moment';
+import { useState } from 'react';
 
-const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
-  const [collaborator, setCollaborator] = useState(collaboratorData);
+const EditableCollaborator = () => {
   const [value, setValue] = useState(moment().format());
 
   const handleChange = (newValue) => {
@@ -413,10 +412,6 @@ const EditableCollaborator = ({ collaboratorData, setCollaboratorData }) => {
       </Box>
     );
   };
-
-  useEffect(() => {
-    setCollaborator(collaboratorData);
-  }, [collaboratorData]);
 
   return showInformation();
 };

@@ -1,22 +1,22 @@
-import { useState, useEffect } from 'react';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
-  AccordionSummary,
   AccordionDetails,
+  AccordionSummary,
+  Chip,
+  Divider,
+  Grid,
   List,
   ListItem,
-  ListItemText,
-  Divider,
-  Chip,
-  Grid
+  ListItemText
 } from '@mui/material';
 import { Box } from '@mui/system';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import moment from 'moment';
 import 'moment/locale/es';
+import { useState, useEffect } from 'react';
 
 const CollaboratorInformation = ({ collaboratorData }) => {
-  const [collaborator, setCollaborator] = useState(collaboratorData);
+  const [collaborator, setCollaborator] = useState();
 
   const showInformation = () => {
     if (collaborator) {
@@ -126,10 +126,11 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                       <ListItemText primary="Especialidad" />
                     </Grid>
                     <Grid sm={12}>
-                      {collaborator.knowledges.map((knowledges) => {
+                      {collaborator.knowledges.map((knowledge) => {
                         return (
                           <Chip
-                            label={knowledges.name}
+                            key={knowledge.id}
+                            label={knowledge.name}
                             color="info"
                             variant="outlined"
                             size="small"
@@ -147,7 +148,14 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                     </Grid>
                     <Grid sm={12}>
                       {collaborator.technologies.map((technology) => {
-                        return <Chip label={technology.name} variant="outlined" size="small" />;
+                        return (
+                          <Chip
+                            key={technology.id}
+                            label={technology.name}
+                            variant="outlined"
+                            size="small"
+                          />
+                        );
                       })}
                     </Grid>
                   </Grid>
@@ -205,6 +213,10 @@ const CollaboratorInformation = ({ collaboratorData }) => {
       return 'There is not collaborator';
     }
   };
+
+  useEffect(() => {
+    setCollaborator(collaboratorData);
+  }, [collaboratorData]);
 
   return showInformation();
 };

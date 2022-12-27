@@ -37,7 +37,7 @@ const Collaborator = () => {
     if (collaboratorData && !edit) {
       return <CollaboratorInformation collaboratorData={collaboratorData} />;
     } else {
-      return <EditableCollaborator  collaboratorData={collaboratorData} />;
+      return <EditableCollaborator collaboratorData={collaboratorData} />;
     }
   };
 
@@ -85,7 +85,7 @@ const Collaborator = () => {
     if (userId) {
       getCollaboratorData(userId);
     }
-  }, [userToken,waitingUser, id, userData]);
+  }, [userToken, waitingUser, id, userData]);
 
   return showInformation();
 };
