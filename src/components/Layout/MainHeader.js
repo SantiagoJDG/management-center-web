@@ -1,9 +1,25 @@
-import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
+import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip, Avatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
+import useAuth from '../../hooks/useAuth';
+
 const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
+  const { userToken, userData, deleteUserSession } = useAuth();
+  const router = useRouter();
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const logout = () => {
+    /*global google */
+    google.accounts.id.revoke(userData.ID, () => {
+      sessionStorage.clear();
+    });
+    sessionStorage.removeItem('center-token');
+    deleteUserSession();
+    router.push('/');
   };
 
   return (
@@ -28,10 +44,20 @@ const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
         </IconButton>
 
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          Sistema de gestion Consultec-TI
+          {userToken ? `Bienvenido ${userData.name}` : 'Sistema de gestion Consultec-TI'}
         </Typography>
 
-        <div style={{}} id="buttonDiv"></div>
+        {!userToken && <div style={{}} id="buttonDiv"></div>}
+
+        {userToken && (
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Cerra sesion">
+              <IconButton onClick={logout} sx={{ p: 0 }}>
+                <Avatar alt={userData.name} src={userData.picture} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
       </Toolbar>
     </AppBar>
   );
