@@ -34,10 +34,14 @@ const Collaborator = () => {
   };
 
   const getInformationView = () => {
+    if (collaboratorData && edit) {
+      return <EditableCollaborator collaboratorData={collaboratorData} />;
+    }
     if (collaboratorData && !edit) {
       return <CollaboratorInformation collaboratorData={collaboratorData} />;
-    } else {
-      return <EditableCollaborator collaboratorData={collaboratorData} />;
+    }
+    if (!collaboratorData && !edit) {
+      return <EditableCollaborator />;
     }
   };
 
@@ -81,9 +85,8 @@ const Collaborator = () => {
     if (waitingUser) return;
     if (!userToken) return;
 
-    let userId = id ? id : userData.consultecId;
-    if (userId) {
-      getCollaboratorData(userId);
+    if (id) {
+      getCollaboratorData(id);
     }
   }, [userToken, waitingUser, id, userData]);
 
