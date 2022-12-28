@@ -100,7 +100,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
           <Grid sx={{ paddingRight: 1 }} xl={2} lg={1.5} md={1} sm={1} xs={1}>
             <CollaboratorFilter
-              title={'Knowledge'}
+              title={'N1'}
               dropdownData={knowledge}
               filterData={executeFilter}
               collaboratorKey={'knowledge'}
