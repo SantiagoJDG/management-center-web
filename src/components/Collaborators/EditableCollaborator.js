@@ -11,7 +11,8 @@ import {
   Grid,
   List,
   ListItem,
-  TextField
+  TextField,
+  createFilterOptions
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -19,6 +20,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 
 import { getAxiosInstance } from '../../utils/axiosClient';
+import CustomAutoComplete from '../../components/CustomAutoComplete';
 
 const EditableCollaborator = ({ collaboratorData }) => {
   const [admissionDate, setAdmissionDate] = useState(moment().format());
@@ -43,6 +45,8 @@ const EditableCollaborator = ({ collaboratorData }) => {
   const [seniorities, setSeniorities] = useState([]);
   const [readiness, setReadiness] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
+
+  const filter = createFilterOptions();
 
   const getResidenceData = async () => {
     try {
@@ -221,15 +225,7 @@ const EditableCollaborator = ({ collaboratorData }) => {
               <ListItem>
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      size="small"
-                      options={countries}
-                      getOptionLabel={(country) => country.name}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => <TextField {...params} label="País de residencia" />}
-                    />
+                    <CustomAutoComplete optionList={countries} />
                   </Grid>
 
                   <Grid item xs={12} lg={6}>
