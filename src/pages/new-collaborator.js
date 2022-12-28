@@ -12,16 +12,11 @@ import EditableCollaborator from '../components/Collaborators/EditableCollaborat
 import CollaboratorInformation from '../components/Collaborators/CollaboratorInformation';
 
 const Collaborator = () => {
-  const router = useRouter();
-  const {
-    query: { id, edit }
-  } = router;
-
   const { userToken, waitingUser, userData } = useAuth();
   const [collaboratorData, setCollaboratorData] = useState();
 
   var admissionDateFormated = moment().format('LL');
-  var PrincipalName = '';
+  var PrincipalName = 'Nuevo consultor';
 
   const getCollaboratorData = async (id) => {
     try {
@@ -34,20 +29,11 @@ const Collaborator = () => {
   };
 
   const getInformationView = () => {
-    if (collaboratorData && edit) {
-      return <EditableCollaborator collaboratorData={collaboratorData} />;
-    }
-    if (collaboratorData && !edit) {
-      return <CollaboratorInformation collaboratorData={collaboratorData} />;
-    }
+    return <EditableCollaborator />;
   };
 
   const showInformation = () => {
     if (userToken) {
-      if (collaboratorData) {
-        admissionDateFormated = moment(collaboratorData.admission_date).format('LL');
-        PrincipalName = collaboratorData.name;
-      }
       return (
         <Grid container>
           <Grid item xs={12}>
@@ -81,12 +67,7 @@ const Collaborator = () => {
   useEffect(() => {
     if (waitingUser) return;
     if (!userToken) return;
-
-    const userId = id ? id : userData.consultecId;
-    if (userId) {
-      getCollaboratorData(userId);
-    }
-  }, [userToken, waitingUser, id, userData]);
+  }, [userToken, waitingUser, userData]);
 
   return showInformation();
 };
