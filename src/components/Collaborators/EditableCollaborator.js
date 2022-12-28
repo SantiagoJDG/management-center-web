@@ -1,6 +1,3 @@
-import moment from 'moment';
-import 'moment/locale/es';
-import { useState, useEffect } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
@@ -11,18 +8,21 @@ import {
   Grid,
   List,
   ListItem,
-  TextField,
-  createFilterOptions
+  TextField
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
+import moment from 'moment';
+import 'moment/locale/es';
+import { useEffect, useState } from 'react';
 
-import { getAxiosInstance } from '../../utils/axiosClient';
 import CustomAutoComplete from '../../components/CustomAutoComplete';
+import { getAxiosInstance } from '../../utils/axiosClient';
 
 const EditableCollaborator = ({ collaboratorData }) => {
+  const [newCollaborator, setNewCollaborator] = useState({});
   const [admissionDate, setAdmissionDate] = useState(moment().format());
   const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
 
@@ -46,17 +46,51 @@ const EditableCollaborator = ({ collaboratorData }) => {
   const [readiness, setReadiness] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
 
-  const filter = createFilterOptions();
+  const handleNewCountry = async (newCountry) => {
+    if (!newCountry) return;
+    if (!newCountry.id) {
+      try {
+        let createCountryPath = '/api/residence/countries';
+        let countryCreated = await getAxiosInstance().post(createCountryPath, newCountry);
+        newCountry.id = countryCreated.data.id;
+        setCountries([...countries, newCountry]);
+      } catch (error) {
+        console.error('Error while get Residence Data..', error);
+      }
+    }
+    setNewCollaborator({ ...newCollaborator, country: newCountry.id });
+  };
+
+  const handleNewState = async (newState) => {
+    if (!newState) return;
+    if (!newState.id) {
+      try {
+        let createStatePath = '/api/residence/states';
+        let stateCreated = await getAxiosInstance().post(createCountryPath, createStatePath);
+        newCountry.id = stateCreated.data.id;
+        setStates([...states, newState]);
+      } catch (error) {
+        console.error('Error while get Residence Data..', error);
+      }
+    }
+    setNewCollaborator({ ...newCollaborator, state: newState.id });
+  };
 
   const getResidenceData = async () => {
     try {
       let countriesPath = '/api/residence/countries';
-      let countriesResponse = await getAxiosInstance().get(countriesPath);
-      setCountries(countriesResponse.data);
+      getAxiosInstance()
+        .get(countriesPath)
+        .then((countriesResponse) => {
+          setCountries(countriesResponse.data);
+        });
 
       let statesPath = '/api/residence/states';
-      let statesResponse = await getAxiosInstance().get(statesPath);
-      setStates(statesResponse.data);
+      await getAxiosInstance()
+        .get(statesPath)
+        .then((statesResponse) => {
+          setStates(statesResponse.data);
+        });
     } catch (error) {
       console.error('Error while get Residence Data..', error);
     }
@@ -225,20 +259,20 @@ const EditableCollaborator = ({ collaboratorData }) => {
               <ListItem>
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
-                    <CustomAutoComplete optionList={countries} />
+                    <CustomAutoComplete
+                      name="country"
+                      label="País de residencia"
+                      optionList={countries}
+                      elmentCallback={handleNewCountry}
+                    />
                   </Grid>
 
                   <Grid item xs={12} lg={6}>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      size="small"
-                      options={states}
-                      getOptionLabel={(state) => state.name}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Ciudad de residencia" />
-                      )}
+                    <CustomAutoComplete
+                      name="state"
+                      label="Ciudad de residencia"
+                      optionList={states}
+                      elmentCallback={handleNewState}
                     />
                   </Grid>
                 </Grid>
