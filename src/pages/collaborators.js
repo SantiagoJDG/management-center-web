@@ -29,7 +29,6 @@ const Collaborators = () => {
   };
 
   const filterByName = (searchValue, filteredCollaborators) => {
-    console.log(searchValue);
     if (!searchValue.length >= 1 || searchValue === '') {
       return AllCollaborators;
     } else {
