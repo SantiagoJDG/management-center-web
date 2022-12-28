@@ -1,32 +1,18 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { Grid, Card, CardHeader, Avatar, IconButton, CardContent } from '@mui/material';
-import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Avatar, Card, CardContent, CardHeader, Grid, IconButton } from '@mui/material';
+import { red } from '@mui/material/colors';
 import moment from 'moment';
 import 'moment/locale/es';
+import { useEffect } from 'react';
 
-import { getAxiosInstance } from '../utils/axiosClient';
-import useAuth from '../hooks/useAuth';
 import EditableCollaborator from '../components/Collaborators/EditableCollaborator';
-import CollaboratorInformation from '../components/Collaborators/CollaboratorInformation';
+import useAuth from '../hooks/useAuth';
 
 const Collaborator = () => {
   const { userToken, waitingUser, userData } = useAuth();
-  const [collaboratorData, setCollaboratorData] = useState();
 
   var admissionDateFormated = moment().format('LL');
   var PrincipalName = 'Nuevo consultor';
-
-  const getCollaboratorData = async (id) => {
-    try {
-      let path = `/api/collaborator/${id}`;
-      let response = await getAxiosInstance().get(path);
-      setCollaboratorData(response.data);
-    } catch (error) {
-      console.error('Error while get Collaborator..', error);
-    }
-  };
 
   const getInformationView = () => {
     return <EditableCollaborator />;

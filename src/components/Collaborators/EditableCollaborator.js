@@ -413,7 +413,7 @@ const EditableCollaborator = ({ collaboratorData }) => {
                       options={knowledges}
                       getOptionLabel={(knowledge) => knowledge.name}
                       filterSelectedOptions
-                      renderInput={(params) => <TextField {...params} label="Perfil" />}
+                      renderInput={(params) => <TextField {...params} label="N2-Especialidad" />}
                     />
                   </Grid>
                 </Grid>
@@ -430,7 +430,7 @@ const EditableCollaborator = ({ collaboratorData }) => {
                       getOptionLabel={(technology) => technology.name}
                       filterSelectedOptions
                       renderInput={(params) => (
-                        <TextField {...params} label="Tecnologías predominantes" />
+                        <TextField {...params} label="N3-tecnologías predominantes" />
                       )}
                     />
                   </Grid>
