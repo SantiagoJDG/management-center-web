@@ -66,8 +66,8 @@ const EditableCollaborator = ({ collaboratorData }) => {
     if (!newState.id) {
       try {
         let createStatePath = '/api/residence/states';
-        let stateCreated = await getAxiosInstance().post(createCountryPath, createStatePath);
-        newCountry.id = stateCreated.data.id;
+        let stateCreated = await getAxiosInstance().post(createStatePath, newState);
+        newState.id = stateCreated.data.id;
         setStates([...states, newState]);
       } catch (error) {
         console.error('Error while get Residence Data..', error);
