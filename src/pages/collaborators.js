@@ -15,7 +15,7 @@ const Collaborators = () => {
 
   const getCollaborators = async () => {
     try {
-      let collaboratorsResponse = await getAxiosInstance().get('/api/collaborator');
+      let collaboratorsResponse = await getAxiosInstance().get('/api/collaborators');
       setCollaborators(collaboratorsResponse.data);
       setAllCollaborators(collaboratorsResponse.data);
     } catch (error) {

@@ -27,7 +27,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
 
   const getResidencies = async () => {
     try {
-      let residenciesResponse = await getAxiosInstance().get('/api/residencies');
+      let residenciesResponse = await getAxiosInstance().get('/api/residence');
       let knowledgeResponse = await getAxiosInstance().get('/api/knowledge');
       const countries = [];
       const states = [];
@@ -66,7 +66,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
     !!collaborators && (
       <>
         <Grid container sx={{ flexWrap: 'wrap' }}>
-          <Grid sx={{ paddingRight: 1, paddingLeft: 1 }} xl={2} lg={1.5} md={1} sm={1} xs={1}>
+          <Grid item sx={{ paddingRight: 1, paddingLeft: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
             <CollaboratorFilter
               title={'Paises'}
               dropdownData={residencies}
@@ -74,7 +74,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'residency'}
             />
           </Grid>
-          <Grid sx={{ paddingRight: 1 }} xl={2} lg={1.5} md={1} sm={1} xs={1}>
+          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
             <CollaboratorFilter
               title={'City'}
               dropdownData={cities}
@@ -82,15 +82,15 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'state'}
             />
           </Grid>
-          <Grid sx={{ paddingRight: 1 }} xl={2} lg={1.5} md={1} sm={1} xs={1}>
+          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
             <CollaboratorFilter
               title={'Office'}
               dropdownData={office}
               filterData={executeFilter}
-              collaboratorKey={'state'}
+              collaboratorKey={'office'}
             />
           </Grid>
-          <Grid sx={{ paddingRight: 1 }} xl={2} lg={1.5} md={1} sm={1} xs={1}>
+          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
             <CollaboratorFilter
               title={'Contrato'}
               dropdownData={contractType}
@@ -98,7 +98,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'contract_type'}
             />
           </Grid>
-          <Grid sx={{ paddingRight: 1 }} xl={2} lg={1.5} md={1} sm={1} xs={1}>
+          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
             <CollaboratorFilter
               title={'N1'}
               dropdownData={knowledge}
