@@ -54,7 +54,11 @@ const CustomAutoComplete = ({ name, label, optionList, elmentCallback }) => {
       onChange={(event, newValue) => {
         handleSelectedOption(newValue);
       }}
-      renderOption={(props, country) => <li {...props}>{country.name}</li>}
+      renderOption={(props, option) => (
+        <li {...props} key={option.id}>
+          {option.name}
+        </li>
+      )}
       renderInput={(params) => <TextField {...params} label={label} />}
     />
   );
