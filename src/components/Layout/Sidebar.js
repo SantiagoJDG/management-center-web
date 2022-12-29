@@ -24,7 +24,8 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
       path: '/collaborators',
       view: ['administrador']
     },
-    { name: 'Ficha Consultor', path: '/collaborator', view: ['administrador'] }
+    { name: 'Mi Ficha', path: '/collaborator', view: ['administrador'] },
+    { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] }
   ];
 
   const handleDrawerToggle = () => {
@@ -37,6 +38,7 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
 
   const getIcon = (path) => {
     switch (path) {
+      case '/new-collaborator':
       case '/collaborator':
         return (
           <ListItemIcon>
