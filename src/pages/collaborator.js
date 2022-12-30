@@ -21,7 +21,7 @@ const Collaborator = () => {
   const [collaboratorData, setCollaboratorData] = useState();
 
   var admissionDateFormated = moment().format('LL');
-  var PrincipalName = 'Nuevo consultor';
+  var PrincipalName = '';
 
   const getCollaboratorData = async (id) => {
     try {
@@ -34,10 +34,11 @@ const Collaborator = () => {
   };
 
   const getInformationView = () => {
+    if (collaboratorData && edit) {
+      return <EditableCollaborator collaboratorData={collaboratorData} />;
+    }
     if (collaboratorData && !edit) {
       return <CollaboratorInformation collaboratorData={collaboratorData} />;
-    } else {
-      return <EditableCollaborator collaboratorData={collaboratorData} />;
     }
   };
 
@@ -81,7 +82,7 @@ const Collaborator = () => {
     if (waitingUser) return;
     if (!userToken) return;
 
-    let userId = id ? id : userData.consultecId;
+    const userId = id ? id : userData.consultecId;
     if (userId) {
       getCollaboratorData(userId);
     }

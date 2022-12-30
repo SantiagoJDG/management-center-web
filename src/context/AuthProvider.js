@@ -20,10 +20,7 @@ const AuthProvider = ({ children }) => {
 
   const getUserData = async (credential) => {
     const { sub, name, picture, email } = jwt_decode(credential);
-
     const ownData = await getOwnUserData(email);
-
-    console.log(ownData);
     return {
       ID: sub,
       consultecId: ownData ? ownData.id : '',

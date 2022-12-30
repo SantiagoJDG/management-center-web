@@ -15,17 +15,164 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import moment from 'moment';
-import { useState } from 'react';
+import 'moment/locale/es';
+import { useEffect, useState } from 'react';
 
-const EditableCollaborator = () => {
-  const [value, setValue] = useState(moment().format());
+import CustomAutoComplete from '../../components/CustomAutoComplete';
+import { getAxiosInstance } from '../../utils/axiosClient';
 
-  const handleChange = (newValue) => {
-    setValue(newValue);
+const EditableCollaborator = ({ collaboratorData }) => {
+  const [newCollaborator, setNewCollaborator] = useState({});
+  const [admissionDate, setAdmissionDate] = useState(moment().format());
+  const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
+
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+
+  const [offices, setOffices] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [status, setStatus] = useState([]);
+
+  const [managements, setManagements] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [knowledges, setKnowledges] = useState([]);
+  const [technologies, setTechnologies] = useState([]);
+  const [clients, setClients] = useState([]);
+
+  const [roles, setRoles] = useState([]);
+  const [seniorities, setSeniorities] = useState([]);
+  const [readiness, setReadiness] = useState([]);
+  const [internalRoles, setInternalRoles] = useState([]);
+
+  const handleNewCountry = async (newCountry) => {
+    if (!newCountry) return;
+    if (!newCountry.id) {
+      try {
+        let createCountryPath = '/api/residence/countries';
+        let countryCreated = await getAxiosInstance().post(createCountryPath, newCountry);
+        newCountry.id = countryCreated.data.id;
+        setCountries([...countries, newCountry]);
+      } catch (error) {
+        console.error('Error while get Residence Data..', error);
+      }
+    }
+    setNewCollaborator({ ...newCollaborator, country: newCountry.id });
   };
 
-  const country = [{ label: 'Panamá' }, { label: 'Venezuela' }];
-  const city = [{ label: 'Panamá' }, { label: 'Caracas' }];
+  const handleNewState = async (newState) => {
+    if (!newState) return;
+    if (!newState.id) {
+      try {
+        let createStatePath = '/api/residence/states';
+        let stateCreated = await getAxiosInstance().post(createStatePath, newState);
+        newState.id = stateCreated.data.id;
+        setStates([...states, newState]);
+      } catch (error) {
+        console.error('Error while get Residence Data..', error);
+      }
+    }
+    setNewCollaborator({ ...newCollaborator, state: newState.id });
+  };
+
+  const getResidenceData = async () => {
+    try {
+      let countriesPath = '/api/residence/countries';
+      getAxiosInstance()
+        .get(countriesPath)
+        .then((countriesResponse) => {
+          setCountries(countriesResponse.data);
+        });
+
+      let statesPath = '/api/residence/states';
+      await getAxiosInstance()
+        .get(statesPath)
+        .then((statesResponse) => {
+          setStates(statesResponse.data);
+        });
+    } catch (error) {
+      console.error('Error while get Residence Data..', error);
+    }
+  };
+
+  const getHiringData = async () => {
+    try {
+      let officesPath = '/api/hiring/offices';
+      let officesResponse = await getAxiosInstance().get(officesPath);
+      setOffices(officesResponse.data);
+
+      let typesPath = '/api/hiring/types';
+      let typesResponse = await getAxiosInstance().get(typesPath);
+      setTypes(typesResponse.data);
+
+      let companiesPath = '/api/hiring/companies';
+      let companiesResponse = await getAxiosInstance().get(companiesPath);
+      setCompanies(companiesResponse.data);
+
+      let statusPath = '/api/hiring/status';
+      let statusResponse = await getAxiosInstance().get(statusPath);
+      setStatus(statusResponse.data);
+    } catch (error) {
+      console.error('Error while get Hiring Data..', error);
+    }
+  };
+
+  const getOperationData = async () => {
+    try {
+      let managementsPath = '/api/operation/managements';
+      let managementsResponse = await getAxiosInstance().get(managementsPath);
+      setManagements(managementsResponse.data);
+
+      let supervisorsPath = '/api/operation/supervisors';
+      let supervisorsResponse = await getAxiosInstance().get(supervisorsPath);
+      setSupervisors(supervisorsResponse.data);
+
+      let profilesPath = '/api/operation/profiles';
+      let profilesResponse = await getAxiosInstance().get(profilesPath);
+      setProfiles(profilesResponse.data);
+
+      let knowledgesPath = '/api/operation/knowledges';
+      let knowledgesResponse = await getAxiosInstance().get(knowledgesPath);
+      setKnowledges(knowledgesResponse.data);
+
+      let technologiesPath = '/api/operation/technologies';
+      let technologiesResponse = await getAxiosInstance().get(technologiesPath);
+      setTechnologies(technologiesResponse.data);
+
+      let clientsPath = '/api/operation/clients';
+      let clientsResponse = await getAxiosInstance().get(clientsPath);
+      setClients(clientsResponse.data);
+    } catch (error) {
+      console.error('Error while get Operation Data..', error);
+    }
+  };
+
+  const getConsultecIdentityData = async () => {
+    try {
+      let rolesPath = '/api/consultec-identity/roles';
+      let rolesResponse = await getAxiosInstance().get(rolesPath);
+      setRoles(rolesResponse.data);
+
+      let senioritiesPath = '/api/consultec-identity/seniorities';
+      let senioritiesResponse = await getAxiosInstance().get(senioritiesPath);
+      setSeniorities(senioritiesResponse.data);
+
+      let readinessPath = '/api/consultec-identity/readiness';
+      let readinessResponse = await getAxiosInstance().get(readinessPath);
+      setReadiness(readinessResponse.data);
+
+      let internalRolesPath = '/api/consultec-identity/internal-roles';
+      let internalRolesResponse = await getAxiosInstance().get(internalRolesPath);
+      setInternalRoles(internalRolesResponse.data);
+    } catch (error) {
+      console.error('Error while get consultec identity..', error);
+    }
+  };
+
+  const handleAdmissionDateChange = (newValue) => {
+    setAdmissionDate(newValue);
+  };
 
   const showInformation = () => {
     return (
@@ -38,36 +185,40 @@ const EditableCollaborator = () => {
           >
             <h2>Información de identidad personal</h2>
           </AccordionSummary>
+
           <AccordionDetails>
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={2}>
+                  <Grid item xs={6} lg={2}>
                     <TextField
                       size="small"
                       required
                       id="outlined-required"
                       label="Código consultor"
+                      defaultValue={collaboratorData && collaboratorData.internal_code}
                     />
                   </Grid>
 
-                  <Grid item xs={5}>
+                  <Grid item xs={12} lg={5}>
                     <TextField
                       fullWidth
                       size="small"
                       required
                       id="outlined-required"
                       label="Nombres y Apellidos"
+                      defaultValue={collaboratorData && collaboratorData.name}
                     />
                   </Grid>
 
-                  <Grid item xs={5}>
+                  <Grid item xs={12} lg={5}>
                     <TextField
                       fullWidth
                       size="small"
                       required
                       id="outlined-required"
                       label="Email corporativo"
+                      defaultValue={collaboratorData && collaboratorData.email}
                     />
                   </Grid>
                 </Grid>
@@ -76,20 +227,20 @@ const EditableCollaborator = () => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} lg={4}>
                     <LocalizationProvider dateAdapter={AdapterMoment}>
                       <MobileDatePicker
                         fullWidth
                         label="Fecha de ingreso"
                         inputFormat="DD/MM/YYYY"
-                        value={value}
-                        onChange={handleChange}
+                        value={admissionDate}
+                        onChange={handleAdmissionDateChange}
                         renderInput={(params) => <TextField {...params} />}
                       />
                     </LocalizationProvider>
                   </Grid>
 
-                  <Grid item xs={2}>
+                  <Grid item xs={9} lg={4}>
                     <TextField
                       size="small"
                       fullWidth
@@ -98,6 +249,7 @@ const EditableCollaborator = () => {
                       InputProps={{
                         readOnly: true
                       }}
+                      value={relativeDateFromAdmission}
                     />
                   </Grid>
                 </Grid>
@@ -106,27 +258,21 @@ const EditableCollaborator = () => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      size="small"
-                      options={country}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => <TextField {...params} label="País de residencia" />}
+                  <Grid item xs={12} lg={6}>
+                    <CustomAutoComplete
+                      name="country"
+                      label="País de residencia"
+                      optionList={countries}
+                      elmentCallback={handleNewCountry}
                     />
                   </Grid>
 
-                  <Grid item xs={6}>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      size="small"
-                      options={city}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Ciudad de residencia" />
-                      )}
+                  <Grid item xs={12} lg={6}>
+                    <CustomAutoComplete
+                      name="state"
+                      label="Ciudad de residencia"
+                      optionList={states}
+                      elmentCallback={handleNewState}
                     />
                   </Grid>
                 </Grid>
@@ -148,12 +294,13 @@ const EditableCollaborator = () => {
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={4}>
+                  <Grid item xs={12} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Consultec-TI']}
+                      options={companies}
+                      getOptionLabel={(company) => company.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => (
                         <TextField {...params} label="Empresa contratante" />
@@ -161,12 +308,13 @@ const EditableCollaborator = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={4}>
+                  <Grid item xs={12} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Panamá']}
+                      options={offices}
+                      getOptionLabel={(office) => office.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => (
                         <TextField {...params} label="Oficina de contrato" />
@@ -174,16 +322,15 @@ const EditableCollaborator = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={4}>
+                  <Grid item xs={12} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Activo', 'Inactivo']}
+                      options={status}
+                      getOptionLabel={(status) => status.name}
                       sx={{ width: 300 }}
-                      renderInput={(params) => (
-                        <TextField {...params} label="Oficina de contrato" />
-                      )}
+                      renderInput={(params) => <TextField {...params} label="Estado" />}
                     />
                   </Grid>
                 </Grid>
@@ -192,18 +339,19 @@ const EditableCollaborator = () => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} lg={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Honorarios profesionales']}
+                      options={types}
+                      getOptionLabel={(type) => type.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Tipo de contrato" />}
                     />
                   </Grid>
 
-                  <Grid item xs={4}>
+                  <Grid item xs={10} lg={4}>
                     <TextField
                       fullWidth
                       size="small"
@@ -232,50 +380,37 @@ const EditableCollaborator = () => {
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Operaciones']}
+                      options={managements}
+                      getOptionLabel={(management) => management.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Dirección" />}
                     />
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={6} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Fernando Diaz']}
+                      options={supervisors}
+                      getOptionLabel={(supervisor) => supervisor.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Supervidor" />}
                     />
                   </Grid>
-                </Grid>
-              </ListItem>
-              <Divider />
 
-              <ListItem>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} md={12} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Desarrollador']}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => <TextField {...params} label="Perfil" />}
-                    />
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      size="small"
-                      options={['Banco General Panamá']}
+                      options={clients}
+                      getOptionLabel={(client) => client.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Cliente" />}
                     />
@@ -286,22 +421,13 @@ const EditableCollaborator = () => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={10}>
+                  <Grid item xs={12}>
                     <Autocomplete
                       multiple
                       id="tags-outlined"
-                      options={[
-                        'Backend',
-                        'Base de datos',
-                        ' APIs',
-                        ' Frontend Web',
-                        'Full Stack',
-                        'Liferay'
-                      ]}
-                      getOptionLabel={(option) => option}
-                      defaultValue={['Backend']}
-                      filterSelectedOptions
-                      renderInput={(params) => <TextField {...params} label="Perfil" />}
+                      options={profiles}
+                      getOptionLabel={(profile) => profile.name}
+                      renderInput={(params) => <TextField {...params} label="N1-Perfil" />}
                     />
                   </Grid>
                 </Grid>
@@ -310,16 +436,31 @@ const EditableCollaborator = () => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={10}>
+                  <Grid item xs={12}>
                     <Autocomplete
                       multiple
                       id="tags-outlined"
-                      options={['Java', 'NodeJs', 'Phyton', 'SQL', 'React', 'JavaScript']}
-                      getOptionLabel={(option) => option}
-                      defaultValue={['Java']}
+                      options={knowledges}
+                      getOptionLabel={(knowledge) => knowledge.name}
+                      filterSelectedOptions
+                      renderInput={(params) => <TextField {...params} label="N2-Especialidad" />}
+                    />
+                  </Grid>
+                </Grid>
+              </ListItem>
+              <Divider />
+
+              <ListItem>
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Autocomplete
+                      multiple
+                      id="tags-outlined"
+                      options={technologies}
+                      getOptionLabel={(technology) => technology.name}
                       filterSelectedOptions
                       renderInput={(params) => (
-                        <TextField {...params} label="Tecnologías predominantes" />
+                        <TextField {...params} label="N3-tecnologías predominantes" />
                       )}
                     />
                   </Grid>
@@ -343,34 +484,37 @@ const EditableCollaborator = () => {
             <List>
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={4}>
+                  <Grid item xs={12} md={6} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Lider técnico']}
+                      options={roles}
+                      getOptionLabel={(role) => role.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Rol" />}
                     />
                   </Grid>
 
-                  <Grid item xs={4}>
+                  <Grid item xs={12} md={6} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Lider']}
+                      options={seniorities}
+                      getOptionLabel={(seniority) => seniority.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Seniority" />}
                     />
                   </Grid>
 
-                  <Grid item xs={4}>
+                  <Grid item xs={12} md={12} lg={4}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['1', '2']}
+                      options={readiness}
+                      getOptionLabel={(readiness) => readiness.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => <TextField {...params} label="Readiness" />}
                     />
@@ -381,22 +525,24 @@ const EditableCollaborator = () => {
 
               <ListItem>
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item xs={12} lg={6}>
                     <TextField
                       fullWidth
                       size="small"
                       required
                       id="outlined-required"
                       label="Firma de correo"
+                      defaultValue={collaboratorData && collaboratorData.email_signature}
                     />
                   </Grid>
 
-                  <Grid item xs={6}>
+                  <Grid item xs={12} lg={6}>
                     <Autocomplete
                       disablePortal
                       id="combo-box-demo"
                       size="small"
-                      options={['Lider']}
+                      options={internalRoles}
+                      getOptionLabel={(internalRole) => internalRole.name}
                       sx={{ width: 300 }}
                       renderInput={(params) => (
                         <TextField {...params} label="Rol dentro del sistema" />
@@ -412,6 +558,18 @@ const EditableCollaborator = () => {
       </Box>
     );
   };
+
+  useEffect(() => {
+    getResidenceData();
+    getHiringData();
+    getOperationData();
+    getConsultecIdentityData();
+
+    if (collaboratorData) {
+      setAdmissionDate(moment(collaboratorData.admission_date).format());
+      setRelativeDateFromAdmission(moment(collaboratorData.admission_date).fromNow());
+    }
+  }, [collaboratorData]);
 
   return showInformation();
 };
