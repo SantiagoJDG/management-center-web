@@ -22,7 +22,8 @@ import { useEffect, useState } from 'react';
 import CustomAutoComplete from '../../components/CustomAutoComplete';
 import { getAxiosInstance } from '../../utils/axiosClient';
 
-const EditableCollaborator = ({ collaboratorData }) => {
+const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
+  const [formErrors, setFormErrors] = useState({});
   const [newCollaborator, setNewCollaborator] = useState({});
   const [admissionDate, setAdmissionDate] = useState(moment().format());
   const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
@@ -47,98 +48,43 @@ const EditableCollaborator = ({ collaboratorData }) => {
   const [readinessList, setReadinessList] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
 
-  const getResidenceData = async () => {
-    try {
-      let countriesPath = '/api/residence/countries';
-      getAxiosInstance()
-        .get(countriesPath)
-        .then((countriesResponse) => {
-          setCountries(countriesResponse.data);
-        });
+  const getDataInformation = (path, callbackMethod) => {
+    getAxiosInstance()
+      .get(path)
+      .then((response) => {
+        callbackMethod(response.data);
+      })
+      .catch((error) => {
+        console.error(`Error while get Data from ${path}`, error);
+      });
+  };
 
-      let statesPath = '/api/residence/states';
-      getAxiosInstance()
-        .get(statesPath)
-        .then((statesResponse) => {
-          setStates(statesResponse.data);
-        });
-    } catch (error) {
-      console.error('Error while get Residence Data..', error);
-    }
+  const getResidenceData = async () => {
+    getDataInformation('/api/residence/countries', setCountries);
+    getDataInformation('/api/residence/states', setStates);
   };
 
   const getHiringData = async () => {
-    try {
-      let officesPath = '/api/hiring/offices';
-      let officesResponse = await getAxiosInstance().get(officesPath);
-      setOffices(officesResponse.data);
-
-      let typesPath = '/api/hiring/types';
-      let typesResponse = await getAxiosInstance().get(typesPath);
-      setTypes(typesResponse.data);
-
-      let companiesPath = '/api/hiring/companies';
-      let companiesResponse = await getAxiosInstance().get(companiesPath);
-      setCompanies(companiesResponse.data);
-
-      let statusPath = '/api/hiring/status';
-      let statusResponse = await getAxiosInstance().get(statusPath);
-      setStatusList(statusResponse.data);
-    } catch (error) {
-      console.error('Error while get Hiring Data..', error);
-    }
+    getDataInformation('/api/hiring/offices', setOffices);
+    getDataInformation('/api/hiring/types', setTypes);
+    getDataInformation('/api/hiring/companies', setCompanies);
+    getDataInformation('/api/hiring/status', setStatusList);
   };
 
   const getOperationData = async () => {
-    try {
-      let managementsPath = '/api/operation/managements';
-      let managementsResponse = await getAxiosInstance().get(managementsPath);
-      setManagements(managementsResponse.data);
-
-      let supervisorsPath = '/api/operation/supervisors';
-      let supervisorsResponse = await getAxiosInstance().get(supervisorsPath);
-      setSupervisors(supervisorsResponse.data);
-
-      let profilesPath = '/api/operation/profiles';
-      let profilesResponse = await getAxiosInstance().get(profilesPath);
-      setProfiles(profilesResponse.data);
-
-      let knowledgesPath = '/api/operation/knowledges';
-      let knowledgesResponse = await getAxiosInstance().get(knowledgesPath);
-      setKnowledges(knowledgesResponse.data);
-
-      let technologiesPath = '/api/operation/technologies';
-      let technologiesResponse = await getAxiosInstance().get(technologiesPath);
-      setTechnologies(technologiesResponse.data);
-
-      let clientsPath = '/api/operation/clients';
-      let clientsResponse = await getAxiosInstance().get(clientsPath);
-      setClients(clientsResponse.data);
-    } catch (error) {
-      console.error('Error while get Operation Data..', error);
-    }
+    getDataInformation('/api/operation/managements', setManagements);
+    getDataInformation('/api/operation/supervisors', setSupervisors);
+    getDataInformation('/api/operation/profiles', setProfiles);
+    getDataInformation('/api/operation/knowledges', setKnowledges);
+    getDataInformation('/api/operation/technologies', setTechnologies);
+    getDataInformation('/api/operation/clients', setClients);
   };
 
   const getConsultecIdentityData = async () => {
-    try {
-      let rolesPath = '/api/consultec-identity/roles';
-      let rolesResponse = await getAxiosInstance().get(rolesPath);
-      setRoles(rolesResponse.data);
-
-      let senioritiesPath = '/api/consultec-identity/seniorities';
-      let senioritiesResponse = await getAxiosInstance().get(senioritiesPath);
-      setSeniorities(senioritiesResponse.data);
-
-      let readinessPath = '/api/consultec-identity/readiness';
-      let readinessResponse = await getAxiosInstance().get(readinessPath);
-      setReadinessList(readinessResponse.data);
-
-      let internalRolesPath = '/api/consultec-identity/internal-roles';
-      let internalRolesResponse = await getAxiosInstance().get(internalRolesPath);
-      setInternalRoles(internalRolesResponse.data);
-    } catch (error) {
-      console.error('Error while get consultec identity..', error);
-    }
+    getDataInformation('/api/consultec-identity/roles', setRoles);
+    getDataInformation('/api/consultec-identity/seniorities', setSeniorities);
+    getDataInformation('/api/consultec-identity/readiness', setReadinessList);
+    getDataInformation('/api/consultec-identity/internal-roles', setInternalRoles);
   };
 
   async function saveNewItem(paths, newItem) {
@@ -366,8 +312,20 @@ const EditableCollaborator = ({ collaboratorData }) => {
     setNewCollaborator({ ...newCollaborator, knowledges: [...newTechnologies] });
   }
 
+  const handleTextChange = (event) => {
+    if (!event.target.value) {
+      setFormErrors({ ...formErrors, [event.target.name]: true });
+    } else {
+      setFormErrors({ ...formErrors, [event.target.name]: false });
+    }
+    setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
+    setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
+  };
+
   const handleAdmissionDateChange = (newValue) => {
+    console.log(newValue);
     setAdmissionDate(newValue);
+    setNewCollaborator({ ...newCollaborator, admissionDate: newValue });
   };
 
   const showInformation = () => {
@@ -388,33 +346,42 @@ const EditableCollaborator = ({ collaboratorData }) => {
                 <Grid container spacing={2}>
                   <Grid item xs={6} lg={2}>
                     <TextField
+                      error={formErrors.internalCode}
                       size="small"
-                      required
-                      id="outlined-required"
+                      id="internalCode"
+                      name="internalCode"
                       label="Código consultor"
-                      defaultValue={collaboratorData && collaboratorData.internal_code}
+                      value={newCollaborator.internalCode}
+                      onChange={handleTextChange}
+                      required
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      fullWidth
-                      size="small"
-                      required
-                      id="outlined-required"
+                      error={formErrors.name}
+                      id="name"
+                      name="name"
                       label="Nombres y Apellidos"
-                      defaultValue={collaboratorData && collaboratorData.name}
+                      value={newCollaborator.name}
+                      onChange={handleTextChange}
+                      size="small"
+                      fullWidth
+                      required
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      fullWidth
-                      size="small"
-                      required
-                      id="outlined-required"
+                      error={formErrors.email}
+                      id="email"
+                      name="email"
                       label="Email corporativo"
-                      defaultValue={collaboratorData && collaboratorData.email}
+                      value={newCollaborator.email}
+                      onChange={handleTextChange}
+                      size="small"
+                      fullWidth
+                      required
                     />
                   </Grid>
                 </Grid>
@@ -426,7 +393,6 @@ const EditableCollaborator = ({ collaboratorData }) => {
                   <Grid item xs={12} lg={4}>
                     <LocalizationProvider dateAdapter={AdapterMoment}>
                       <MobileDatePicker
-                        fullWidth
                         label="Fecha de ingreso"
                         inputFormat="DD/MM/YYYY"
                         value={admissionDate}
@@ -533,11 +499,15 @@ const EditableCollaborator = ({ collaboratorData }) => {
 
                   <Grid item xs={10} lg={4}>
                     <TextField
-                      fullWidth
-                      size="small"
-                      required
-                      id="outlined-required"
+                      error={formErrors.salaryAmount}
+                      id="salaryAmount"
+                      name="salaryAmount"
                       label="Tarifa mensual bruta"
+                      value={newCollaborator.salaryAmount}
+                      onChange={handleTextChange}
+                      size="small"
+                      fullWidth
+                      required
                     />
                   </Grid>
                 </Grid>
@@ -688,12 +658,15 @@ const EditableCollaborator = ({ collaboratorData }) => {
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <TextField
-                      fullWidth
+                      error={formErrors.emailSignature}
+                      id="emailSignature"
+                      name="emailSignature"
+                      label="Firma de correo"
+                      value={newCollaborator.emailSignature}
+                      onChange={handleTextChange}
                       size="small"
                       required
-                      id="outlined-required"
-                      label="Firma de correo"
-                      defaultValue={collaboratorData && collaboratorData.email_signature}
+                      fullWidth
                     />
                   </Grid>
 
