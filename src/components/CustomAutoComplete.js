@@ -1,9 +1,16 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 
-const CustomAutoComplete = ({ name, label, optionList, elmentCallback }) => {
+const CustomAutoComplete = ({ name, label, optionList, elmentCallback, multiple }) => {
   const filter = createFilterOptions();
 
   const handleSelectedOption = (newValue) => {
+    if (multiple) {
+      if (elmentCallback) {
+        elmentCallback(newValue);
+      }
+      return;
+    }
+
     let response = newValue;
 
     if (newValue && newValue.inputValue) {
@@ -21,12 +28,16 @@ const CustomAutoComplete = ({ name, label, optionList, elmentCallback }) => {
       id={name}
       name={name}
       size="small"
+      multiple={multiple}
       freeSolo
       selectOnFocus
       clearOnBlur
       options={optionList}
       getOptionLabel={(option) => {
         // Value selected with enter, right from the input
+        if (option.name === undefined) {
+          return '';
+        }
         if (typeof option === 'string') {
           return option;
         }
@@ -55,7 +66,7 @@ const CustomAutoComplete = ({ name, label, optionList, elmentCallback }) => {
         handleSelectedOption(newValue);
       }}
       renderOption={(props, option) => (
-        <li {...props} key={option.id}>
+        <li {...props} key={option.id ? option.id : option.name}>
           {option.name}
         </li>
       )}
