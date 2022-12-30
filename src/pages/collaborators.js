@@ -6,6 +6,7 @@ import useAuth from '../hooks/useAuth';
 
 import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
+import DateBarFilter from '../components/Collaborators/DateBarFilter';
 
 const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();
@@ -15,7 +16,9 @@ const Collaborators = () => {
 
   const getCollaborators = async () => {
     try {
-      let collaboratorsResponse = await getAxiosInstance().get('/api/collaborators');
+      let collaboratorsResponse = await getAxiosInstance().get(
+        '/api/collaborator/allcollaborators'
+      );
       setCollaborators(collaboratorsResponse.data);
       setAllCollaborators(collaboratorsResponse.data);
     } catch (error) {
@@ -64,6 +67,11 @@ const Collaborators = () => {
             allCollaborators={AllCollaborators}
           />
         </Grid>
+        <DateBarFilter
+          collaborators={collaborators}
+          setCollaborators={setCollaborators}
+          allCollaborators={AllCollaborators}
+        ></DateBarFilter>
         <Grid item sx={{ flexWrap: 'wrap' }}>
           <Box xl={2} lg={2} md={2} sm={1.5}>
             <CollaboratorTable collaborators={collaborators}></CollaboratorTable>

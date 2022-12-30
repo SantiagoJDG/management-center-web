@@ -28,14 +28,16 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   const getResidencies = async () => {
     try {
       let residenciesResponse = await getAxiosInstance().get('/api/residence');
-      let knowledgeResponse = await getAxiosInstance().get('/api/knowledge');
+      let stateResponse = await getAxiosInstance().get('/api/residence/states');
+      let countriesResponse = await getAxiosInstance().get('/api/residence/countries');
+      let knowledgeResponse = await getAxiosInstance().get('/api/knowledge/technologiesList');
       const countries = [];
       const states = [];
       const officeContract = [];
       const contract_type = [];
       const knowledge_list = [];
-      createFilterArray(residenciesResponse.data, 'country', countries);
-      createFilterArray(residenciesResponse.data, 'state', states);
+      createFilterArray(countriesResponse.data, 'country', countries);
+      createFilterArray(stateResponse.data, 'state', states);
       createFilterArray(residenciesResponse.data, 'office', officeContract);
       createFilterArray(residenciesResponse.data, 'contract_type', contract_type);
       createFilterArray(knowledgeResponse.data, 'knowledge', knowledge_list);
