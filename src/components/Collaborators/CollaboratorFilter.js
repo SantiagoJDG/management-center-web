@@ -44,15 +44,14 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
 
   return (
     <div>
-      <FormControl sx={{ width: '100%' }}>
-        <InputLabel id="multiple-chip-label">{title}</InputLabel>
+      <FormControl sx={{ width: '100%' }} size="small">
+        <InputLabel id="multiple-chip-label-small">{title}</InputLabel>
         <Select
           labelId="multiple-chip-label"
           multiple
           value={item}
           onChange={handleChange}
           input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-          sx={{ backgroundColor: 'white' }}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
