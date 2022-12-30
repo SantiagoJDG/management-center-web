@@ -6,7 +6,7 @@ import useAuth from '../hooks/useAuth';
 
 import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
-import DateBarFilter from '../components/Collaborators/DateBarFilter';
+import DateBarFilter from 'components/Collaborators/DateBarFilter';
 
 const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();
@@ -16,11 +16,13 @@ const Collaborators = () => {
 
   const getCollaborators = async () => {
     try {
-      let collaboratorsResponse = await getAxiosInstance().get(
-        '/api/collaborator/allcollaborators'
-      );
-      setCollaborators(collaboratorsResponse.data);
-      setAllCollaborators(collaboratorsResponse.data);
+      let collaboratorPath = '/api/collaborator';
+      await getAxiosInstance()
+        .get(collaboratorPath)
+        .then((collaboratorsResponse) => {
+          setCollaborators(collaboratorsResponse.data);
+          setAllCollaborators(collaboratorsResponse.data);
+        });
     } catch (error) {
       console.error('Error while get Collaborators..', error);
     }
@@ -51,27 +53,53 @@ const Collaborators = () => {
 
   return (
     <>
-      <Grid container direction={'column'} spacing={2}>
-        <Grid item sx={{ display: 'flex' }}>
-          <Box xl={3} lg={2.5} md={2} sm={1.5} xs={1}>
+      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ gap: 1 }}>
+        <Grid
+          item
+          sx={{
+            flexWrap: 'wrap',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 2
+          }}
+        >
+          <Box>
             <TextField
-              id="filled-basic"
-              label="Name"
+              id="standard-basic"
+              label="Filtrar por nombre"
+              variant="standard"
               value={searchValue}
               onChange={onSearchValueChange}
+              size="small"
             />
           </Box>
+        </Grid>
+        <Grid
+          item
+          sx={{
+            flexWrap: 'wrap',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 2
+          }}
+        >
+          <Box xl={6} lg={5} md={5} sm={1.5} xs={1}>
+            <DateBarFilter
+              collaborators={collaborators}
+              setCollaborators={setCollaborators}
+              allCollaborators={AllCollaborators}
+            ></DateBarFilter>
+          </Box>
+        </Grid>
+        <Grid item xs={6} md={10} lg={20} xl={25}>
           <CollaboratorBarFilter
             collaborators={collaborators}
             setCollaborators={setCollaborators}
             allCollaborators={AllCollaborators}
           />
         </Grid>
-        <DateBarFilter
-          collaborators={collaborators}
-          setCollaborators={setCollaborators}
-          allCollaborators={AllCollaborators}
-        ></DateBarFilter>
         <Grid item sx={{ flexWrap: 'wrap' }}>
           <Box xl={2} lg={2} md={2} sm={1.5}>
             <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
