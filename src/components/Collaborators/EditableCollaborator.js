@@ -4,12 +4,12 @@ import {
   AccordionDetails,
   AccordionSummary,
   Autocomplete,
+  Button,
   Divider,
   Grid,
   List,
   ListItem,
-  TextField,
-  Button
+  TextField
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -17,7 +17,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import moment from 'moment';
 import 'moment/locale/es';
-import Collaborator from 'pages/collaborator';
 import { useEffect, useState } from 'react';
 
 import CustomAutoComplete from '../../components/CustomAutoComplete';
@@ -58,7 +57,7 @@ const EditableCollaborator = ({ collaboratorData }) => {
         });
 
       let statesPath = '/api/residence/states';
-      await getAxiosInstance()
+      getAxiosInstance()
         .get(statesPath)
         .then((statesResponse) => {
           setStates(statesResponse.data);
@@ -142,10 +141,9 @@ const EditableCollaborator = ({ collaboratorData }) => {
     }
   };
 
-  async function saveNewItem(paths, newItem, setNewList, oldList) {
+  async function saveNewItem(paths, newItem) {
     try {
       let createdItem = await getAxiosInstance().post(paths, newItem);
-      console.log(createdItem);
       return createdItem.data.id;
     } catch (error) {
       console.error('Error while save new item...', error);
