@@ -270,6 +270,102 @@ const EditableCollaborator = ({ collaboratorData }) => {
     setNewCollaborator({ ...newCollaborator, internalRole: internalRole.id });
   }
 
+  async function handleProfiles(_profiles) {
+    if (!_profiles) return;
+
+    let actualProfiles = newCollaborator.profiles ? [...newCollaborator.profiles] : [];
+
+    const newProfiles = _profiles.map((profile, index) => {
+      if (profile.inputValue) {
+        const profileCreatedBefore = actualProfiles.find(
+          (item) => item.name === profile.inputValue
+        );
+        if (!profileCreatedBefore) {
+          saveNewItem('/api/operation/profiles', profile).then((idReturned) => {
+            newProfiles[index] = {
+              id: idReturned,
+              name: profile.inputValue
+            };
+
+            setNewCollaborator({ ...newCollaborator, profiles: newProfiles });
+            setProfiles([...profiles, newProfiles[index]]);
+          });
+          return {
+            name: profile.inputValue
+          };
+        }
+        return profileCreatedBefore;
+      }
+      return profile;
+    });
+
+    setNewCollaborator({ ...newCollaborator, profiles: [...newProfiles] });
+  }
+
+  async function handleKnowledges(_knowledges) {
+    if (!_knowledges) return;
+
+    let actualKnowledges = newCollaborator.knowledges ? [...newCollaborator.knowledges] : [];
+
+    const newKnowledges = _knowledges.map((knowledge, index) => {
+      if (knowledge.inputValue) {
+        const knowledgeCreatedBefore = actualKnowledges.find(
+          (item) => item.name === knowledge.inputValue
+        );
+        if (!knowledgeCreatedBefore) {
+          saveNewItem('/api/operation/knowledges', knowledge).then((idReturned) => {
+            newKnowledges[index] = {
+              id: idReturned,
+              name: knowledge.inputValue
+            };
+
+            setNewCollaborator({ ...newCollaborator, knowledges: newKnowledges });
+            setKnowledges([...knowledges, newKnowledges[index]]);
+          });
+          return {
+            name: knowledge.inputValue
+          };
+        }
+        return knowledgeCreatedBefore;
+      }
+      return knowledge;
+    });
+
+    setNewCollaborator({ ...newCollaborator, knowledges: [...newKnowledges] });
+  }
+
+  async function handleTechnologies(_technologies) {
+    if (!_technologies) return;
+
+    let actualTechnologies = newCollaborator.technologies ? [...newCollaborator.technologies] : [];
+
+    const newTechnologies = _technologies.map((technology, index) => {
+      if (technology.inputValue) {
+        const technologyCreatedBefore = actualTechnologies.find(
+          (item) => item.name === technology.inputValue
+        );
+        if (!technologyCreatedBefore) {
+          saveNewItem('/api/operation/technologies', technology).then((idReturned) => {
+            newTechnologies[index] = {
+              id: idReturned,
+              name: technology.inputValue
+            };
+
+            setNewCollaborator({ ...newCollaborator, technologies: newTechnologies });
+            setKnowledges([...technologies, newTechnologies[index]]);
+          });
+          return {
+            name: technology.inputValue
+          };
+        }
+        return technologyCreatedBefore;
+      }
+      return technology;
+    });
+
+    setNewCollaborator({ ...newCollaborator, knowledges: [...newTechnologies] });
+  }
+
   const handleAdmissionDateChange = (newValue) => {
     setAdmissionDate(newValue);
   };
@@ -500,12 +596,12 @@ const EditableCollaborator = ({ collaboratorData }) => {
               <ListItem>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <Autocomplete
-                      multiple
-                      id="n1Profile"
-                      options={profiles}
-                      getOptionLabel={(profile) => profile.name}
-                      renderInput={(params) => <TextField {...params} label="N1-Perfil" />}
+                    <CustomAutoComplete
+                      name="n1Profile"
+                      label="N1-Perfil"
+                      optionList={profiles}
+                      elmentCallback={handleProfiles}
+                      multiple={true}
                     />
                   </Grid>
                 </Grid>
@@ -515,13 +611,12 @@ const EditableCollaborator = ({ collaboratorData }) => {
               <ListItem>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <Autocomplete
-                      multiple
-                      id="n2Knowledge"
-                      options={knowledges}
-                      getOptionLabel={(knowledge) => knowledge.name}
-                      filterSelectedOptions
-                      renderInput={(params) => <TextField {...params} label="N2-Especialidad" />}
+                    <CustomAutoComplete
+                      name="n2Knowledge"
+                      label="N2-Especialidad"
+                      optionList={knowledges}
+                      elmentCallback={handleKnowledges}
+                      multiple={true}
                     />
                   </Grid>
                 </Grid>
@@ -531,15 +626,12 @@ const EditableCollaborator = ({ collaboratorData }) => {
               <ListItem>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <Autocomplete
-                      multiple
-                      id="n3Technology"
-                      options={technologies}
-                      getOptionLabel={(technology) => technology.name}
-                      filterSelectedOptions
-                      renderInput={(params) => (
-                        <TextField {...params} label="N3-tecnologías predominantes" />
-                      )}
+                    <CustomAutoComplete
+                      name="n3Technology"
+                      label="N3-tecnologías predominantes"
+                      optionList={technologies}
+                      elmentCallback={handleTechnologies}
+                      multiple={true}
                     />
                   </Grid>
                 </Grid>
