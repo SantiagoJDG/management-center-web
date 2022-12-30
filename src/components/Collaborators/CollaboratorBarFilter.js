@@ -27,18 +27,40 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
 
   const getResidencies = async () => {
     try {
-      let residenciesResponse = await getAxiosInstance().get('/api/residence');
-      let knowledgeResponse = await getAxiosInstance().get('/api/knowledge');
       const countries = [];
       const states = [];
       const officeContract = [];
       const contract_type = [];
       const knowledge_list = [];
-      createFilterArray(residenciesResponse.data, 'country', countries);
-      createFilterArray(residenciesResponse.data, 'state', states);
-      createFilterArray(residenciesResponse.data, 'office', officeContract);
-      createFilterArray(residenciesResponse.data, 'contract_type', contract_type);
-      createFilterArray(knowledgeResponse.data, 'knowledge', knowledge_list);
+
+      let residenciesPath = '/api/residence';
+      await getAxiosInstance()
+        .get(residenciesPath)
+        .then((residence) => {
+          createFilterArray(residence.data, 'office', officeContract);
+          createFilterArray(residence.data, 'contract_type', contract_type);
+        });
+
+      let statePath = '/api/residence/states';
+      await getAxiosInstance()
+        .get(statePath)
+        .then((statesResponse) => {
+          createFilterArray(statesResponse.data, 'name', states);
+        });
+
+      let countriesPath = '/api/residence/countries';
+      await getAxiosInstance()
+        .get(countriesPath)
+        .then((countriesResponse) => {
+          createFilterArray(countriesResponse.data, 'name', countries);
+        });
+
+      let knowledgePath = '/api/operation/knowledges';
+      await getAxiosInstance()
+        .get(knowledgePath)
+        .then((knowledge) => {
+          createFilterArray(knowledge.data, 'name', knowledge_list);
+        });
       setKnowledge(knowledge_list);
       setCities(states);
       setOffice(officeContract);
@@ -65,8 +87,8 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   return (
     !!collaborators && (
       <>
-        <Grid container sx={{ flexWrap: 'wrap' }}>
-          <Grid item sx={{ paddingRight: 1, paddingLeft: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
+        <Grid container sx={{ gap: 1 }}>
+          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
             <CollaboratorFilter
               title={'Paises'}
               dropdownData={residencies}
@@ -74,7 +96,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'residency'}
             />
           </Grid>
-          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
+          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
             <CollaboratorFilter
               title={'City'}
               dropdownData={cities}
@@ -82,7 +104,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'state'}
             />
           </Grid>
-          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
+          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
             <CollaboratorFilter
               title={'Office'}
               dropdownData={office}
@@ -90,7 +112,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'office'}
             />
           </Grid>
-          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
+          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
             <CollaboratorFilter
               title={'Contrato'}
               dropdownData={contractType}
@@ -98,7 +120,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'contract_type'}
             />
           </Grid>
-          <Grid item sx={{ paddingRight: 1 }} xl={2} lg={2.3} md={1} sm={1} xs={1}>
+          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
             <CollaboratorFilter
               title={'N1'}
               dropdownData={knowledge}
