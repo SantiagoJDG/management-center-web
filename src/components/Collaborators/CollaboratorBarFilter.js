@@ -37,7 +37,6 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       await getAxiosInstance()
         .get(residenciesPath)
         .then((residence) => {
-          console.log(residence.data);
           createFilterArray(residence.data, 'office', officeContract);
           createFilterArray(residence.data, 'contract_type', contract_type);
         });
@@ -46,7 +45,6 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       await getAxiosInstance()
         .get(statePath)
         .then((statesResponse) => {
-          console.log(statesResponse.data);
           createFilterArray(statesResponse.data, 'name', states);
         });
 
@@ -54,7 +52,6 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       await getAxiosInstance()
         .get(countriesPath)
         .then((countriesResponse) => {
-          console.log(countriesResponse.data);
           createFilterArray(countriesResponse.data, 'name', countries);
         });
 
@@ -62,7 +59,6 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       await getAxiosInstance()
         .get(knowledgePath)
         .then((knowledge) => {
-          console.log(knowledge.name);
           createFilterArray(knowledge.data, 'name', knowledge_list);
         });
       setKnowledge(knowledge_list);
