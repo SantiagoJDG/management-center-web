@@ -323,9 +323,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   };
 
   const handleAdmissionDateChange = (newValue) => {
-    console.log(newValue);
-    setAdmissionDate(newValue);
-    setNewCollaborator({ ...newCollaborator, admissionDate: newValue });
+    setAdmissionDate(newValue.format('YYYY-MM-DD'));
+    setNewCollaborator({ ...newCollaborator, admissionDate: newValue.format('YYYY-MM-DD') });
+
+    const monthOfRelativeDate = moment().month(newValue.month()).fromNow(true);
+    const yearOfRelativeDate = moment(newValue).fromNow();
+    setRelativeDateFromAdmission(`${yearOfRelativeDate} y ${monthOfRelativeDate}`);
   };
 
   const showInformation = () => {
@@ -406,7 +409,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                     <TextField
                       size="small"
                       fullWidth
-                      id="outlined-required"
+                      id="antiquity"
+                      name="antiquity"
                       label="Antigüedad"
                       InputProps={{
                         readOnly: true
