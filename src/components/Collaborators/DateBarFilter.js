@@ -9,23 +9,21 @@ import 'moment/locale/es';
 
 export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
   const { userToken, waitingUser } = useAuth();
-  const [initialDate, setInitialDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [initialDate, setInitialDate] = useState();
+  const [endDate, setEndDate] = useState();
   const [admissionDate, setAdmissionDate] = useState([]);
 
   useEffect(() => {
     if (!userToken) return;
-
-    setCollaboratorAdmissionDate(collaborators);
   }, [userToken, waitingUser]);
 
-  const setCollaboratorAdmissionDate = async (collaborators) => {
+  const setCollaboratorAdmissionDate = async () => {
     return new Promise((res) => {
       const admissionDateRaw = [];
-      for (let index = 0; index < collaborators.length; index++) {
-        admissionDateRaw.push(collaborators[index].admission_date);
+      for (let index = 0; index < allCollaborators.length; index++) {
+        admissionDateRaw.push(allCollaborators[index].admission_date);
       }
-      if (admissionDateRaw.length === collaborators.length) {
+      if (admissionDateRaw.length === allCollaborators.length) {
         setAdmissionDate(admissionDateRaw);
         return res(true);
       }
@@ -33,15 +31,22 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
   };
 
   const onChangeInitialDate = (newValue) => {
+    setCollaboratorAdmissionDate();
     const startFilter = new Date(newValue);
     setInitialDate(startFilter);
-    const betweenDates = isBetweenDates(initialDate, endDate, admissionDate);
-    setCollaborators(filteredCollaborator(allCollaborators, betweenDates, 'admission_date'));
+    if (!initialDate) return;
+    executeFilter();
   };
 
   const onChangeEndDate = (newValue) => {
+    setCollaboratorAdmissionDate();
     const endFilter = new Date(newValue);
     setEndDate(endFilter);
+    if (!endDate) return;
+    executeFilter();
+  };
+
+  const executeFilter = () => {
     const betweenDates = isBetweenDates(initialDate, endDate, admissionDate);
     setCollaborators(filteredCollaborator(allCollaborators, betweenDates, 'admission_date'));
   };
@@ -55,57 +60,59 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
 
   const isBetweenDates = (startFilterDate, endFilterDate, admission) => {
     return admission.filter((date) => {
+      console.log(startFilterDate);
+      console.log(endFilterDate);
       const collaboratorAdmissionDate = new Date(date);
+      console.log(collaboratorAdmissionDate > startFilterDate);
+      console.log(collaboratorAdmissionDate < endFilterDate);
       if (
         collaboratorAdmissionDate > startFilterDate &&
         collaboratorAdmissionDate < endFilterDate
       ) {
         return date;
       } else {
-        console.log('out');
+        return console.log('Out');
       }
     });
   };
 
   return (
-    <>
-      <Grid container sx={{ flexWrap: 'wrap', display: 'flex', gap: 1 }}>
-        <Grid item>
-          <Box xs={1} sm={1} md={1} lg={2}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DesktopDatePicker
-                fullWidth
-                maxDate={endDate}
-                label="Fecha de Inicio"
-                inputFormat="MM/DD/YYYY"
-                value={initialDate}
-                onChange={(newValue) => {
-                  onChangeInitialDate(newValue);
-                }}
-                renderInput={(params) => <TextField size="small" {...params} />}
-              />
-            </LocalizationProvider>
-          </Box>
+    !!collaborators && (
+      <>
+        <Grid container sx={{ flexWrap: 'wrap', display: 'flex', gap: 1 }}>
+          <Grid item>
+            <Box xs={1} sm={1} md={1} lg={2}>
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DesktopDatePicker
+                  fullWidth
+                  maxDate={endDate}
+                  label="Fecha de Inicio"
+                  inputFormat="MM/DD/YYYY"
+                  value={initialDate}
+                  onChange={onChangeInitialDate}
+                  renderInput={(params) => <TextField size="small" {...params} />}
+                />
+              </LocalizationProvider>
+            </Box>
+          </Grid>
+          <Grid item>
+            <Box xs={1} sm={1} md={1}>
+              <LocalizationProvider dateAdapter={AdapterMoment}>
+                <DesktopDatePicker
+                  fullWidth
+                  minDate={initialDate}
+                  label="Fecha de Cierre"
+                  inputFormat="MM/DD/YYYY"
+                  value={endDate}
+                  onChange={onChangeEndDate}
+                  renderInput={(params) => <TextField size="small" {...params} />}
+                />
+              </LocalizationProvider>
+            </Box>
+          </Grid>
         </Grid>
-        <Grid item>
-          <Box xs={1} sm={1} md={1}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DesktopDatePicker
-                fullWidth
-                minDate={initialDate}
-                label="Fecha de Cierre"
-                inputFormat="MM/DD/YYYY"
-                value={endDate}
-                onChange={(newValue) => {
-                  onChangeEndDate(newValue);
-                }}
-                renderInput={(params) => <TextField size="small" {...params} />}
-              />
-            </LocalizationProvider>
-          </Box>
-        </Grid>
-      </Grid>
-    </>
+      </>
+    )
   );
 };
 
