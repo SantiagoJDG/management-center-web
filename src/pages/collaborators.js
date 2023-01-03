@@ -53,7 +53,7 @@ const Collaborators = () => {
 
   return (
     <>
-      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ gap: 1 }}>
+      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ gap: 1, width: '100%' }}>
         <Grid
           item
           sx={{
@@ -85,7 +85,7 @@ const Collaborators = () => {
             gap: 2
           }}
         >
-          <Box xl={6} lg={5} md={5} sm={1.5} xs={1}>
+          <Box xl={6} lg={7} md={5} sm={1.5} xs={1}>
             <DateBarFilter
               collaborators={collaborators}
               setCollaborators={setCollaborators}
@@ -93,7 +93,7 @@ const Collaborators = () => {
             ></DateBarFilter>
           </Box>
         </Grid>
-        <Grid item xs={6} md={10} lg={20} xl={25}>
+        <Grid item xs={6} sm={13} md={20} lg={20} xl={25}>
           <CollaboratorBarFilter
             collaborators={collaborators}
             setCollaborators={setCollaborators}

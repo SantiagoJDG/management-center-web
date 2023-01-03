@@ -52,7 +52,7 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
   };
 
   const filteredCollaborator = (collaborators, betweenDates, collaboratorKey) => {
-    if (!betweenDates.length) return collaborators;
+    if (!betweenDates.length) return [];
     return allCollaborators.filter((filteredCollaborator) => {
       return betweenDates.includes(filteredCollaborator[collaboratorKey]);
     });
@@ -60,18 +60,14 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
 
   const isBetweenDates = (startFilterDate, endFilterDate, admission) => {
     return admission.filter((date) => {
-      console.log(startFilterDate);
-      console.log(endFilterDate);
       const collaboratorAdmissionDate = new Date(date);
-      console.log(collaboratorAdmissionDate > startFilterDate);
-      console.log(collaboratorAdmissionDate < endFilterDate);
       if (
         collaboratorAdmissionDate > startFilterDate &&
         collaboratorAdmissionDate < endFilterDate
       ) {
         return date;
       } else {
-        return console.log('Out');
+        return;
       }
     });
   };

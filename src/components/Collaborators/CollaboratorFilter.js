@@ -39,36 +39,45 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
     } = event;
     const ternary = typeof value === 'string' ? value.split(',') : value;
     setItem(ternary);
-    filterData(ternary, collaboratorKey);
+    let id = ternary.map((selected) => {
+      return selected.id;
+    });
+    filterData(id, collaboratorKey);
   };
 
   return (
-    <div>
-      <FormControl sx={{ width: '100%' }} size="small">
-        <InputLabel id="multiple-chip-label-small">{title}</InputLabel>
-        <Select
-          labelId="multiple-chip-label"
-          multiple
-          value={item}
-          onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value} />
-              ))}
-            </Box>
-          )}
-          MenuProps={MenuProps}
-        >
-          {dropdownData.map((dropdownItem, index) => (
-            <MenuItem key={index} value={dropdownItem} style={getStyles(dropdownItem, item, theme)}>
-              {dropdownItem}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </div>
+    !!dropdownData && (
+      <div>
+        <FormControl sx={{ width: '100%' }} size="small">
+          <InputLabel id="multiple-chip-label-small">{title}</InputLabel>
+          <Select
+            labelId="multiple-chip-label"
+            multiple
+            value={item}
+            onChange={handleChange}
+            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value.name} />
+                ))}
+              </Box>
+            )}
+            MenuProps={MenuProps}
+          >
+            {dropdownData.map((parameters, index) => (
+              <MenuItem
+                key={index}
+                value={parameters}
+                style={getStyles(parameters.name, item, theme)}
+              >
+                {parameters.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+    )
   );
 };
 
