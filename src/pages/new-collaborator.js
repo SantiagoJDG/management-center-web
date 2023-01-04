@@ -3,7 +3,7 @@ import { Avatar, Card, CardContent, CardHeader, Grid, IconButton } from '@mui/ma
 import { red } from '@mui/material/colors';
 import moment from 'moment';
 import 'moment/locale/es';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import EditableCollaborator from '../components/Collaborators/EditableCollaborator';
 import useAuth from '../hooks/useAuth';
@@ -11,11 +11,13 @@ import useAuth from '../hooks/useAuth';
 const Collaborator = () => {
   const { userToken, waitingUser, userData } = useAuth();
 
-  var admissionDateFormated = moment().format('LL');
-  var PrincipalName = 'Nuevo consultor';
+  const [pricipalInformation, setPricipalInformation] = useState({
+    name: 'Nuevo consultor',
+    admissionDate: moment().format('LL')
+  });
 
   const getInformationView = () => {
-    return <EditableCollaborator />;
+    return <EditableCollaborator setPrincipalInformation={setPricipalInformation} />;
   };
 
   const showInformation = () => {
@@ -37,8 +39,7 @@ const Collaborator = () => {
                     <MoreVertIcon />
                   </IconButton>
                 }
-                title={PrincipalName}
-                subheader={`Fecha de ingreso: ${admissionDateFormated}`}
+                title={pricipalInformation.name}
               />
               <CardContent>{getInformationView()}</CardContent>
             </Card>
