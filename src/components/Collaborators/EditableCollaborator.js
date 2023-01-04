@@ -142,7 +142,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
   async function saveNewCollaborator(collaboratorToSave) {
     try {
-      let createdCollaborator= await getAxiosInstance().post('/api/collaborator/', collaboratorToSave);
+      let createdCollaborator = await getAxiosInstance().post(
+        '/api/collaborator/',
+        collaboratorToSave
+      );
       return createdCollaborator.data.id;
     } catch (error) {
       console.error('Error while save new Collaborator...', error);
@@ -399,7 +402,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setFormErrors(newErrors);
       return;
     }
-    saveNewCollaborator(newCollaborator)
+    saveNewCollaborator(newCollaborator);
   }
 
   const showInformation = () => {
