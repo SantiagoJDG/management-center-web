@@ -21,10 +21,55 @@ import { useEffect, useState } from 'react';
 
 import CustomAutoComplete from '../../components/CustomAutoComplete';
 import { getAxiosInstance } from '../../utils/axiosClient';
+import Joi from 'joi';
+
+const CollaboratorSchema = Joi.object({
+  internalCode: Joi.string().required(),
+  name: Joi.string().required(),
+  email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+  country: Joi.number().required(),
+  state: Joi.number().required(),
+  company: Joi.number().required(),
+  office: Joi.number().required(),
+  status: Joi.number().required(),
+  type: Joi.number().required(),
+  salaryAmount: Joi.number().required().precision(4),
+  management: Joi.number().required(),
+  supervisor: Joi.number().required(),
+  client: Joi.number().required(),
+  profiles: Joi.array().required(),
+  knowledges: Joi.array().required(),
+  technologies: Joi.array().required(),
+  role: Joi.number().required(),
+  seniority: Joi.any(),
+  readiness: Joi.any(),
+  emailSignature: Joi.string().required(),
+  internalRole: Joi.number().required()
+});
 
 const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
   const [formErrors, setFormErrors] = useState({});
-  const [newCollaborator, setNewCollaborator] = useState({});
+  const [newCollaborator, setNewCollaborator] = useState({
+    internalCode: '',
+    name: '',
+    email: '',
+    country: null,
+    state: null,
+    company: null,
+    status: null,
+    type: null,
+    salaryAmount: '',
+    management: null,
+    client: null,
+    profiles: null,
+    knowledges: null,
+    technologies: null,
+    role: null,
+    seniority: null,
+    readiness: null,
+    emailSignature: '',
+    internalRole: null
+  });
   const [admissionDate, setAdmissionDate] = useState(moment().format());
   const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
 
@@ -95,6 +140,14 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       console.error('Error while save new item...', error);
     }
   }
+  async function saveNewCollaborator(collaboratorToSave) {
+    try {
+      let createdCollaborator= await getAxiosInstance().post('/api/collaborator/', collaboratorToSave);
+      return createdCollaborator.data.id;
+    } catch (error) {
+      console.error('Error while save new Collaborator...', error);
+    }
+  }
 
   async function handleCountry(country) {
     if (!country) return;
@@ -133,7 +186,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       office.id = idReturned;
       setOffices([...offices, office]);
     }
-    setNewCollaborator({ ...newCollaborator, company: office.id });
+    setNewCollaborator({ ...newCollaborator, office: office.id });
   }
 
   async function handleStatus(status) {
@@ -164,6 +217,11 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setManagements([...managements, management]);
     }
     setNewCollaborator({ ...newCollaborator, management: management.id });
+  }
+
+  async function handleSupervisor(supervisor) {
+    if (!supervisor) return;
+    setNewCollaborator({ ...newCollaborator, supervisor: supervisor.id });
   }
 
   async function handleClient(client) {
@@ -309,10 +367,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       return technology;
     });
 
-    setNewCollaborator({ ...newCollaborator, knowledges: [...newTechnologies] });
+    setNewCollaborator({ ...newCollaborator, technologies: [...newTechnologies] });
   }
 
-  const handleTextChange = (event) => {
+  function handleTextChange(event) {
     if (!event.target.value) {
       setFormErrors({ ...formErrors, [event.target.name]: true });
     } else {
@@ -320,16 +378,29 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     }
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
-  };
+  }
 
-  const handleAdmissionDateChange = (newValue) => {
+  function handleAdmissionDateChange(newValue) {
     setAdmissionDate(newValue.format('YYYY-MM-DD'));
     setNewCollaborator({ ...newCollaborator, admissionDate: newValue.format('YYYY-MM-DD') });
 
     const monthOfRelativeDate = moment().month(newValue.month()).fromNow(true);
     const yearOfRelativeDate = moment(newValue).fromNow();
     setRelativeDateFromAdmission(`${yearOfRelativeDate} y ${monthOfRelativeDate}`);
-  };
+  }
+
+  function handleSaveCollaborator() {
+    const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
+    if (error) {
+      let newErrors = {};
+      error.details.map((detail) => {
+        newErrors[detail.path] = true;
+      });
+      setFormErrors(newErrors);
+      return;
+    }
+    saveNewCollaborator(newCollaborator)
+  }
 
   const showInformation = () => {
     return (
@@ -400,7 +471,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                         inputFormat="DD/MM/YYYY"
                         value={admissionDate}
                         onChange={handleAdmissionDateChange}
-                        renderInput={(params) => <TextField {...params} />}
+                        renderInput={(params) => <TextField {...params} required />}
                       />
                     </LocalizationProvider>
                   </Grid>
@@ -426,19 +497,23 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
+                      showError={formErrors.country}
                       name="country"
                       label="País de residencia"
                       optionList={countries}
                       elmentCallback={handleCountry}
+                      requiredField={true}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
+                      showError={formErrors.state}
                       name="state"
                       label="Ciudad de residencia"
                       optionList={states}
                       elmentCallback={handleState}
+                      requiredField={true}
                     />
                   </Grid>
                 </Grid>
@@ -462,28 +537,34 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
+                      showError={formErrors.company}
                       name="company"
                       label="Empresa contratante"
                       optionList={companies}
                       elmentCallback={handleCompany}
+                      requiredField={true}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
+                      showError={formErrors.office}
                       name="office"
                       label="Oficina de contrato"
                       optionList={offices}
                       elmentCallback={handleOffice}
+                      requiredField={true}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
+                      showError={formErrors.status}
                       name="status"
                       label="Estado"
                       optionList={statusList}
                       elmentCallback={handleStatus}
+                      requiredField={true}
                     />
                   </Grid>
                 </Grid>
@@ -494,10 +575,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
+                      showError={formErrors.type}
                       name="type"
                       label="Tipo de contrato"
                       optionList={types}
                       elmentCallback={handleType}
+                      requiredField={true}
                     />
                   </Grid>
 
@@ -536,10 +619,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
+                      showError={formErrors.management}
                       name="management"
                       label="Dirección"
                       optionList={managements}
                       elmentCallback={handleManagement}
+                      requiredField={true}
                     />
                   </Grid>
 
@@ -550,17 +635,28 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       options={supervisors}
                       getOptionLabel={(supervisor) => supervisor.name}
-                      sx={{ width: 300 }}
-                      renderInput={(params) => <TextField {...params} label="Supervidor" />}
+                      onChange={(event, newValue) => {
+                        handleSupervisor(newValue);
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Supervidor"
+                          required
+                          error={formErrors.supervisor}
+                        />
+                      )}
                     />
                   </Grid>
 
                   <Grid item xs={12} md={12} lg={4}>
                     <CustomAutoComplete
+                      showError={formErrors.client}
                       name="client"
                       label="Cliente"
                       optionList={clients}
                       elmentCallback={handleClient}
+                      requiredField={true}
                     />
                   </Grid>
                 </Grid>
@@ -571,11 +667,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
+                      showError={formErrors.profiles}
                       name="n1Profile"
                       label="N1-Perfil"
                       optionList={profiles}
                       elmentCallback={handleProfiles}
                       multiple={true}
+                      requiredField={true}
                     />
                   </Grid>
                 </Grid>
@@ -586,11 +684,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
+                      showError={formErrors.knowledges}
                       name="n2Knowledge"
                       label="N2-Especialidad"
                       optionList={knowledges}
                       elmentCallback={handleKnowledges}
                       multiple={true}
+                      requiredField={true}
                     />
                   </Grid>
                 </Grid>
@@ -601,11 +701,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
+                      showError={formErrors.technologies}
                       name="n3Technology"
                       label="N3-tecnologías predominantes"
                       optionList={technologies}
                       elmentCallback={handleTechnologies}
                       multiple={true}
+                      requiredField={true}
                     />
                   </Grid>
                 </Grid>
@@ -630,10 +732,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
+                      showError={formErrors.role}
                       name="role"
                       label="Rol"
                       optionList={roles}
                       elmentCallback={handleRole}
+                      requiredField={true}
                     />
                   </Grid>
 
@@ -676,10 +780,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
+                      showError={formErrors.internalRole}
                       name="internalRole"
                       label="Rol dentro del sistema"
                       optionList={internalRoles}
                       elmentCallback={handleInternalRole}
+                      requiredField={true}
                     />
                   </Grid>
                 </Grid>
@@ -689,12 +795,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
           </AccordionDetails>
         </Accordion>
 
-        <Button
-          variant="contained"
-          onClick={() => {
-            console.log(newCollaborator);
-          }}
-        >
+        <Button variant="contained" onClick={handleSaveCollaborator}>
           Guardar
         </Button>
       </Box>

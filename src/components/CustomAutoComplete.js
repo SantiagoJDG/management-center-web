@@ -1,6 +1,14 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
 
-const CustomAutoComplete = ({ name, label, optionList, elmentCallback, multiple }) => {
+const CustomAutoComplete = ({
+  name,
+  label,
+  optionList,
+  elmentCallback,
+  multiple,
+  requiredField,
+  showError
+}) => {
   const filter = createFilterOptions();
 
   const handleSelectedOption = (newValue) => {
@@ -70,7 +78,9 @@ const CustomAutoComplete = ({ name, label, optionList, elmentCallback, multiple 
           {option.name}
         </li>
       )}
-      renderInput={(params) => <TextField {...params} label={label} />}
+      renderInput={(params) => (
+        <TextField {...params} label={label} required={requiredField} error={showError} />
+      )}
     />
   );
 };
