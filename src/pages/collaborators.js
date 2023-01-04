@@ -7,6 +7,7 @@ import useAuth from '../hooks/useAuth';
 import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
 import DateBarFilter from 'components/Collaborators/DateBarFilter';
+import CollaboratorSliderFilter from 'components/Collaborators/CollaboratorSliderFilter';
 
 const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();
@@ -92,6 +93,26 @@ const Collaborators = () => {
               allCollaborators={AllCollaborators}
             ></DateBarFilter>
           </Box>
+        </Grid>
+        <Grid
+          item
+          xl={2}
+          lg={2}
+          md={2}
+          sm={2}
+          xs={2}
+          sx={{
+            flexWrap: 'wrap',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 2
+          }}
+        >
+          <CollaboratorSliderFilter
+            setCollaborators={setCollaborators}
+            allCollaborators={AllCollaborators}
+          ></CollaboratorSliderFilter>
         </Grid>
         <Grid item xs={6} sm={13} md={20} lg={20} xl={25}>
           <CollaboratorBarFilter

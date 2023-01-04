@@ -85,11 +85,11 @@ const CollaboratorTable = ({ collaborators }) => {
             <TableBody>
               {collaborators
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, i) => {
+                .map((row, index) => {
                   return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={i}>
+                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                       {columns.map((column) => {
-                        const value = row[column.id];
+                        var value = row[column.id];
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {column.format && typeof value === 'number'
