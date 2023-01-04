@@ -11,8 +11,10 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   const [residencies, setResidencies] = useState([]);
   const [cities, setCities] = useState([]);
   const [office, setOffice] = useState([]);
-  const [contractType, setContractType] = useState([]);
   const [knowledge, setKnowledge] = useState([]);
+  const [technologies, setTechnologies] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
 
   const filteredCollaborator = (collaborators, value, collaboratorKey) => {
     if (!value.length) return collaborators;
@@ -27,55 +29,57 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
 
   const getResidencies = async () => {
     try {
-      const countries = [];
-      const states = [];
-      const officeContract = [];
-      const contract_type = [];
-      const knowledge_list = [];
-
-      let residenciesPath = '/api/residence';
-      await getAxiosInstance()
-        .get(residenciesPath)
-        .then((residence) => {
-          createFilterArray(residence.data, 'office', officeContract);
-          createFilterArray(residence.data, 'contract_type', contract_type);
-        });
-
       let statePath = '/api/residence/states';
       await getAxiosInstance()
         .get(statePath)
         .then((statesResponse) => {
-          createFilterArray(statesResponse.data, 'name', states);
+          setCities(statesResponse.data);
         });
 
       let countriesPath = '/api/residence/countries';
       await getAxiosInstance()
         .get(countriesPath)
         .then((countriesResponse) => {
-          createFilterArray(countriesResponse.data, 'name', countries);
+          setResidencies(countriesResponse.data);
+        });
+
+      let officePath = '/api/hiring/offices';
+      await getAxiosInstance()
+        .get(officePath)
+        .then((officeResponse) => {
+          setOffice(officeResponse.data);
         });
 
       let knowledgePath = '/api/operation/knowledges';
       await getAxiosInstance()
         .get(knowledgePath)
         .then((knowledge) => {
-          createFilterArray(knowledge.data, 'name', knowledge_list);
+          setKnowledge(knowledge.data);
         });
-      setKnowledge(knowledge_list);
-      setCities(states);
-      setOffice(officeContract);
-      setContractType(contract_type);
-      return setResidencies(countries);
+
+      let technologiesPath = '/api/operation/technologies';
+      await getAxiosInstance()
+        .get(technologiesPath)
+        .then((tech) => {
+          setTechnologies(tech.data);
+        });
+
+      let clientsPath = '/api/operation/clients';
+      await getAxiosInstance()
+        .get(clientsPath)
+        .then((client) => {
+          setClients(client.data);
+        });
+
+      let supervisorsPath = '/api/operation/supervisors';
+      await getAxiosInstance()
+        .get(supervisorsPath)
+        .then((supervisor) => {
+          setSupervisors(supervisor.data);
+        });
     } catch (error) {
       console.error('Error while get Collaborators..', error);
     }
-  };
-
-  const createFilterArray = (response, key, emptyArray) => {
-    response.forEach((object) => {
-      emptyArray.push(object[key]);
-      return emptyArray;
-    });
   };
 
   useEffect(() => {
@@ -88,44 +92,60 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
     !!collaborators && (
       <>
         <Grid container sx={{ gap: 1 }}>
-          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
             <CollaboratorFilter
               title={'Paises'}
               dropdownData={residencies}
               filterData={executeFilter}
-              collaboratorKey={'residency'}
+              collaboratorKey={'residencyid'}
             />
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
             <CollaboratorFilter
-              title={'City'}
+              title={'Ciudad'}
               dropdownData={cities}
               filterData={executeFilter}
-              collaboratorKey={'state'}
+              collaboratorKey={'stateid'}
             />
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
             <CollaboratorFilter
-              title={'Office'}
+              title={'Oficina'}
               dropdownData={office}
               filterData={executeFilter}
-              collaboratorKey={'office'}
+              collaboratorKey={'officeid'}
             />
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
-            <CollaboratorFilter
-              title={'Contrato'}
-              dropdownData={contractType}
-              filterData={executeFilter}
-              collaboratorKey={'contract_type'}
-            />
-          </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={2} xl={2}>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
             <CollaboratorFilter
               title={'N1'}
               dropdownData={knowledge}
               filterData={executeFilter}
-              collaboratorKey={'knowledge'}
+              collaboratorKey={'knowledgeid'}
+            />
+          </Grid>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+            <CollaboratorFilter
+              title={'N2'}
+              dropdownData={technologies}
+              filterData={executeFilter}
+              collaboratorKey={'knowledgeid'}
+            />
+          </Grid>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+            <CollaboratorFilter
+              title={'Supervisor'}
+              dropdownData={supervisors}
+              filterData={executeFilter}
+              collaboratorKey={'supervisorid'}
+            />
+          </Grid>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+            <CollaboratorFilter
+              title={'Cliente'}
+              dropdownData={clients}
+              filterData={executeFilter}
+              collaboratorKey={'clientid'}
             />
           </Grid>
         </Grid>
