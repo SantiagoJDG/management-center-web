@@ -13,7 +13,8 @@ const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();
   const [collaborators, setCollaborators] = useState([]);
   const [AllCollaborators, setAllCollaborators] = useState([]);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValueName, setSearchValueName] = useState('');
+  const [searchValueCode, setSearchValueCode] = useState('');
 
   const getCollaborators = async () => {
     try {
@@ -29,9 +30,9 @@ const Collaborators = () => {
     }
   };
 
-  const onSearchValueChange = (event) => {
-    setSearchValue(event.target.value);
-    setCollaborators(filterByName(searchValue, AllCollaborators));
+  const onSearchNameValueChange = (event) => {
+    setSearchValueName(event.target.value);
+    setCollaborators(filterByName(searchValueName, AllCollaborators));
   };
 
   const filterByName = (searchValue, filteredCollaborators) => {
@@ -42,6 +43,21 @@ const Collaborators = () => {
         const collaboratorLowerCase = collaborator.name.toLowerCase();
         const searchTextLowerCase = searchValue.toLowerCase();
         return collaboratorLowerCase.includes(searchTextLowerCase);
+      });
+    }
+  };
+
+  const onSearchCodeValueChange = (event) => {
+    setSearchValueCode(event.target.value);
+    setCollaborators(filterByCode(searchValueCode, AllCollaborators));
+  };
+
+  const filterByCode = (searchValue, filteredCollaborators) => {
+    if (!searchValue.length >= 1 || searchValue === ' ' || searchValue === '') {
+      return AllCollaborators;
+    } else {
+      return filteredCollaborators.filter((collaborator) => {
+        return collaborator.code.includes(searchValue);
       });
     }
   };
@@ -70,8 +86,18 @@ const Collaborators = () => {
               id="standard-basic"
               label="Filtrar por nombre"
               variant="standard"
-              value={searchValue}
-              onChange={onSearchValueChange}
+              value={searchValueName}
+              onChange={onSearchNameValueChange}
+              size="small"
+            />
+          </Box>
+          <Box>
+            <TextField
+              id="standard-basic"
+              label="Filtrar por codigo"
+              variant="standard"
+              value={searchValueCode}
+              onChange={onSearchCodeValueChange}
               size="small"
             />
           </Box>

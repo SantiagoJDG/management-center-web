@@ -15,6 +15,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   const [technologies, setTechnologies] = useState([]);
   const [clients, setClients] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
+  const [profile, setProfile] = useState([]);
 
   const filteredCollaborator = (collaborators, value, collaboratorKey) => {
     if (!value.length) return collaborators;
@@ -77,6 +78,13 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
         .then((supervisor) => {
           setSupervisors(supervisor.data);
         });
+
+      let profilePath = '/api/operation/profiles';
+      await getAxiosInstance()
+        .get(profilePath)
+        .then((profile) => {
+          setProfile(profile.data);
+        });
     } catch (error) {
       console.error('Error while get Collaborators..', error);
     }
@@ -119,6 +127,14 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
             <CollaboratorFilter
               title={'N1'}
+              dropdownData={profile}
+              filterData={executeFilter}
+              collaboratorKey={'profileid'}
+            />
+          </Grid>
+          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+            <CollaboratorFilter
+              title={'N2'}
               dropdownData={knowledge}
               filterData={executeFilter}
               collaboratorKey={'knowledgeid'}
@@ -126,7 +142,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
           <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
             <CollaboratorFilter
-              title={'N2'}
+              title={'N3'}
               dropdownData={technologies}
               filterData={executeFilter}
               collaboratorKey={'knowledgeid'}

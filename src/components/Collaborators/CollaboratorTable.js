@@ -9,15 +9,10 @@ import {
   TablePagination,
   TableRow
 } from '@mui/material';
+import { useRouter } from 'next/router';
 
 const columns = [
-  { id: 'name', label: 'Nombre', minWidth: 170, align: 'center' },
-  {
-    id: 'email',
-    label: 'Email',
-    minWidth: 170,
-    align: 'center'
-  },
+  { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
   {
     id: 'admission_date',
     label: 'Fecha de Ingreso',
@@ -26,13 +21,13 @@ const columns = [
   },
   {
     id: 'residency',
-    label: 'Pais de Residencia',
+    label: 'País de Residencia',
     minWidth: 170,
     align: 'center'
   },
   {
     id: 'office',
-    label: 'Pais de Contrato',
+    label: 'País de Contrato',
     minWidth: 170,
     align: 'center'
   },
@@ -47,12 +42,26 @@ const columns = [
     label: 'Supervisor',
     minWidth: 170,
     align: 'center'
+  },
+  {
+    id: 'profile',
+    label: 'N1-Profile',
+    minWidth: 170,
+    align: 'center'
   }
 ];
 
 const CollaboratorTable = ({ collaborators }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const router = useRouter();
+
+  const handleRowClick = (id) => {
+    router.push({
+      pathname: '/collaborator',
+      query: { id: id }
+    });
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -87,7 +96,13 @@ const CollaboratorTable = ({ collaborators }) => {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={index}
+                      onClick={() => handleRowClick(row.collaboratorid)}
+                    >
                       {columns.map((column) => {
                         var value = row[column.id];
                         return (
