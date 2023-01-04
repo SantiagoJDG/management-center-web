@@ -40,8 +40,14 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       await getAxiosInstance()
         .get(countriesPath)
         .then((countriesResponse) => {
-          setOffice(countriesResponse.data);
           setResidencies(countriesResponse.data);
+        });
+
+      let officePath = '/api/hiring/offices';
+      await getAxiosInstance()
+        .get(officePath)
+        .then((officeResponse) => {
+          setOffice(officeResponse.data);
         });
 
       let knowledgePath = '/api/operation/knowledges';
