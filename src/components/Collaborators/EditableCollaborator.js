@@ -32,7 +32,7 @@ const CollaboratorSchema = Joi.object({
   company: Joi.number().required(),
   office: Joi.number().required(),
   status: Joi.number().required(),
-  type: Joi.number().required(),
+  contractType: Joi.number().required(),
   salaryAmount: Joi.number().required().precision(4),
   management: Joi.number().required(),
   supervisor: Joi.number().required(),
@@ -44,7 +44,8 @@ const CollaboratorSchema = Joi.object({
   seniority: Joi.any(),
   readiness: Joi.any(),
   emailSignature: Joi.string().required(),
-  internalRole: Joi.number().required()
+  internalRole: Joi.number().required(),
+  admissionDate: Joi.any()
 });
 
 const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
@@ -57,7 +58,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     state: null,
     company: null,
     status: null,
-    type: null,
+    contractType: null,
     salaryAmount: '',
     management: null,
     client: null,
@@ -68,7 +69,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     seniority: null,
     readiness: null,
     emailSignature: '',
-    internalRole: null
+    internalRole: null,
+    admissionDate: moment().format('YYYY-MM-DD')
   });
   const [admissionDate, setAdmissionDate] = useState(moment().format());
   const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
@@ -77,7 +79,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   const [states, setStates] = useState([]);
 
   const [offices, setOffices] = useState([]);
-  const [types, setTypes] = useState([]);
+  const [contractTypes, setContractTypes] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [statusList, setStatusList] = useState([]);
 
@@ -111,7 +113,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
   const getHiringData = async () => {
     getDataInformation('/api/hiring/offices', setOffices);
-    getDataInformation('/api/hiring/types', setTypes);
+    getDataInformation('/api/hiring/types', setContractTypes);
     getDataInformation('/api/hiring/companies', setCompanies);
     getDataInformation('/api/hiring/status', setStatusList);
   };
@@ -140,6 +142,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       console.error('Error while save new item...', error);
     }
   }
+
   async function saveNewCollaborator(collaboratorToSave) {
     try {
       let createdCollaborator = await getAxiosInstance().post(
@@ -202,14 +205,14 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     setNewCollaborator({ ...newCollaborator, status: status.id });
   }
 
-  async function handleType(type) {
-    if (!type) return;
-    if (!type.id) {
-      let idReturned = await saveNewItem('/api/hiring/types', type);
-      type.id = idReturned;
-      setTypes([...types, type]);
+  async function handleContractTypes(contractType) {
+    if (!contractType) return;
+    if (!contractType.id) {
+      let idReturned = await saveNewItem('/api/hiring/types', contractTypes);
+      contractType.id = idReturned;
+      setContractTypes([...contractTypes, contractType]);
     }
-    setNewCollaborator({ ...newCollaborator, type: type.id });
+    setNewCollaborator({ ...newCollaborator, contractType: contractType.id });
   }
 
   async function handleManagement(management) {
@@ -393,8 +396,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   function handleSaveCollaborator() {
+    console.log(newCollaborator);
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
+      console.log(error.details);
       let newErrors = {};
       error.details.map((detail) => {
         newErrors[detail.path] = true;
@@ -578,11 +583,11 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.type}
-                      name="type"
+                      showError={formErrors.contractType}
+                      name="contractType"
                       label="Tipo de contrato"
-                      optionList={types}
-                      elmentCallback={handleType}
+                      optionList={contractTypes}
+                      elmentCallback={handleContractTypes}
                       requiredField={true}
                     />
                   </Grid>
