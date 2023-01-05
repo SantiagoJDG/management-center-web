@@ -396,10 +396,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   function handleSaveCollaborator() {
-    console.log(newCollaborator);
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
-      console.log(error.details);
       let newErrors = {};
       error.details.map((detail) => {
         newErrors[detail.path] = true;
