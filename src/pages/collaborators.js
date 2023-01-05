@@ -70,7 +70,7 @@ const Collaborators = () => {
 
   return (
     <>
-      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ gap: 1, width: '100%' }}>
+      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ gap: 1 }}>
         <Grid
           item
           sx={{
@@ -140,15 +140,15 @@ const Collaborators = () => {
             allCollaborators={AllCollaborators}
           ></CollaboratorSliderFilter>
         </Grid>
-        <Grid item xs={6} sm={13} md={20} lg={20} xl={25}>
+        <Grid item xs={6} sm={13} md={20} lg={30} xl={30}>
           <CollaboratorBarFilter
             collaborators={collaborators}
             setCollaborators={setCollaborators}
             allCollaborators={AllCollaborators}
           />
         </Grid>
-        <Grid item sx={{ flexWrap: 'wrap' }}>
-          <Box xl={2} lg={2} md={2} sm={1.5}>
+        <Grid item sx={{ flexWrap: 'wrap', width: '100%' }}>
+          <Box>
             <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
           </Box>
         </Grid>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import {
   Paper,
   Table,
@@ -7,8 +8,11 @@ import {
   TableContainer,
   TableHead,
   TablePagination,
-  TableRow
+  TableRow,
+  TableSortLabel,
+  Box
 } from '@mui/material';
+import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
 
 const columns = [
@@ -52,6 +56,8 @@ const columns = [
 ];
 
 const CollaboratorTable = ({ collaborators }) => {
+  const [order, setOrder] = React.useState('asc');
+  const [orderBy, setOrderBy] = React.useState('calories');
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const router = useRouter();
@@ -71,6 +77,39 @@ const CollaboratorTable = ({ collaborators }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+  const descendingComparator = (a, b, orderBy) => {
+    if (b[orderBy] < a[orderBy]) {
+      return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const getComparator = (order, orderBy) => {
+    return order === 'desc'
+      ? (a, b) => descendingComparator(a, b, orderBy)
+      : (a, b) => -descendingComparator(a, b, orderBy);
+  };
+  const stableSort = (array, comparator) => {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) {
+        return order;
+      }
+      return a[1] - b[1];
+    });
+    return stabilizedThis.map((el) => el[0]);
+  };
+
   if (collaborators.length < 1) {
     return 'There are not collaborator';
   } else {
@@ -78,21 +117,9 @@ const CollaboratorTable = ({ collaborators }) => {
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column, index) => (
-                  <TableCell
-                    key={index}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth, background: 'grey' }}
-                  >
-                    <b> {column.label}</b>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
             <TableBody>
-              {collaborators
+              {stableSort(collaborators, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   return (
@@ -131,6 +158,47 @@ const CollaboratorTable = ({ collaborators }) => {
       </Paper>
     );
   }
+};
+const EnhancedTableHead = (props) => {
+  const { order, orderBy, onRequestSort } = props;
+  const createSortHandler = (property) => (event) => {
+    onRequestSort(event, property);
+  };
+
+  return (
+    <TableHead>
+      <TableRow>
+        {columns.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.align}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+            style={{ minWidth: headCell.minWidth, background: 'grey' }}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+      </TableRow>
+    </TableHead>
+  );
+};
+
+EnhancedTableHead.propTypes = {
+  onRequestSort: PropTypes.func.isRequired,
+  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+  orderBy: PropTypes.string.isRequired
 };
 
 export default CollaboratorTable;
