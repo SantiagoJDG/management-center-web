@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Paper,
@@ -56,10 +57,10 @@ const columns = [
 ];
 
 const CollaboratorTable = ({ collaborators }) => {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const router = useRouter();
 
   const handleRowClick = (id) => {
@@ -83,11 +84,12 @@ const CollaboratorTable = ({ collaborators }) => {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
-  const descendingComparator = (a, b, orderBy) => {
-    if (b[orderBy] < a[orderBy]) {
+
+  const descendingComparator = (firstCollab, nextCollab, orderBy) => {
+    if (nextCollab[orderBy] < firstCollab[orderBy]) {
       return -1;
     }
-    if (b[orderBy] > a[orderBy]) {
+    if (nextCollab[orderBy] > firstCollab[orderBy]) {
       return 1;
     }
     return 0;
@@ -95,19 +97,19 @@ const CollaboratorTable = ({ collaborators }) => {
 
   const getComparator = (order, orderBy) => {
     return order === 'desc'
-      ? (a, b) => descendingComparator(a, b, orderBy)
-      : (a, b) => -descendingComparator(a, b, orderBy);
+      ? (firstCollab, nextCollab) => descendingComparator(firstCollab, nextCollab, orderBy)
+      : (fisrtCollab, nextCollab) => -descendingComparator(fisrtCollab, nextCollab, orderBy);
   };
-  const stableSort = (array, comparator) => {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-      const order = comparator(a[0], b[0]);
+  const stableSort = (collaborators, comparator) => {
+    const stabilizedThis = collaborators.map((collaborator, index) => [collaborator, index]);
+    stabilizedThis.sort((firstCollab, nextCollab) => {
+      const order = comparator(firstCollab[0], nextCollab[0]);
       if (order !== 0) {
         return order;
       }
-      return a[1] - b[1];
+      return firstCollab[1] - nextCollab[1];
     });
-    return stabilizedThis.map((el) => el[0]);
+    return stabilizedThis.map((collaborator) => collaborator[0]);
   };
 
   if (collaborators.length < 1) {
