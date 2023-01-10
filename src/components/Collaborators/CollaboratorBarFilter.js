@@ -98,9 +98,9 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
 
   return (
     !!collaborators && (
-      <>
-        <Grid container sx={{ gap: 1 }}>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+      <Grid container spacing={1}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
             <CollaboratorFilter
               title={'Paises'}
               dropdownData={residencies}
@@ -108,7 +108,8 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'residencyid'}
             />
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+
+          <Grid item xs={12} md={6}>
             <CollaboratorFilter
               title={'Ciudad'}
               dropdownData={cities}
@@ -116,7 +117,8 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'stateid'}
             />
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+
+          <Grid item xs={12} md={4}>
             <CollaboratorFilter
               title={'Oficina'}
               dropdownData={office}
@@ -124,31 +126,8 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'officeid'}
             />
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
-            <CollaboratorFilter
-              title={'N1'}
-              dropdownData={profile}
-              filterData={executeFilter}
-              collaboratorKey={'profileid'}
-            />
-          </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
-            <CollaboratorFilter
-              title={'N2'}
-              dropdownData={knowledge}
-              filterData={executeFilter}
-              collaboratorKey={'knowledgeid'}
-            />
-          </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
-            <CollaboratorFilter
-              title={'N3'}
-              dropdownData={technologies}
-              filterData={executeFilter}
-              collaboratorKey={'knowledgeid'}
-            />
-          </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+
+          <Grid item xs={12} md={4}>
             <CollaboratorFilter
               title={'Supervisor'}
               dropdownData={supervisors}
@@ -156,7 +135,8 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'supervisorid'}
             />
           </Grid>
-          <Grid item xs={2} sm={2} md={2} lg={1.5} xl={1}>
+
+          <Grid item xs={12} md={4}>
             <CollaboratorFilter
               title={'Cliente'}
               dropdownData={clients}
@@ -164,8 +144,35 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               collaboratorKey={'clientid'}
             />
           </Grid>
+
+          <Grid item xs={12} md={4}>
+            <CollaboratorFilter
+              title={'N1'}
+              dropdownData={profile}
+              filterData={executeFilter}
+              collaboratorKey={'profileid'}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <CollaboratorFilter
+              title={'N2'}
+              dropdownData={knowledge}
+              filterData={executeFilter}
+              collaboratorKey={'knowledgeid'}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <CollaboratorFilter
+              title={'N3'}
+              dropdownData={technologies}
+              filterData={executeFilter}
+              collaboratorKey={'knowledgeid'}
+            />
+          </Grid>
         </Grid>
-      </>
+      </Grid>
     )
   );
 };
