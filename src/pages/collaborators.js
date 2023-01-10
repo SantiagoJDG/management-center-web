@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
-import React from 'react';
-import { Grid, Box, TextField } from '@mui/material';
-import { getAxiosInstance } from '../utils/axiosClient';
+import { Grid, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
+import { getAxiosInstance } from '../utils/axiosClient';
 
-import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
-import DateBarFilter from 'components/Collaborators/DateBarFilter';
 import CollaboratorSliderFilter from 'components/Collaborators/CollaboratorSliderFilter';
+import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
+import DateBarFilter from 'components/Collaborators/DateBarFilter';
 
 const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();

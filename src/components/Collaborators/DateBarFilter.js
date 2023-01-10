@@ -1,11 +1,10 @@
-import React from 'react';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { Grid, TextField } from '@mui/material';
 import { DesktopDatePicker } from '@mui/x-date-pickers/';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { useState, useEffect } from 'react';
-import useAuth from '../../hooks/useAuth';
-import { Grid, TextField, Box } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import 'moment/locale/es';
+import { useEffect, useState } from 'react';
+import useAuth from '../../hooks/useAuth';
 
 export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
   const { userToken, waitingUser } = useAuth();
