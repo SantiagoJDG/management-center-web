@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -100,6 +99,7 @@ const CollaboratorTable = ({ collaborators }) => {
       ? (firstCollab, nextCollab) => descendingComparator(firstCollab, nextCollab, orderBy)
       : (fisrtCollab, nextCollab) => -descendingComparator(fisrtCollab, nextCollab, orderBy);
   };
+
   const stableSort = (collaborators, comparator) => {
     const stabilizedThis = collaborators.map((collaborator, index) => [collaborator, index]);
     stabilizedThis.sort((firstCollab, nextCollab) => {
