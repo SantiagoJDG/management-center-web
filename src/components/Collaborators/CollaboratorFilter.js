@@ -10,9 +10,6 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-
 function getStyles(name, item, theme) {
   return {
     fontWeight:
