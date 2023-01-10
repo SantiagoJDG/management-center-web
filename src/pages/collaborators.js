@@ -69,91 +69,58 @@ const Collaborators = () => {
   }, [userToken, waitingUser]);
 
   return (
-    <>
-      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ gap: 1 }}>
-        <Grid
-          item
-          sx={{
-            flexWrap: 'wrap',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
-          <Box>
-            <TextField
-              id="standard-basic"
-              label="Filtrar por nombre"
-              variant="standard"
-              value={searchValueName}
-              onChange={onSearchNameValueChange}
-              size="small"
-            />
-          </Box>
-          <Box>
-            <TextField
-              id="standard-basic"
-              label="Filtrar por codigo"
-              variant="standard"
-              value={searchValueCode}
-              onChange={onSearchCodeValueChange}
-              size="small"
-            />
-          </Box>
+    <Grid container>
+      <Grid container spacing={2}>
+        <Grid item xs={6} md={4} lg={2}>
+          <TextField
+            id="standard-basic"
+            label="Filtrar por nombre"
+            variant="standard"
+            value={searchValueName}
+            onChange={onSearchNameValueChange}
+            size="small"
+          />
         </Grid>
-        <Grid
-          item
-          sx={{
-            flexWrap: 'wrap',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
-          <Box xl={6} lg={7} md={5} sm={1.5} xs={1}>
-            <DateBarFilter
-              collaborators={collaborators}
-              setCollaborators={setCollaborators}
-              allCollaborators={AllCollaborators}
-            ></DateBarFilter>
-          </Box>
+
+        <Grid item xs={6} md={4} lg={2}>
+          <TextField
+            id="standard-basic"
+            label="Filtrar por codigo"
+            variant="standard"
+            value={searchValueCode}
+            onChange={onSearchCodeValueChange}
+            size="small"
+          />
         </Grid>
-        <Grid
-          item
-          xl={2}
-          lg={2}
-          md={2}
-          sm={2}
-          xs={2}
-          sx={{
-            flexWrap: 'wrap',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
+
+        <Grid item xs={12} md={6} lg={4}>
+          <DateBarFilter
+            collaborators={collaborators}
+            setCollaborators={setCollaborators}
+            allCollaborators={AllCollaborators}
+          ></DateBarFilter>
+        </Grid>
+
+        <Grid item xs={12} md={6} lg={4}>
           <CollaboratorSliderFilter
             setCollaborators={setCollaborators}
             allCollaborators={AllCollaborators}
           ></CollaboratorSliderFilter>
         </Grid>
-        <Grid item xs={6} sm={13} md={20} lg={30} xl={30}>
+
+        <Grid item xs={12}>
           <CollaboratorBarFilter
             collaborators={collaborators}
             setCollaborators={setCollaborators}
             allCollaborators={AllCollaborators}
           />
         </Grid>
-        <Grid item sx={{ flexWrap: 'wrap', width: '100%' }}>
-          <Box>
-            <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
-          </Box>
+
+        <Grid item xs={12}>
+          <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 };
 

@@ -74,40 +74,35 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
 
   return (
     !!collaborators && (
-      <>
-        <Grid container sx={{ flexWrap: 'wrap', display: 'flex', gap: 1 }}>
-          <Grid item>
-            <Box xs={1} sm={1} md={1} lg={2}>
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DesktopDatePicker
-                  fullWidth
-                  maxDate={endDate}
-                  label="Fecha de Inicio"
-                  inputFormat="MM/DD/YYYY"
-                  value={initialDate}
-                  onChange={onChangeInitialDate}
-                  renderInput={(params) => <TextField size="small" {...params} />}
-                />
-              </LocalizationProvider>
-            </Box>
-          </Grid>
-          <Grid item>
-            <Box xs={1} sm={1} md={1}>
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DesktopDatePicker
-                  fullWidth
-                  minDate={initialDate}
-                  label="Fecha de Cierre"
-                  inputFormat="MM/DD/YYYY"
-                  value={endDate}
-                  onChange={onChangeEndDate}
-                  renderInput={(params) => <TextField size="small" {...params} />}
-                />
-              </LocalizationProvider>
-            </Box>
-          </Grid>
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={6}>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DesktopDatePicker
+              fullWidth
+              maxDate={endDate}
+              label="Fecha de Inicio"
+              inputFormat="MM/DD/YYYY"
+              value={initialDate}
+              onChange={onChangeInitialDate}
+              renderInput={(params) => <TextField size="small" {...params} />}
+            />
+          </LocalizationProvider>
         </Grid>
-      </>
+
+        <Grid item xs={12} sm={6}>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <DesktopDatePicker
+              fullWidth
+              minDate={initialDate}
+              label="Fecha de Cierre"
+              inputFormat="MM/DD/YYYY"
+              value={endDate}
+              onChange={onChangeEndDate}
+              renderInput={(params) => <TextField size="small" {...params} />}
+            />
+          </LocalizationProvider>
+        </Grid>
+      </Grid>
     )
   );
 };

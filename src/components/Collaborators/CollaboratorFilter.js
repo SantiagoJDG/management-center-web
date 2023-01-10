@@ -47,36 +47,33 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
 
   return (
     !!dropdownData && (
-      <div>
-        <FormControl sx={{ width: '100%' }} size="small">
-          <InputLabel id="multiple-chip-label-small">{title}</InputLabel>
-          <Select
-            labelId="multiple-chip-label"
-            multiple
-            value={item}
-            onChange={handleChange}
-            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-            renderValue={(selected) => (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {selected.map((value) => (
-                  <Chip key={value} label={value.name} />
-                ))}
-              </Box>
-            )}
-            MenuProps={MenuProps}
-          >
-            {dropdownData.map((parameters, index) => (
-              <MenuItem
-                key={index}
-                value={parameters}
-                style={getStyles(parameters.name, item, theme)}
-              >
-                {parameters.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </div>
+      <FormControl sx={{ width: '100%' }} size="small">
+        <InputLabel id="multiple-chip-label-small">{title}</InputLabel>
+        <Select
+          labelId="multiple-chip-label"
+          multiple
+          value={item}
+          onChange={handleChange}
+          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+          renderValue={(selected) => (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+              {selected.map((value) => (
+                <Chip key={value} label={value.name} />
+              ))}
+            </Box>
+          )}
+        >
+          {dropdownData.map((parameters, index) => (
+            <MenuItem
+              key={index}
+              value={parameters}
+              style={getStyles(parameters.name, item, theme)}
+            >
+              {parameters.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     )
   );
 };
