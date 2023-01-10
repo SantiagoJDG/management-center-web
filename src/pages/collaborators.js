@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react';
-import React from 'react';
-import { Grid, Box, TextField } from '@mui/material';
-import { getAxiosInstance } from '../utils/axiosClient';
+import { Grid, TextField } from '@mui/material';
+import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
+import { getAxiosInstance } from '../utils/axiosClient';
 
-import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
-import DateBarFilter from 'components/Collaborators/DateBarFilter';
 import CollaboratorSliderFilter from 'components/Collaborators/CollaboratorSliderFilter';
+import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
+import DateBarFilter from 'components/Collaborators/DateBarFilter';
 
 const Collaborators = () => {
   const { userToken, waitingUser } = useAuth();
@@ -69,91 +68,58 @@ const Collaborators = () => {
   }, [userToken, waitingUser]);
 
   return (
-    <>
-      <Grid container spacing={{ xs: 1, md: 2 }} sx={{ gap: 1, width: '100%' }}>
-        <Grid
-          item
-          sx={{
-            flexWrap: 'wrap',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
-          <Box>
-            <TextField
-              id="standard-basic"
-              label="Filtrar por nombre"
-              variant="standard"
-              value={searchValueName}
-              onChange={onSearchNameValueChange}
-              size="small"
-            />
-          </Box>
-          <Box>
-            <TextField
-              id="standard-basic"
-              label="Filtrar por codigo"
-              variant="standard"
-              value={searchValueCode}
-              onChange={onSearchCodeValueChange}
-              size="small"
-            />
-          </Box>
+    <Grid container>
+      <Grid container spacing={2}>
+        <Grid item xs={6} md={4} lg={2}>
+          <TextField
+            id="standard-basic"
+            label="Filtrar por nombre"
+            variant="standard"
+            value={searchValueName}
+            onChange={onSearchNameValueChange}
+            size="small"
+          />
         </Grid>
-        <Grid
-          item
-          sx={{
-            flexWrap: 'wrap',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
-          <Box xl={6} lg={7} md={5} sm={1.5} xs={1}>
-            <DateBarFilter
-              collaborators={collaborators}
-              setCollaborators={setCollaborators}
-              allCollaborators={AllCollaborators}
-            ></DateBarFilter>
-          </Box>
+
+        <Grid item xs={6} md={4} lg={2}>
+          <TextField
+            id="standard-basic"
+            label="Filtrar por codigo"
+            variant="standard"
+            value={searchValueCode}
+            onChange={onSearchCodeValueChange}
+            size="small"
+          />
         </Grid>
-        <Grid
-          item
-          xl={2}
-          lg={2}
-          md={2}
-          sm={2}
-          xs={2}
-          sx={{
-            flexWrap: 'wrap',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2
-          }}
-        >
+
+        <Grid item xs={12} md={6} lg={4}>
+          <DateBarFilter
+            collaborators={collaborators}
+            setCollaborators={setCollaborators}
+            allCollaborators={AllCollaborators}
+          ></DateBarFilter>
+        </Grid>
+
+        <Grid item xs={12} md={6} lg={4}>
           <CollaboratorSliderFilter
             setCollaborators={setCollaborators}
             allCollaborators={AllCollaborators}
           ></CollaboratorSliderFilter>
         </Grid>
-        <Grid item xs={6} sm={13} md={20} lg={20} xl={25}>
+
+        <Grid item xs={12}>
           <CollaboratorBarFilter
             collaborators={collaborators}
             setCollaborators={setCollaborators}
             allCollaborators={AllCollaborators}
           />
         </Grid>
-        <Grid item sx={{ flexWrap: 'wrap' }}>
-          <Box xl={2} lg={2} md={2} sm={1.5}>
-            <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
-          </Box>
+
+        <Grid item xs={12}>
+          <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 };
 
