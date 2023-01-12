@@ -16,16 +16,33 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   const [clients, setClients] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
   const [profile, setProfile] = useState([]);
+  const [filters, setFilters] = useState({});
 
-  const filteredCollaborator = (collaborators, value, collaboratorKey) => {
-    if (!value.length) return collaborators;
-    return allCollaborators.filter((filteredCollaborator) => {
-      return value.includes(filteredCollaborator[collaboratorKey]);
-    });
+  const filteredCollaborator = async (collaborators, filters) => {
+    try {
+      let statePath = '/api/collaborator/filterBy';
+      await getAxiosInstance()
+        .get(statePath, { params: filters })
+        .then((rows) => {
+          return rows.data;
+        });
+    } catch {
+      console.log('error catched');
+    }
   };
 
   const executeFilter = (value, collaboratorKey) => {
-    setCollaborators(filteredCollaborator(allCollaborators, [...value], collaboratorKey));
+    const filtersAdd = {
+      [collaboratorKey]: value
+    };
+    setFilters((previousState) => {
+      return {
+        ...previousState,
+        ...filtersAdd
+      };
+    });
+    console.log(filteredCollaborator(allCollaborators, filters));
+    return filteredCollaborator(allCollaborators, filters);
   };
 
   const getResidencies = async () => {
@@ -105,7 +122,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Paises'}
               dropdownData={residencies}
               filterData={executeFilter}
-              collaboratorKey={'residencyid'}
+              collaboratorKey={'residency'}
             />
           </Grid>
 
@@ -114,7 +131,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Ciudad'}
               dropdownData={cities}
               filterData={executeFilter}
-              collaboratorKey={'stateid'}
+              collaboratorKey={'state'}
             />
           </Grid>
 
@@ -123,7 +140,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Oficina'}
               dropdownData={office}
               filterData={executeFilter}
-              collaboratorKey={'officeid'}
+              collaboratorKey={'office'}
             />
           </Grid>
 
@@ -132,7 +149,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Supervisor'}
               dropdownData={supervisors}
               filterData={executeFilter}
-              collaboratorKey={'supervisorid'}
+              collaboratorKey={'supervisor'}
             />
           </Grid>
 
@@ -141,7 +158,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Cliente'}
               dropdownData={clients}
               filterData={executeFilter}
-              collaboratorKey={'clientid'}
+              collaboratorKey={'client'}
             />
           </Grid>
 
