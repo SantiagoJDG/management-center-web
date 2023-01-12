@@ -33,9 +33,6 @@ const Collaborator = () => {
     admissionDate: ''
   });
 
-  var admissionDateFormated = moment().format('LL');
-  var PrincipalName = '';
-
   const getCollaboratorData = async (id) => {
     try {
       let path = `/api/collaborator/${id}`;
