@@ -10,7 +10,9 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
-  Box
+  Box,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
@@ -60,12 +62,34 @@ const CollaboratorTable = ({ collaborators }) => {
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [menuAnchorElement, setMenuAnchorElement] = useState(null);
+  const [selectedCollaboratorMenu, setSelectedCollaboratorMenu] = useState(null);
+
   const router = useRouter();
 
-  const handleRowClick = (id) => {
+  const openMenu = Boolean(menuAnchorElement);
+
+  const handleOpenMenuByCollaborator = (event, collaboratorId) => {
+    setMenuAnchorElement(event.currentTarget);
+    setSelectedCollaboratorMenu(collaboratorId);
+  };
+
+  const handleCloseMenu = () => {
+    setMenuAnchorElement(null);
+    setSelectedCollaboratorMenu(null);
+  };
+
+  const handleProfileRouting = (edit) => {
+    let queryParams = { id: selectedCollaboratorMenu };
+
+    if (edit === true) {
+      queryParams = { ...queryParams, edit };
+    }
+
     router.push({
       pathname: '/collaborator',
-      query: { id: id }
+      query: queryParams
     });
   };
 
@@ -135,7 +159,7 @@ const CollaboratorTable = ({ collaborators }) => {
                         role="checkbox"
                         tabIndex={-1}
                         key={index}
-                        onClick={() => handleRowClick(row.collaboratorid)}
+                        onClick={(event) => handleOpenMenuByCollaborator(event, row.collaboratorid)}
                       >
                         {columns.map((column) => {
                           var value = row[column.id];
@@ -163,6 +187,27 @@ const CollaboratorTable = ({ collaborators }) => {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
+
+        <Menu
+          id="optionsMenu"
+          anchorEl={menuAnchorElement}
+          open={openMenu}
+          onClose={handleCloseMenu}
+          MenuListProps={{
+            'aria-labelledby': 'fade-button'
+          }}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left'
+          }}
+        >
+          <MenuItem onClick={handleProfileRouting}>Ver Perfil</MenuItem>
+          <MenuItem onClick={() => handleProfileRouting(true)}>Editar</MenuItem>
+        </Menu>
       </Box>
     );
   }

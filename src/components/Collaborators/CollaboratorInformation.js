@@ -20,8 +20,34 @@ const CollaboratorInformation = ({ collaboratorData }) => {
 
   const showInformation = () => {
     if (collaborator) {
-      const admissionDateFormated = moment(collaborator.admission_date).format('LL');
-      const relativeDateFromAdmission = moment(collaborator.admission_date).fromNow();
+      const {
+        admissionDate,
+        internalCode,
+        name,
+        emailSignature,
+        email,
+        country,
+        supervisor,
+        state,
+        company,
+        office,
+        status,
+        contractType,
+        salaryAmount,
+        management,
+        client,
+        profiles,
+        knowledges,
+        technologies,
+        role,
+        seniority,
+        readiness,
+        internalRole
+      } = collaborator;
+
+      const admissionDateFormated = moment(admissionDate).format('LL');
+      const relativeDateFromAdmission = moment(admissionDate).fromNow();
+
       return (
         <Box>
           <Accordion>
@@ -32,12 +58,13 @@ const CollaboratorInformation = ({ collaboratorData }) => {
             >
               <h2>Información de identidad personal</h2>
             </AccordionSummary>
+
             <AccordionDetails>
               <List>
                 <ListItem>
-                  <ListItemText primary="Código consultor" secondary={collaborator.internal_code} />
-                  <ListItemText primary="Nombres y Apellidos" secondary={collaborator.name} />
-                  <ListItemText primary="Email corporativo" secondary={collaborator.email} />
+                  <ListItemText primary="Código consultor" secondary={internalCode} />
+                  <ListItemText primary="Nombres y Apellidos" secondary={name} />
+                  <ListItemText primary="Email corporativo" secondary={email} />
                 </ListItem>
                 <Divider />
 
@@ -48,13 +75,12 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <Divider />
 
                 <ListItem>
-                  <ListItemText primary="País de residencia" secondary={collaborator.country} />
-                  <ListItemText primary="Ciudad de residencia" secondary={collaborator.state} />
+                  <ListItemText primary="País de residencia" secondary={country.name} />
+                  <ListItemText primary="Ciudad de residencia" secondary={state.name} />
                 </ListItem>
               </List>
             </AccordionDetails>
           </Accordion>
-
           <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -67,14 +93,14 @@ const CollaboratorInformation = ({ collaboratorData }) => {
             <AccordionDetails>
               <List>
                 <ListItem>
-                  <ListItemText primary="Empresa contratante" secondary={collaborator.company} />
-                  <ListItemText primary="Oficina de contrato" secondary={collaborator.office} />
+                  <ListItemText primary="Empresa contratante" secondary={company.name} />
+                  <ListItemText primary="Oficina de contrato" secondary={office.name} />
                   <ListItemText
                     primary="Estado"
                     secondary={
                       <Chip
-                        label={collaborator.status}
-                        color={collaborator.status == 'ACTIVO' ? 'success' : 'error'}
+                        label={status.name}
+                        color={status.name == 'ACTIVO' ? 'success' : 'error'}
                         variant="outlined"
                         size="small"
                       />
@@ -84,20 +110,19 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <Divider />
 
                 <ListItem>
-                  <ListItemText primary="Tipo de contrato" secondary={collaborator.contract_type} />
+                  <ListItemText primary="Tipo de contrato" secondary={contractType.name} />
                   <ListItemText
-                    primary="Tarifa mensual bruta (AUN NO)"
+                    primary="Tarifa mensual bruta"
                     secondary={new Intl.NumberFormat('es-ES', {
                       style: 'currency',
                       currency: 'USD'
-                    }).format(10000)}
+                    }).format(salaryAmount ? salaryAmount : 0)}
                   />
                 </ListItem>
                 <Divider />
               </List>
             </AccordionDetails>
           </Accordion>
-
           <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -110,23 +135,41 @@ const CollaboratorInformation = ({ collaboratorData }) => {
             <AccordionDetails>
               <List>
                 <ListItem>
-                  <ListItemText primary="Dirección" secondary={collaborator.management} />
-                  <ListItemText primary="Supervidor" secondary={collaborator.supervisor} />
+                  <ListItemText primary="Dirección" secondary={management.name} />
+                  <ListItemText primary="Supervidor" secondary={supervisor.name} />
+                  <ListItemText primary="Cliente" secondary={client.name} />
                 </ListItem>
-                <Divider />
-                <ListItem>
-                  <ListItemText primary="Perfil" secondary={collaborator.profile} />
-                  <ListItemText primary="Cliente" secondary={collaborator.client} />
-                </ListItem>
-                <Divider />
 
+                <Divider />
                 <ListItem>
                   <Grid container>
-                    <Grid sm={12}>
-                      <ListItemText primary="Especialidad" />
+                    <Grid item sm={12}>
+                      <ListItemText primary="N1-Perfil" />
                     </Grid>
-                    <Grid sm={12}>
-                      {collaborator.knowledges.map((knowledge) => {
+                    <Grid item sm={12}>
+                      {profiles.map((profile) => {
+                        return (
+                          <Chip
+                            key={profile.id}
+                            label={profile.name}
+                            color="info"
+                            variant="outlined"
+                            size="small"
+                          />
+                        );
+                      })}
+                    </Grid>
+                  </Grid>
+                </ListItem>
+
+                <Divider />
+                <ListItem>
+                  <Grid container>
+                    <Grid item sm={12}>
+                      <ListItemText primary="N2-Especialidad" />
+                    </Grid>
+                    <Grid item sm={12}>
+                      {knowledges.map((knowledge) => {
                         return (
                           <Chip
                             key={knowledge.id}
@@ -140,14 +183,15 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                     </Grid>
                   </Grid>
                 </ListItem>
+
                 <Divider />
                 <ListItem>
                   <Grid container>
-                    <Grid sm={12}>
-                      <ListItemText primary="Tecnologías predominantes" />
+                    <Grid item sm={12}>
+                      <ListItemText primary="N3-tecnologías predominantes" />
                     </Grid>
-                    <Grid sm={12}>
-                      {collaborator.technologies.map((technology) => {
+                    <Grid item sm={12}>
+                      {technologies.map((technology) => {
                         return (
                           <Chip
                             key={technology.id}
@@ -164,7 +208,6 @@ const CollaboratorInformation = ({ collaboratorData }) => {
               </List>
             </AccordionDetails>
           </Accordion>
-
           <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -177,13 +220,13 @@ const CollaboratorInformation = ({ collaboratorData }) => {
             <AccordionDetails>
               <List>
                 <ListItem>
-                  <ListItemText primary="Rol" secondary={collaborator.role} />
-                  <ListItemText primary="Seniority" secondary={collaborator.seniority} />
+                  <ListItemText primary="Rol" secondary={role.name} />
+                  <ListItemText primary="Seniority" secondary={seniority.name} />
                   <ListItemText
                     primary="Readiness"
                     secondary={
                       <Chip
-                        label={collaborator.readiness}
+                        label={readiness.name}
                         color="primary"
                         variant="outlined"
                         size="small"
@@ -194,19 +237,13 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <Divider />
 
                 <ListItem>
-                  <ListItemText
-                    primary="Firma de correo"
-                    secondary={collaborator.email_signature}
-                  />
-                  <ListItemText
-                    primary="Rol dentro del sistema"
-                    secondary={collaborator.identity_role}
-                  />
+                  <ListItemText primary="Firma de correo" secondary={emailSignature} />
+                  <ListItemText primary="Rol dentro del sistema" secondary={internalRole.name} />
                 </ListItem>
                 <Divider />
               </List>
             </AccordionDetails>
-          </Accordion>
+          </Accordion>{' '}
         </Box>
       );
     } else {
