@@ -3,7 +3,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Autocomplete,
   Button,
   Divider,
   Grid,
@@ -19,9 +18,9 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { useEffect, useState } from 'react';
 
+import Joi from 'joi';
 import CustomAutoComplete from '../../components/CustomAutoComplete';
 import { getAxiosInstance } from '../../utils/axiosClient';
-import Joi from 'joi';
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
