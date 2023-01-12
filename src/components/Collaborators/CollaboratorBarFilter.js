@@ -21,7 +21,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   const filteredCollaborator = async (collaborators, filters) => {
     try {
       let statePath = '/api/collaborator/filterBy';
-      await getAxiosInstance()
+      return await getAxiosInstance()
         .get(statePath, { params: filters })
         .then((rows) => {
           return rows.data;
@@ -36,13 +36,12 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       [collaboratorKey]: value
     };
     setFilters((previousState) => {
+      if (!Object.keys(previousState).length) return filtersAdd;
       return {
         ...previousState,
         ...filtersAdd
       };
     });
-    console.log(filteredCollaborator(allCollaborators, filters));
-    return filteredCollaborator(allCollaborators, filters);
   };
 
   const getResidencies = async () => {
@@ -113,6 +112,11 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
     getResidencies();
   }, [userToken, waitingUser]);
 
+  useEffect(() => {
+    filteredCollaborator(allCollaborators, filters).then((response) => {
+      return setCollaborators(response);
+    });
+  }, [filters, setCollaborators, allCollaborators]);
   return (
     !!collaborators && (
       <Grid container spacing={1}>
