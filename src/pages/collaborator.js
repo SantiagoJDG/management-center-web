@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Grid, Card, CardHeader, Avatar, IconButton, CardContent } from '@mui/material';
+import {
+  Grid,
+  Card,
+  CardHeader,
+  Avatar,
+  IconButton,
+  CardContent,
+  Backdrop,
+  CircularProgress
+} from '@mui/material';
 import { red } from '@mui/material/colors';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import moment from 'moment';
@@ -19,6 +28,10 @@ const Collaborator = () => {
 
   const { userToken, waitingUser, userData } = useAuth();
   const [collaboratorData, setCollaboratorData] = useState();
+  const [pricipalInformation, setPricipalInformation] = useState({
+    name: '',
+    admissionDate: ''
+  });
 
   var admissionDateFormated = moment().format('LL');
   var PrincipalName = '';
@@ -27,6 +40,10 @@ const Collaborator = () => {
     try {
       let path = `/api/collaborator/${id}`;
       let response = await getAxiosInstance().get(path);
+      setPricipalInformation({
+        name: response.data.name,
+        admissionDate: moment(response.data.admission_date).format('LL')
+      });
       setCollaboratorData(response.data);
     } catch (error) {
       console.error('Error while get Collaborator..', error);
@@ -34,20 +51,21 @@ const Collaborator = () => {
   };
 
   const getInformationView = () => {
-    if (collaboratorData && edit) {
-      return <EditableCollaborator collaboratorData={collaboratorData} />;
+    if (collaboratorData && edit === 'true') {
+      return (
+        <EditableCollaborator
+          collaboratorData={collaboratorData}
+          setPrincipalInformation={setPricipalInformation}
+        />
+      );
     }
-    if (collaboratorData && !edit) {
+    if (collaboratorData && (!edit || edit === 'false')) {
       return <CollaboratorInformation collaboratorData={collaboratorData} />;
     }
   };
 
   const showInformation = () => {
-    if (userToken) {
-      if (collaboratorData) {
-        admissionDateFormated = moment(collaboratorData.admission_date).format('LL');
-        PrincipalName = collaboratorData.name;
-      }
+    if (userToken && collaboratorData) {
       return (
         <Grid container>
           <Grid item xs={12}>
@@ -57,7 +75,7 @@ const Collaborator = () => {
                   <Avatar
                     sx={{ bgcolor: red[500] }}
                     aria-label="recipe"
-                    alt={userData.name}
+                    alt={pricipalInformation.name}
                   ></Avatar>
                 }
                 action={
@@ -65,8 +83,11 @@ const Collaborator = () => {
                     <MoreVertIcon />
                   </IconButton>
                 }
-                title={PrincipalName}
-                subheader={`Fecha de ingreso: ${admissionDateFormated}`}
+                title={pricipalInformation.name}
+                subheader={
+                  pricipalInformation.admissionDate &&
+                  `Fecha de ingreso: ${pricipalInformation.admissionDate}`
+                }
               />
               <CardContent>{getInformationView()}</CardContent>
             </Card>
@@ -74,7 +95,11 @@ const Collaborator = () => {
         </Grid>
       );
     } else {
-      return 'There is loading page';
+      return (
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      );
     }
   };
 
