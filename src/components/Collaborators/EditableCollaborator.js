@@ -3,7 +3,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Autocomplete,
   Button,
   Divider,
   Grid,
@@ -19,9 +18,9 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { useEffect, useState } from 'react';
 
+import Joi from 'joi';
 import CustomAutoComplete from '../../components/CustomAutoComplete';
 import { getAxiosInstance } from '../../utils/axiosClient';
-import Joi from 'joi';
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
@@ -72,6 +71,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     internalRole: null,
     admissionDate: moment().format('YYYY-MM-DD')
   });
+  const [initialDataCollaborator, setInitialDataCollaborator] = useState({});
+
   const [admissionDate, setAdmissionDate] = useState(moment().format());
   const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
 
@@ -143,12 +144,21 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     }
   }
 
-  async function saveNewCollaborator(collaboratorToSave) {
+  async function saveCollaborator(collaboratorToSave) {
     try {
-      let createdCollaborator = await getAxiosInstance().post(
-        '/api/collaborator/',
-        collaboratorToSave
-      );
+      let createdCollaborator;
+
+      if (collaboratorData) {
+        createdCollaborator = await getAxiosInstance().put(
+          '/api/collaborator/',
+          collaboratorToSave
+        );
+      } else {
+        createdCollaborator = await getAxiosInstance().post(
+          '/api/collaborator/',
+          collaboratorToSave
+        );
+      }
       return createdCollaborator.data.id;
     } catch (error) {
       console.error('Error while save new Collaborator...', error);
@@ -268,6 +278,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setReadinessList([...readinessList, readiness]);
     }
     setNewCollaborator({ ...newCollaborator, readiness: readiness.id });
+    console.log(newCollaborator);
   }
 
   async function handleInternalRole(internalRole) {
@@ -396,6 +407,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   function handleSaveCollaborator() {
+    console.log(newCollaborator);
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
       let newErrors = {};
@@ -405,7 +417,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setFormErrors(newErrors);
       return;
     }
-    saveNewCollaborator(newCollaborator);
+    saveCollaborator(newCollaborator);
   }
 
   const showInformation = () => {
@@ -509,6 +521,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={countries}
                       elmentCallback={handleCountry}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.country}
                     />
                   </Grid>
 
@@ -520,6 +533,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={states}
                       elmentCallback={handleState}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.state}
                     />
                   </Grid>
                 </Grid>
@@ -549,6 +563,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={companies}
                       elmentCallback={handleCompany}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.company}
                     />
                   </Grid>
 
@@ -560,6 +575,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={offices}
                       elmentCallback={handleOffice}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.office}
                     />
                   </Grid>
 
@@ -571,6 +587,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={statusList}
                       elmentCallback={handleStatus}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.status}
                     />
                   </Grid>
                 </Grid>
@@ -587,6 +604,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={contractTypes}
                       elmentCallback={handleContractTypes}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.contractType}
                     />
                   </Grid>
 
@@ -631,27 +649,19 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={managements}
                       elmentCallback={handleManagement}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.management}
                     />
                   </Grid>
 
                   <Grid item xs={12} md={6} lg={4}>
-                    <Autocomplete
-                      disablePortal
-                      id="supervisor"
-                      size="small"
-                      options={supervisors}
-                      getOptionLabel={(supervisor) => supervisor.name}
-                      onChange={(event, newValue) => {
-                        handleSupervisor(newValue);
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          label="Supervidor"
-                          required
-                          error={formErrors.supervisor}
-                        />
-                      )}
+                    <CustomAutoComplete
+                      showError={formErrors.supervisor}
+                      name="supervisor"
+                      label="Supervisor"
+                      optionList={supervisors}
+                      elmentCallback={handleSupervisor}
+                      requiredField={true}
+                      prechargedValue={initialDataCollaborator.supervisor}
                     />
                   </Grid>
 
@@ -663,6 +673,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={clients}
                       elmentCallback={handleClient}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.client}
                     />
                   </Grid>
                 </Grid>
@@ -680,6 +691,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       elmentCallback={handleProfiles}
                       multiple={true}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.profiles}
                     />
                   </Grid>
                 </Grid>
@@ -697,6 +709,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       elmentCallback={handleKnowledges}
                       multiple={true}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.knowledges}
                     />
                   </Grid>
                 </Grid>
@@ -714,6 +727,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       elmentCallback={handleTechnologies}
                       multiple={true}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.technologies}
                     />
                   </Grid>
                 </Grid>
@@ -744,6 +758,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={roles}
                       elmentCallback={handleRole}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.role}
                     />
                   </Grid>
 
@@ -753,6 +768,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       label="Seniority"
                       optionList={seniorities}
                       elmentCallback={handleSeniority}
+                      prechargedValue={initialDataCollaborator.seniority}
                     />
                   </Grid>
 
@@ -762,6 +778,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       label="Readiness"
                       optionList={readinessList}
                       elmentCallback={handleReadiness}
+                      prechargedValue={initialDataCollaborator.readiness}
                     />
                   </Grid>
                 </Grid>
@@ -792,6 +809,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={internalRoles}
                       elmentCallback={handleInternalRole}
                       requiredField={true}
+                      prechargedValue={initialDataCollaborator.internalRole}
                     />
                   </Grid>
                 </Grid>
@@ -815,8 +833,35 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     getConsultecIdentityData();
 
     if (collaboratorData) {
-      setAdmissionDate(moment(collaboratorData.admission_date).format());
-      setRelativeDateFromAdmission(moment(collaboratorData.admission_date).fromNow());
+      setAdmissionDate(moment(collaboratorData.admissionDate).format());
+      setRelativeDateFromAdmission(moment(collaboratorData.admissionDate).fromNow());
+
+      setNewCollaborator({
+        internalCode: collaboratorData.internalCode,
+        name: collaboratorData.name,
+        emailSignature: collaboratorData.emailSignature,
+        email: collaboratorData.email,
+        country: collaboratorData.country.id,
+        supervisor: collaboratorData.supervisor.id,
+        admissionDate: moment(collaboratorData.admissionDate).format('YYYY-MM-DD'),
+        state: collaboratorData.state.id,
+        company: collaboratorData.company.id,
+        office: collaboratorData.office.id,
+        status: collaboratorData.status.id,
+        contractType: collaboratorData.contractType.id,
+        salaryAmount: collaboratorData.salary.amount,
+        management: collaboratorData.management.id,
+        client: collaboratorData.client.id,
+        profiles: collaboratorData.profiles.map(({ id }) => id),
+        knowledges: collaboratorData.knowledges,
+        technologies: collaboratorData.technologies,
+        role: collaboratorData.role.id,
+        seniority: collaboratorData.seniorities,
+        readiness: collaboratorData.readiness.id,
+        internalRole: collaboratorData.internalRole.id
+      });
+
+      setInitialDataCollaborator(collaboratorData);
     }
   }, [collaboratorData]);
 

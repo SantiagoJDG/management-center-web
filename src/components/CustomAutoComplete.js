@@ -1,4 +1,5 @@
 import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
+import { useState, useEffect } from 'react';
 
 const CustomAutoComplete = ({
   name,
@@ -7,8 +8,11 @@ const CustomAutoComplete = ({
   elmentCallback,
   multiple,
   requiredField,
-  showError
+  showError,
+  prechargedValue
 }) => {
+  const [value, setValue] = useState(multiple ? [] : '');
+  const [inputValue, setInputValue] = useState('');
   const filter = createFilterOptions();
 
   const handleSelectedOption = (newValue) => {
@@ -31,58 +35,75 @@ const CustomAutoComplete = ({
     }
   };
 
-  return (
-    <Autocomplete
-      id={name}
-      name={name}
-      size="small"
-      multiple={multiple}
-      freeSolo
-      selectOnFocus
-      clearOnBlur
-      options={optionList}
-      getOptionLabel={(option) => {
-        // Value selected with enter, right from the input
-        if (option.name === undefined) {
-          return '';
-        }
-        if (typeof option === 'string') {
-          return option;
-        }
-        // Add "xxx" option created dynamically
-        if (option.inputValue) {
-          return option.inputValue;
-        }
-        return option.name;
-      }}
-      filterOptions={(optionList, params) => {
-        const filtered = filter(optionList, params);
+  const getInformationView = () => {
+    return (
+      <Autocomplete
+        id={`custom-${name}`}
+        name={name}
+        size="small"
+        multiple={multiple}
+        value={value}
+        inputValue={inputValue}
+        freeSolo
+        selectOnFocus
+        clearOnBlur
+        options={optionList}
+        getOptionLabel={(option) => {
+          // Value selected with enter, right from the input
+          if (option.name === undefined) {
+            return '';
+          }
+          if (typeof option === 'string') {
+            return option;
+          }
+          // Add "xxx" option created dynamically
+          if (option.inputValue) {
+            return option.inputValue;
+          }
+          return option.name;
+        }}
+        filterOptions={(optionList, params) => {
+          const filtered = filter(optionList, params);
 
-        const { inputValue } = params;
-        // Suggest the creation of a new value
-        const isExisting = optionList.some((option) => inputValue === option.name);
-        if (inputValue !== '' && !isExisting) {
-          filtered.push({
-            inputValue,
-            name: `Crear nuevo "${inputValue}"`
-          });
-        }
+          const { inputValue } = params;
+          // Suggest the creation of a new value
+          const isExisting = optionList.some((option) => inputValue === option.name);
+          if (inputValue !== '' && !isExisting) {
+            filtered.push({
+              inputValue,
+              name: `Crear nuevo "${inputValue}"`
+            });
+          }
 
-        return filtered;
-      }}
-      onChange={(event, newValue) => {
-        handleSelectedOption(newValue);
-      }}
-      renderOption={(props, option) => (
-        <li {...props} key={option.id ? option.id : option.name}>
-          {option.name}
-        </li>
-      )}
-      renderInput={(params) => (
-        <TextField {...params} label={label} required={requiredField} error={showError} />
-      )}
-    />
-  );
+          return filtered;
+        }}
+        onChange={(event, newValue) => {
+          setValue(newValue);
+          handleSelectedOption(newValue);
+        }}
+        onInputChange={(event, newInputValue) => {
+          console.log('inoutCahnge', newInputValue);
+          setInputValue(newInputValue);
+        }}
+        renderOption={(props, option) => (
+          <li {...props} key={option.id ? option.id : option.name}>
+            {option.name}
+          </li>
+        )}
+        renderInput={(params) => (
+          <TextField {...params} label={label} required={requiredField} error={showError} />
+        )}
+      />
+    );
+  };
+
+  useEffect(() => {
+    if (prechargedValue) {
+      setValue(prechargedValue);
+    }
+  }, [prechargedValue]);
+
+  return getInformationView();
 };
 
 export default CustomAutoComplete;
