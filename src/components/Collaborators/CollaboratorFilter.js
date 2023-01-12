@@ -46,8 +46,8 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
           input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {selected.map((value) => (
-                <Chip key={value} label={value.name} />
+              {selected.map((value, index) => (
+                <Chip key={index} label={value.name} />
               ))}
             </Box>
           )}
