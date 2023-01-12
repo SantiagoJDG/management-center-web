@@ -850,7 +850,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         office: collaboratorData.office.id,
         status: collaboratorData.status.id,
         contractType: collaboratorData.contractType.id,
-        salaryAmount: '',
+        salaryAmount: collaboratorData.salary.amount,
         management: collaboratorData.management.id,
         client: collaboratorData.client.id,
         profiles: collaboratorData.profiles.map(({ id }) => id),
