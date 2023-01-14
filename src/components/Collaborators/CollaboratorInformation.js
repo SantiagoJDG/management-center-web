@@ -33,7 +33,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
         office,
         status,
         contractType,
-        salaryAmount,
+        salary,
         management,
         client,
         profiles,
@@ -116,7 +116,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                     secondary={new Intl.NumberFormat('es-ES', {
                       style: 'currency',
                       currency: 'USD'
-                    }).format(salaryAmount ? salaryAmount : 0)}
+                    }).format(salary.amount ? salary.amount : 0)}
                   />
                 </ListItem>
                 <Divider />
