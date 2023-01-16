@@ -4,6 +4,7 @@ import 'moment/locale/es';
 
 const UserInfo = ({ userDataLogged, profilePicture }) => {
   const admissionDateFormated = moment(userDataLogged.admissionDate).format('LL');
+  console.log(userDataLogged);
   if (!userDataLogged) {
     return 'There is no user Data';
   } else {
@@ -18,8 +19,8 @@ const UserInfo = ({ userDataLogged, profilePicture }) => {
           </Typography>
         </Grid>
         <Grid item>{admissionDateFormated}</Grid>
-        <Grid item>{userDataLogged.supervisor.name}</Grid>
-        <Grid item>{userDataLogged.client.name}</Grid>
+        <Grid item>{userDataLogged.supervisorData.name}</Grid>
+        <Grid item>{userDataLogged.clientData.name}</Grid>
         <Grid item>
           <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0.5 }}>
             <Typography variant="h7" align="center">
