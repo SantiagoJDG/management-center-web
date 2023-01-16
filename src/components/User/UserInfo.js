@@ -4,7 +4,6 @@ import 'moment/locale/es';
 
 const UserInfo = ({ userDataLogged, profilePicture }) => {
   const admissionDateFormated = moment(userDataLogged.admissionDate).format('LL');
-  console.log(userDataLogged);
   if (!userDataLogged) {
     return 'There is no user Data';
   } else {
