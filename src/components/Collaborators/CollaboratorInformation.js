@@ -141,7 +141,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
               <List>
                 <ListItem>
                   <ListItemText primary="Dirección" secondary={managementData.name} />
-                  <ListItemText primary="Supervidor" secondary={supervisorData.name} />
+                  <ListItemText primary="Supervisor" secondary={supervisorData.name} />
                   <ListItemText primary="Cliente" secondary={clientData.name} />
                 </ListItem>
 
