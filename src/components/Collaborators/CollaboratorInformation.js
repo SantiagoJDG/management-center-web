@@ -121,7 +121,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                     secondary={new Intl.NumberFormat('es-ES', {
                       style: 'currency',
                       currency: 'USD'
-                    }).format(salaries ? salaries[0].amount : 0)}
+                    }).format(salaries && salaries.length > 0 ? salaries[0].amount : 0)}
                   />
                 </ListItem>
                 <Divider />

@@ -836,6 +836,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     if (collaboratorData) {
       setAdmissionDate(moment(collaboratorData.admissionDate).format());
       setRelativeDateFromAdmission(moment(collaboratorData.admissionDate).fromNow());
+      const salaryAmount =
+        collaboratorData.salaries && collaboratorData.salaries.length > 0
+          ? collaboratorData.salaries[0].amount
+          : 0;
 
       setNewCollaborator({
         internalCode: collaboratorData.internalCode,
@@ -850,7 +854,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         office: collaboratorData.officeData.id,
         status: collaboratorData.statusData.id,
         contractType: collaboratorData.contractTypeData.id,
-        salaryAmount: collaboratorData.salaries[0].amount,
+        salaryAmount: salaryAmount,
         management: collaboratorData.managementData.id,
         client: collaboratorData.clientData.id,
         profiles: collaboratorData.profiles,
@@ -875,7 +879,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         office: collaboratorData.officeData,
         status: collaboratorData.statusData,
         contractType: collaboratorData.contractTypeData,
-        salaryAmount: collaboratorData.salaries[0].amount,
+        salaryAmount: salaryAmount,
         management: collaboratorData.managementData,
         client: collaboratorData.clientData,
         profiles: collaboratorData.profiles,
