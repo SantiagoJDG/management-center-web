@@ -146,20 +146,20 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
   async function saveCollaborator(collaboratorToSave) {
     try {
-      let createdCollaborator;
+      let modifiedCollaborator;
 
       if (collaboratorData) {
-        createdCollaborator = await getAxiosInstance().put(
-          '/api/collaborator/',
+        modifiedCollaborator = await getAxiosInstance().put(
+          `/api/collaborator/${collaboratorData.id}`,
           collaboratorToSave
         );
       } else {
-        createdCollaborator = await getAxiosInstance().post(
+        modifiedCollaborator = await getAxiosInstance().post(
           '/api/collaborator/',
           collaboratorToSave
         );
       }
-      return createdCollaborator.data.id;
+      return modifiedCollaborator.data.id;
     } catch (error) {
       console.error('Error while save new Collaborator...', error);
     }
@@ -410,6 +410,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     console.log(newCollaborator);
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
+      console.log(error);
       let newErrors = {};
       error.details.map((detail) => {
         newErrors[detail.path] = true;
@@ -841,27 +842,50 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         name: collaboratorData.name,
         emailSignature: collaboratorData.emailSignature,
         email: collaboratorData.email,
-        country: collaboratorData.country.id,
-        supervisor: collaboratorData.supervisor.id,
+        country: collaboratorData.residencyData.countryData.id,
+        state: collaboratorData.residencyData.stateData.id,
+        supervisor: collaboratorData.supervisorData.id,
         admissionDate: moment(collaboratorData.admissionDate).format('YYYY-MM-DD'),
-        state: collaboratorData.state.id,
-        company: collaboratorData.company.id,
-        office: collaboratorData.office.id,
-        status: collaboratorData.status.id,
-        contractType: collaboratorData.contractType.id,
-        salaryAmount: collaboratorData.salary.amount,
-        management: collaboratorData.management.id,
-        client: collaboratorData.client.id,
-        profiles: collaboratorData.profiles.map(({ id }) => id),
+        company: collaboratorData.companyData.id,
+        office: collaboratorData.officeData.id,
+        status: collaboratorData.statusData.id,
+        contractType: collaboratorData.contractTypeData.id,
+        salaryAmount: collaboratorData.salaries[0].amount,
+        management: collaboratorData.managementData.id,
+        client: collaboratorData.clientData.id,
+        profiles: collaboratorData.profiles,
         knowledges: collaboratorData.knowledges,
         technologies: collaboratorData.technologies,
-        role: collaboratorData.role.id,
-        seniority: collaboratorData.seniorities,
-        readiness: collaboratorData.readiness.id,
-        internalRole: collaboratorData.internalRole.id
+        role: collaboratorData.identityRoleData.id,
+        seniority: collaboratorData.seniorityData.id,
+        readiness: collaboratorData.readinessData.id,
+        internalRole: collaboratorData.internalRoleData.id
       });
 
-      setInitialDataCollaborator(collaboratorData);
+      setInitialDataCollaborator({
+        internalCode: collaboratorData.internalCode,
+        name: collaboratorData.name,
+        emailSignature: collaboratorData.emailSignature,
+        email: collaboratorData.email,
+        country: collaboratorData.residencyData.countryData,
+        state: collaboratorData.residencyData.stateData,
+        supervisor: collaboratorData.supervisorData,
+        admissionDate: moment(collaboratorData.admissionDate).format('YYYY-MM-DD'),
+        company: collaboratorData.companyData,
+        office: collaboratorData.officeData,
+        status: collaboratorData.statusData,
+        contractType: collaboratorData.contractTypeData,
+        salaryAmount: collaboratorData.salaries[0].amount,
+        management: collaboratorData.managementData,
+        client: collaboratorData.clientData,
+        profiles: collaboratorData.profiles,
+        knowledges: collaboratorData.knowledges,
+        technologies: collaboratorData.technologies,
+        role: collaboratorData.identityRoleData,
+        seniority: collaboratorData.seniorityData,
+        readiness: collaboratorData.readinessData,
+        internalRole: collaboratorData.internalRoleData
+      });
     }
   }, [collaboratorData]);
 
