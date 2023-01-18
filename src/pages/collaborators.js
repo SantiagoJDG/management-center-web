@@ -31,7 +31,8 @@ const Collaborators = () => {
 
   const onSearchNameValueChange = (event) => {
     setSearchValueName(event.target.value);
-    setCollaborators(filterByName(searchValueName, AllCollaborators));
+    console.log(filterByName(searchValueName, collaborators));
+    setAllCollaborators(filterByName(searchValueName, collaborators));
   };
 
   const filterByName = (searchValue, filteredCollaborators) => {
@@ -116,7 +117,7 @@ const Collaborators = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
+          <CollaboratorTable collaborators={AllCollaborators}></CollaboratorTable>
         </Grid>
       </Grid>
     </Grid>

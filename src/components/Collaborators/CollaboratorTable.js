@@ -12,6 +12,7 @@ import {
   TableSortLabel,
   Box,
   Menu,
+  Chip,
   MenuItem
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
@@ -20,19 +21,19 @@ import { useRouter } from 'next/router';
 const columns = [
   { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
   {
-    id: 'admission_date',
+    id: 'admissionDate',
     label: 'Fecha de Ingreso',
     minWidth: 170,
     align: 'center'
   },
   {
-    id: 'residency',
+    id: `residencyData.countryData.name`,
     label: 'País de Residencia',
     minWidth: 170,
     align: 'center'
   },
   {
-    id: 'office',
+    id: 'officeData.name',
     label: 'País de Contrato',
     minWidth: 170,
     align: 'center'
@@ -44,7 +45,7 @@ const columns = [
     align: 'center'
   },
   {
-    id: 'supervisor',
+    id: 'supervisorData.name',
     label: 'Supervisor',
     minWidth: 170,
     align: 'center'
@@ -58,6 +59,40 @@ const columns = [
 ];
 
 const CollaboratorTable = ({ collaborators }) => {
+  console.log(collaborators);
+  const columns = [
+    { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
+    {
+      id: 'admissionDate',
+      label: 'Fecha de Ingreso',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: `residencyData.countryData.name`,
+      label: 'País de Residencia',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'officeData.name',
+      label: 'País de Contrato',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'salary',
+      label: 'Tarifa mensual bruta',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'supervisorData.name',
+      label: 'Supervisor',
+      minWidth: 170,
+      align: 'center'
+    }
+  ];
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
@@ -119,9 +154,26 @@ const CollaboratorTable = ({ collaborators }) => {
   };
 
   const getComparator = (order, orderBy) => {
+    console.log(order);
+    console.log(orderBy);
     return order === 'desc'
       ? (firstCollab, nextCollab) => descendingComparator(firstCollab, nextCollab, orderBy)
       : (fisrtCollab, nextCollab) => -descendingComparator(fisrtCollab, nextCollab, orderBy);
+  };
+
+  Object.byString = function (row, accessProperty) {
+    var accessPropertyReplaced = accessProperty.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+    var accessPropertyNew = accessPropertyReplaced.replace(/^\./, ''); // strip a leading dot
+    var accessPropertySplitted = accessPropertyNew.split('.');
+    for (var i = 0, n = accessPropertySplitted.length; i < n; ++i) {
+      var eachProperty = accessPropertySplitted[i];
+      if (eachProperty in row) {
+        row = row[eachProperty];
+      } else {
+        return;
+      }
+    }
+    return row;
   };
 
   const stableSort = (collaborators, comparator) => {
@@ -162,15 +214,24 @@ const CollaboratorTable = ({ collaborators }) => {
                         onClick={(event) => handleOpenMenuByCollaborator(event, row.collaboratorid)}
                       >
                         {columns.map((column) => {
-                          var value = row[column.id];
+                          let value = Object.byString(row, column.id);
                           return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === 'number'
-                                ? column.format(value)
-                                : value}
-                            </TableCell>
+                            <>
+                              <TableCell key={column.id} align={column.align}>
+                                {column.format && typeof value === 'number'
+                                  ? column.format(value)
+                                  : value}
+                              </TableCell>
+                            </>
                           );
                         })}
+                        <TableCell key={row.id} align="center">
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {row.profiles.map((value, index) => (
+                              <Chip key={index} label={value.name} />
+                            ))}
+                          </Box>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
