@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import useAuth from '../hooks/useAuth';
 import { getAxiosInstance } from '../utils/axiosClient';
+import { Grid } from '@mui/material';
 
 import UserInfo from 'components/User/UserInfo';
+import UserProfile from 'components/User/UserProfile';
 
 const UserInfoPage = () => {
   const { userToken, waitingUser, userData } = useAuth();
@@ -39,7 +41,14 @@ const UserInfoPage = () => {
   const render = () => {
     if (collaboratorData) {
       return (
-        <UserInfo userDataLogged={collaboratorData} profilePicture={userData.picture}></UserInfo>
+        <Grid container spacing={2} direction="row">
+          <Grid item alignContent={'start'}>
+            <UserInfo userDataLogged={collaboratorData} profilePicture={userData.picture} />
+          </Grid>
+          <Grid item sx={{ display: 'flex', alignItems: 'center' }} xs={4}>
+            <UserProfile userDataLogged={collaboratorData} profilePicture={userData.picture} />
+          </Grid>
+        </Grid>
       );
     } else {
       return <h3>no data</h3>;
