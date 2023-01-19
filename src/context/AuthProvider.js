@@ -12,28 +12,32 @@ const AuthProvider = ({ children }) => {
   const getOwnUserData = async (email) => {
     try {
       let response = await getAxiosInstance().get('/api/user', { params: { email: email } });
-      return response.data[0];
+      return response.data;
     } catch (error) {
       console.error('Error while get Collaborators..', error);
     }
   };
 
   const getUserData = async (credential) => {
-    const { sub, name, picture, email } = jwt_decode(credential);
+    const { picture, email } = jwt_decode(credential);
     const ownData = await getOwnUserData(email);
-    return {
-      ID: sub,
-      consultecId: ownData ? ownData.id : '',
-      name: ownData ? ownData.name : name,
-      picture: picture,
-      email: email
-    };
+    if (ownData) {
+      return {
+        ...ownData,
+        picture: picture
+      };
+    }
   };
 
   const saveUserSession = async (credential) => {
     const userData = await getUserData(credential);
-    setUserData(userData);
-    setUserToken(credential);
+    if (userData) {
+      setUserData(userData);
+      setUserToken(credential);
+      sessionStorage.setItem('center-token', credential);
+    }else{
+      console.error("User doesn't exist")
+    }
     setWaitingUser(false);
   };
 
