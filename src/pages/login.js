@@ -1,6 +1,4 @@
-import { useEffect } from 'react';
-
-import { Avatar, Grid, Paper } from '@mui/material';
+import { Avatar, Button, Grid, Paper } from '@mui/material';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
 import useAuth from '../hooks/useAuth';
@@ -11,13 +9,11 @@ export default function Login() {
   const router = useRouter();
 
   const saveToken = async (response) => {
-    sessionStorage.setItem('center-token', response.credential);
     await saveUserSession(response.credential);
 
-    router.push('/collaborator?id=1');
+    router.push('/user-profile?id=1');
   };
 
-  const showLoginOptions = () => {};
   return (
     <>
       <Script
@@ -70,6 +66,18 @@ export default function Login() {
               <Grid item xs>
                 <div style={{ margin: '1rem' }} id="googleButton"></div>
               </Grid>
+              {!waitingUser && userToken && (
+                <Grid item xs>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      router.push('/user-profile?id=1');
+                    }}
+                  >
+                    Volver al sistema
+                  </Button>
+                </Grid>
+              )}
             </Grid>
           </Paper>
         </Grid>
