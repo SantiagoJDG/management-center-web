@@ -18,8 +18,8 @@ const UserInfo = ({ userDataLogged, profilePicture }) => {
           </Typography>
         </Grid>
         <Grid item>{admissionDateFormated}</Grid>
-        <Grid item>{userDataLogged.supervisorData.name}</Grid>
-        <Grid item>{userDataLogged.clientData.name}</Grid>
+        <Grid item>{userDataLogged?.supervisorData?.name}</Grid>
+        <Grid item>{userDataLogged?.clientData?.name}</Grid>
         <Grid item>
           <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0.5 }}>
             <Typography variant="h7" align="center">
@@ -27,7 +27,7 @@ const UserInfo = ({ userDataLogged, profilePicture }) => {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {userDataLogged.profiles.slice(0, 8).map((value, index) => (
+            {userDataLogged.profiles?.slice(0, 8).map((value, index) => (
               <Chip key={index} label={value.name} />
             ))}
           </Box>
@@ -40,7 +40,7 @@ const UserInfo = ({ userDataLogged, profilePicture }) => {
           </Box>
 
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {userDataLogged.knowledges.slice(0, 8).map((value, index) => (
+            {userDataLogged.knowledges?.slice(0, 8).map((value, index) => (
               <Chip key={index} label={value.name} />
             ))}
           </Box>
@@ -52,7 +52,7 @@ const UserInfo = ({ userDataLogged, profilePicture }) => {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-            {userDataLogged.technologies.slice(0, 8).map((value, index) => (
+            {userDataLogged.technologies?.slice(0, 8).map((value, index) => (
               <Chip key={index} label={value.name} />
             ))}
           </Box>

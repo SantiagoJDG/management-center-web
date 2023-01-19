@@ -13,8 +13,14 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import PersonIcon from '@mui/icons-material/Person';
 import HomeIcon from '@mui/icons-material/Home';
 
+import UserInfo from '../User/UserInfo';
+import useAuth from '../../hooks/useAuth';
+
 const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
   const router = useRouter();
+
+  const { userToken, waitingUser, userData } = useAuth();
+
   const container = window !== undefined ? () => window().document.body : undefined;
 
   const pagesList = [
@@ -90,7 +96,8 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
         }}
       >
-        {menuOptions}
+        {/* {menuOptions} */}
+        <UserInfo userDataLogged={userData}></UserInfo>
       </Drawer>
 
       <Drawer
@@ -106,7 +113,8 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
         }}
       >
-        {menuOptions}
+        {/* {menuOptions} */}
+        <UserInfo userDataLogged={userData}></UserInfo>
       </Drawer>
     </>
   );
