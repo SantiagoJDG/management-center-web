@@ -47,6 +47,9 @@ const UserProfile = ({ userDataLogged, profilePicture }) => {
   } else {
     return (
       <Grid container direction="column" justifyContent="flex-start" gap={1}>
+        <Typography variant="h5" align="start" fontWeight="bold">
+          Quiero ingresar como
+        </Typography>
         {roles.map((role, index) => {
           return (
             <Grid key={index} item>
