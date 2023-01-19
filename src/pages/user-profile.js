@@ -4,7 +4,6 @@ import useAuth from '../hooks/useAuth';
 import { getAxiosInstance } from '../utils/axiosClient';
 import { Grid } from '@mui/material';
 
-import UserInfo from 'components/User/UserInfo';
 import UserProfile from 'components/User/UserProfile';
 
 const UserInfoPage = () => {
@@ -18,10 +17,9 @@ const UserInfoPage = () => {
 
   useEffect(() => {
     if (waitingUser) return;
-    if (!userToken) return;
 
     if (!userToken) {
-      router.push('/login');
+      router.replace('/login');
       return;
     }
 
@@ -47,10 +45,7 @@ const UserInfoPage = () => {
     if (collaboratorData) {
       return (
         <Grid container spacing={2} direction="row">
-          <Grid item alignContent={'start'}>
-            <UserInfo userDataLogged={collaboratorData} profilePicture={userData.picture} />
-          </Grid>
-          <Grid item sx={{ display: 'flex', alignItems: 'center' }} xs={4}>
+          <Grid item sx={{ display: 'flex', alignItems: 'center' }} xs={12} md={10} lg={6} xl={4}>
             <UserProfile userDataLogged={collaboratorData} profilePicture={userData.picture} />
           </Grid>
         </Grid>
