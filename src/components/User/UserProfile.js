@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import { Grid, Box, Avatar, Typography, Card, CardActionArea } from '@mui/material';
 
 const UserProfile = ({ userDataLogged, profilePicture }) => {
-  const [items, setItems] = useState('');
-  const { roles } = userDataLogged;
+  const [roleProfile, setRoleProfile] = useState('');
+  const { roles, name } = userDataLogged;
 
   useEffect(() => {
-    localStorage.setItem('user', { profile: JSON.stringify(items) });
-  }, [items]);
+    localStorage.setItem('user', { profile: JSON.stringify(roleProfile) });
+  }, [roleProfile]);
 
-  const myfunction = (profile) => {
-    setItems(profile);
+  const storeUserRoleProfile = (profile) => {
+    setRoleProfile(profile);
   };
 
   const profileSelection = (profile) => {
@@ -19,7 +19,7 @@ const UserProfile = ({ userDataLogged, profilePicture }) => {
         <CardActionArea
           sx={{ display: 'flex', padding: 1, border: 'solid', justifyContent: 'flex-start' }}
           onClick={() => {
-            myfunction(profile);
+            storeUserRoleProfile(profile);
           }}
         >
           <Box
@@ -29,11 +29,11 @@ const UserProfile = ({ userDataLogged, profilePicture }) => {
               alignItems: 'center'
             }}
           >
-            <Avatar alt={userDataLogged.name} src={profilePicture} />
+            <Avatar alt={name} src={profilePicture} />
           </Box>
           <Box sx={{ justifyContent: 'start', padding: 0.5 }}>
             <Typography variant="h5" align="center" fontWeight="bold">
-              {userDataLogged.name}
+              {name}
             </Typography>
             <Typography variant="h7">{profile}</Typography>
           </Box>

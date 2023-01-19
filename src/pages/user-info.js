@@ -20,11 +20,16 @@ const UserInfoPage = () => {
     if (waitingUser) return;
     if (!userToken) return;
 
+    if (!userToken) {
+      router.push('/login');
+      return;
+    }
+
     const userId = id ? id : userData.consultecId;
     if (userId) {
       getCollaboratorData(userId);
     }
-  }, [userToken, waitingUser, id, userData]);
+  }, [userToken, waitingUser, id, userData, router]);
 
   const getCollaboratorData = async (id) => {
     try {
