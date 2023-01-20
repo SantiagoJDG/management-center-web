@@ -18,6 +18,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 import Joi from 'joi';
 import CustomAutoComplete from '../../components/CustomAutoComplete';
@@ -98,6 +99,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   const [readinessList, setReadinessList] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
 
+  const router = useRouter();
+
   const getDataInformation = (path, callbackMethod) => {
     getAxiosInstance()
       .get(path)
@@ -159,6 +162,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         modifiedCollaborator = await getAxiosInstance().post(
           '/api/collaborator/',
           collaboratorToSave
+          
         );
       }
       return modifiedCollaborator.data.id;
@@ -410,6 +414,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
   function handleSaveCollaborator() {
     console.log(newCollaborator);
+    
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
       console.log(error);
@@ -418,10 +423,14 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         newErrors[detail.path] = true;
       });
       setFormErrors(newErrors);
+   
       return;
-    }
-    
+      
+    } 
     saveCollaborator(newCollaborator);
+    router.push({
+      pathname: '/collaborators',
+    });
   }
 
   const showInformation = () => {
@@ -823,10 +832,9 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
           </AccordionDetails>
         </Accordion>
        
-       <Button   variant="contained" onClick={handleSaveCollaborator}>
+       <Button  variant="contained" onClick={handleSaveCollaborator}>
           Guardar
         </Button>
-       
         
       </Box>
     );
@@ -899,6 +907,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }, [collaboratorData]);
 
   return showInformation();
-};
+}
 
 export default EditableCollaborator;
