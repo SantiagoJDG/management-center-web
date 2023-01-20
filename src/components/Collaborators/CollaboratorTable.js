@@ -119,8 +119,8 @@ const CollaboratorTable = ({ collaborators }) => {
   };
 
   Object.byString = function (row, accessProperty) {
-    var accessPropertyReplaced = accessProperty.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
-    var accessPropertyNew = accessPropertyReplaced.replace(/^\./, ''); // strip a leading dot
+    var accessPropertyReplaced = accessProperty.replace(/\[(\w+)\]/g, '.$1');
+    var accessPropertyNew = accessPropertyReplaced.replace(/^\./, '');
     var accessPropertySplitted = accessPropertyNew.split('.');
     for (var i = 0, n = accessPropertySplitted.length; i < n; ++i) {
       var eachProperty = accessPropertySplitted[i];
