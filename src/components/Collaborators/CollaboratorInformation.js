@@ -201,6 +201,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                           <Chip
                             key={technology.id}
                             label={technology.name}
+                            color="info"
                             variant="outlined"
                             size="small"
                           />
