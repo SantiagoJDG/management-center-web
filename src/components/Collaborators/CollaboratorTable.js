@@ -173,13 +173,11 @@ const CollaboratorTable = ({ collaborators }) => {
                         {columns.map((column) => {
                           let value = Object.byString(row, column.id);
                           return (
-                            <>
-                              <TableCell key={column.id} align={column.align}>
-                                {column.format && typeof value === 'number'
-                                  ? column.format(value)
-                                  : value}
-                              </TableCell>
-                            </>
+                            <TableCell key={column.id} align={column.align}>
+                              {column.format && typeof value === 'number'
+                                ? column.format(value)
+                                : value}
+                            </TableCell>
                           );
                         })}
                         <TableCell key={row.id} align="center">

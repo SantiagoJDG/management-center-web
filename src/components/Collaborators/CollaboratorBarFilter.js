@@ -113,9 +113,9 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   }, [userToken, waitingUser]);
 
   useEffect(() => {
-    filteredCollaborator(allCollaborators, filters).then((response) => {
-      return setCollaborators(response);
-    });
+    // filteredCollaborator(allCollaborators, filters).then((response) => {
+    //   return setCollaborators(response);
+    // });
   }, [filters, setCollaborators, allCollaborators]);
   return (
     !!collaborators && (
