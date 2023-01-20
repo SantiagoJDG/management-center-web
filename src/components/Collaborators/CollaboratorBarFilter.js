@@ -99,8 +99,6 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
     getResidencies();
   }, [userToken, waitingUser]);
 
-  useEffect(() => {}, [filters, setCollaborators, allCollaborators]);
-
   return (
     !!collaborators && (
       <Grid container spacing={1}>
