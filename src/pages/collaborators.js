@@ -31,34 +31,10 @@ const Collaborators = () => {
 
   const onSearchNameValueChange = (event) => {
     setSearchValueName(event.target.value);
-    setCollaborators(filterByName(searchValueName, AllCollaborators));
-  };
-
-  const filterByName = (searchValue, filteredCollaborators) => {
-    if (!searchValue.length >= 1 || searchValue === '') {
-      return AllCollaborators;
-    } else {
-      return filteredCollaborators.filter((collaborator) => {
-        const collaboratorLowerCase = collaborator.name.toLowerCase();
-        const searchTextLowerCase = searchValue.toLowerCase();
-        return collaboratorLowerCase.includes(searchTextLowerCase);
-      });
-    }
   };
 
   const onSearchCodeValueChange = (event) => {
     setSearchValueCode(event.target.value);
-    setCollaborators(filterByCode(searchValueCode, AllCollaborators));
-  };
-
-  const filterByCode = (searchValue, filteredCollaborators) => {
-    if (!searchValue.length >= 1 || searchValue === ' ' || searchValue === '') {
-      return AllCollaborators;
-    } else {
-      return filteredCollaborators.filter((collaborator) => {
-        return collaborator.code.includes(searchValue);
-      });
-    }
   };
 
   useEffect(() => {
@@ -66,6 +42,36 @@ const Collaborators = () => {
 
     getCollaborators();
   }, [userToken, waitingUser]);
+
+  useEffect(() => {
+    const filterByName = (searchValue, filteredCollaborators) => {
+      if (!searchValue.length >= 1 || searchValue === '') {
+        return AllCollaborators;
+      } else {
+        return filteredCollaborators.filter((collaborator) => {
+          const collaboratorLowerCase = collaborator.name.toLowerCase();
+          const searchTextLowerCase = searchValue.toLowerCase();
+          return collaboratorLowerCase.includes(searchTextLowerCase);
+        });
+      }
+    };
+    setCollaborators(filterByName(searchValueName, collaborators));
+  }, [searchValueName, AllCollaborators]);
+
+  useEffect(() => {
+    const filterByCode = (searchValue, filteredCollaborators) => {
+      if (!searchValue.length >= 1) {
+        return AllCollaborators;
+      } else {
+        return filteredCollaborators.filter((collaborator) => {
+          const collaboratorCodeLowerCase = collaborator.internal_code.toLowerCase();
+          const searchTextLowerCase = searchValue.toLowerCase();
+          return collaboratorCodeLowerCase.internal_code.includes(searchTextLowerCase);
+        });
+      }
+    };
+    setCollaborators(filterByCode(searchValueName, collaborators));
+  }, [searchValueCode, AllCollaborators]);
 
   return (
     <Grid container>

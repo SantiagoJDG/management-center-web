@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from 'next/link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
@@ -162,7 +162,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         modifiedCollaborator = await getAxiosInstance().post(
           '/api/collaborator/',
           collaboratorToSave
-          
         );
       }
       return modifiedCollaborator.data.id;
@@ -284,7 +283,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setReadinessList([...readinessList, readiness]);
     }
     setNewCollaborator({ ...newCollaborator, readiness: readiness.id });
-    console.log(newCollaborator);
   }
 
   async function handleInternalRole(internalRole) {
@@ -413,8 +411,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   function handleSaveCollaborator() {
-    console.log(newCollaborator);
-    
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
       console.log(error);
@@ -423,13 +419,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         newErrors[detail.path] = true;
       });
       setFormErrors(newErrors);
-   
+
       return;
-      
-    } 
+    }
     saveCollaborator(newCollaborator);
     router.push({
-      pathname: '/collaborators',
+      pathname: '/collaborators'
     });
   }
 
@@ -831,11 +826,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
             </List>
           </AccordionDetails>
         </Accordion>
-       
-       <Button  variant="contained" onClick={handleSaveCollaborator}>
+
+        <Button variant="contained" onClick={handleSaveCollaborator}>
           Guardar
         </Button>
-        
       </Box>
     );
   };
@@ -875,8 +869,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         technologies: collaboratorData.technologies,
         role: collaboratorData.identityRoleData.id,
         seniority: collaboratorData.seniorityData.id,
-        readiness: collaboratorData.readinessData.id,
-        
+        readiness: collaboratorData.readinessData.id
       });
 
       setInitialDataCollaborator({
@@ -907,6 +900,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }, [collaboratorData]);
 
   return showInformation();
-}
+};
 
 export default EditableCollaborator;
