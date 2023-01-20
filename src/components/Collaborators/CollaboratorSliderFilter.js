@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Box, Slider, Typography } from '@mui/material';
 
 const CollaboratorSliderFilter = ({ setCollaborators, allCollaborators }) => {
-  console.log(allCollaborators);
   const [value1, setValue1] = React.useState([0, 1000]);
   const minDistance = 1000;
 
