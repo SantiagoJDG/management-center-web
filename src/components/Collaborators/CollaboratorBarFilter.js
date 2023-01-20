@@ -18,19 +18,6 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   const [profile, setProfile] = useState([]);
   const [filters, setFilters] = useState({});
 
-  const filteredCollaborator = async (collaborators, filters) => {
-    try {
-      let statePath = '/api/collaborator/filterBy';
-      return await getAxiosInstance()
-        .get(statePath, { params: filters })
-        .then((rows) => {
-          return rows.data;
-        });
-    } catch {
-      console.log('error catched');
-    }
-  };
-
   const executeFilter = (value, collaboratorKey) => {
     const filtersAdd = {
       [collaboratorKey]: value
@@ -112,11 +99,8 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
     getResidencies();
   }, [userToken, waitingUser]);
 
-  useEffect(() => {
-    // filteredCollaborator(allCollaborators, filters).then((response) => {
-    //   return setCollaborators(response);
-    // });
-  }, [filters, setCollaborators, allCollaborators]);
+  useEffect(() => {}, [filters, setCollaborators, allCollaborators]);
+
   return (
     !!collaborators && (
       <Grid container spacing={1}>
