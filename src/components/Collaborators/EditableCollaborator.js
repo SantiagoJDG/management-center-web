@@ -278,7 +278,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setReadinessList([...readinessList, readiness]);
     }
     setNewCollaborator({ ...newCollaborator, readiness: readiness.id });
-    console.log(newCollaborator);
   }
 
   async function handleInternalRole(internalRole) {
@@ -407,7 +406,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   function handleSaveCollaborator() {
-    console.log(newCollaborator);
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
       console.log(error);

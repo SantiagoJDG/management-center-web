@@ -18,48 +18,7 @@ import {
 import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
 
-const columns = [
-  { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
-  {
-    id: 'admissionDate',
-    label: 'Fecha de Ingreso',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: `residencyData.countryData.name`,
-    label: 'País de Residencia',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'officeData.name',
-    label: 'País de Contrato',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'salary',
-    label: 'Tarifa mensual bruta',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'supervisorData.name',
-    label: 'Supervisor',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'profile',
-    label: 'N1-Profile',
-    minWidth: 170,
-    align: 'center'
-  }
-];
-
 const CollaboratorTable = ({ collaborators }) => {
-  console.log(collaborators);
   const columns = [
     { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
     {
@@ -81,7 +40,7 @@ const CollaboratorTable = ({ collaborators }) => {
       align: 'center'
     },
     {
-      id: 'salary',
+      id: 'salaries[0].amount',
       label: 'Tarifa mensual bruta',
       minWidth: 170,
       align: 'center'
@@ -144,18 +103,16 @@ const CollaboratorTable = ({ collaborators }) => {
   };
 
   const descendingComparator = (firstCollab, nextCollab, orderBy) => {
-    if (nextCollab[orderBy] < firstCollab[orderBy]) {
+    if (Object.byString(nextCollab, orderBy) < Object.byString(firstCollab, orderBy)) {
       return -1;
     }
-    if (nextCollab[orderBy] > firstCollab[orderBy]) {
+    if (Object.byString(nextCollab, orderBy) > Object.byString(firstCollab, orderBy)) {
       return 1;
     }
     return 0;
   };
 
   const getComparator = (order, orderBy) => {
-    console.log(order);
-    console.log(orderBy);
     return order === 'desc'
       ? (firstCollab, nextCollab) => descendingComparator(firstCollab, nextCollab, orderBy)
       : (fisrtCollab, nextCollab) => -descendingComparator(fisrtCollab, nextCollab, orderBy);
@@ -279,31 +236,73 @@ const EnhancedTableHead = (props) => {
     onRequestSort(event, property);
   };
 
+  const columnsHeader = [
+    { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
+    {
+      id: 'admissionDate',
+      label: 'Fecha de Ingreso',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: `residencyData.countryData.name`,
+      label: 'País de Residencia',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'officeData.name',
+      label: 'País de Contrato',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'salaries[0].amount',
+      label: 'Tarifa mensual bruta',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'supervisorData.name',
+      label: 'Supervisor',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'profiles',
+      label: 'N1-Profile',
+      minWidth: 170,
+      align: 'center'
+    }
+  ];
+
   return (
     <TableHead>
       <TableRow>
-        {columns.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.align}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-            style={{ minWidth: headCell.minWidth, background: 'grey' }}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
+        {columnsHeader.map((headCell) => {
+          return (
+            <TableCell
+              key={headCell.id}
+              align={headCell.align}
+              padding={headCell.disablePadding ? 'none' : 'normal'}
+              sortDirection={orderBy === headCell.id ? order : false}
+              style={{ minWidth: headCell.minWidth, background: 'grey' }}
             >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+          );
+        })}
       </TableRow>
     </TableHead>
   );
