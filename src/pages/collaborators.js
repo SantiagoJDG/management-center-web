@@ -55,7 +55,7 @@ const Collaborators = () => {
         });
       }
     };
-    setCollaborators(filterByName(searchValueName, collaborators));
+    setCollaborators(filterByName(searchValueName, AllCollaborators));
   }, [searchValueName, AllCollaborators]);
 
   useEffect(() => {
@@ -64,13 +64,13 @@ const Collaborators = () => {
         return AllCollaborators;
       } else {
         return filteredCollaborators.filter((collaborator) => {
-          const collaboratorCodeLowerCase = collaborator.internal_code.toLowerCase();
+          const collaboratorCodeLowerCase = collaborator.internalCode.toLowerCase();
           const searchTextLowerCase = searchValue.toLowerCase();
-          return collaboratorCodeLowerCase.internal_code.includes(searchTextLowerCase);
+          return collaboratorCodeLowerCase.includes(searchTextLowerCase);
         });
       }
     };
-    setCollaborators(filterByCode(searchValueName, collaborators));
+    setCollaborators(filterByCode(searchValueCode, AllCollaborators));
   }, [searchValueCode, AllCollaborators]);
 
   return (

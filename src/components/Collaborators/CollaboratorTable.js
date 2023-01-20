@@ -19,6 +19,7 @@ import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
 
 const CollaboratorTable = ({ collaborators }) => {
+  console.log(collaborators);
   const columns = [
     { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
     {
