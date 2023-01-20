@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
@@ -21,6 +22,7 @@ import { useEffect, useState } from 'react';
 import Joi from 'joi';
 import CustomAutoComplete from '../../components/CustomAutoComplete';
 import { getAxiosInstance } from '../../utils/axiosClient';
+import { Router } from 'next/router';
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
@@ -418,6 +420,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setFormErrors(newErrors);
       return;
     }
+    
     saveCollaborator(newCollaborator);
   }
 
@@ -819,10 +822,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
             </List>
           </AccordionDetails>
         </Accordion>
-
-        <Button variant="contained" onClick={handleSaveCollaborator}>
+       
+       <Button   variant="contained" onClick={handleSaveCollaborator}>
           Guardar
         </Button>
+       
+        
       </Box>
     );
   };
@@ -863,7 +868,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         role: collaboratorData.identityRoleData.id,
         seniority: collaboratorData.seniorityData.id,
         readiness: collaboratorData.readinessData.id,
-        internalRole: collaboratorData.internalRoleData.id
+        
       });
 
       setInitialDataCollaborator({
