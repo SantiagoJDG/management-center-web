@@ -201,6 +201,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                           <Chip
                             key={technology.id}
                             label={technology.name}
+                            color="info"
                             variant="outlined"
                             size="small"
                           />
@@ -245,7 +246,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                   <ListItemText primary="Firma de correo" secondary={emailSignature} />
                   <ListItemText
                     primary="Rol dentro del sistema"
-                    secondary={internalRoleData.name}
+  
                   />
                 </ListItem>
                 <Divider />
