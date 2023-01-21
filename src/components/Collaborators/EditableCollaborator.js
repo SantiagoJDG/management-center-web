@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
@@ -17,10 +18,12 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 import Joi from 'joi';
 import CustomAutoComplete from '../../components/CustomAutoComplete';
 import { getAxiosInstance } from '../../utils/axiosClient';
+import { Router } from 'next/router';
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
@@ -95,6 +98,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   const [seniorities, setSeniorities] = useState([]);
   const [readinessList, setReadinessList] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
+
+  const router = useRouter();
 
   const getDataInformation = (path, callbackMethod) => {
     getAxiosInstance()
@@ -278,7 +283,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setReadinessList([...readinessList, readiness]);
     }
     setNewCollaborator({ ...newCollaborator, readiness: readiness.id });
-    console.log(newCollaborator);
   }
 
   async function handleInternalRole(internalRole) {
@@ -407,7 +411,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   function handleSaveCollaborator() {
-    console.log(newCollaborator);
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
       console.log(error);
@@ -416,9 +419,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         newErrors[detail.path] = true;
       });
       setFormErrors(newErrors);
+
       return;
     }
     saveCollaborator(newCollaborator);
+    router.push({
+      pathname: '/collaborators'
+    });
   }
 
   const showInformation = () => {
@@ -862,8 +869,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         technologies: collaboratorData.technologies,
         role: collaboratorData.identityRoleData.id,
         seniority: collaboratorData.seniorityData.id,
-        readiness: collaboratorData.readinessData.id,
-        internalRole: collaboratorData.internalRoleData.id
+        readiness: collaboratorData.readinessData.id
       });
 
       setInitialDataCollaborator({
