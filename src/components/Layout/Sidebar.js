@@ -1,5 +1,4 @@
 import { Drawer } from '@mui/material';
-import { useRouter } from 'next/router';
 
 import useAuth from '../../hooks/useAuth';
 import UserInfo from '../User/UserInfo';
