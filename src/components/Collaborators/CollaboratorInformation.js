@@ -41,7 +41,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
         identityRoleData,
         seniorityData,
         readinessData,
-        internalRoleData
+        roles
       } = collaborator;
 
       const admissionDateFormated = moment(admissionDate).format('LL');
@@ -246,9 +246,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                   <ListItemText primary="Firma de correo" secondary={emailSignature} />
                   <ListItemText
                     primary="Rol dentro del sistema"
-                    secondary={
-                      internalRoleData && internalRoleData.name ? internalRoleData.name : 'No data'
-                    }
+                    secondary={roles.length > 0 ? roles[0].name : ''}
                   />
                 </ListItem>
                 <Divider />

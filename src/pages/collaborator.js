@@ -102,7 +102,11 @@ const Collaborator = () => {
 
   useEffect(() => {
     if (waitingUser) return;
-    if (!userToken) return;
+
+    if (!userToken) {
+      router.replace('/login');
+      return;
+    }
 
     const userId = id ? id : userData.consultecId;
     if (userId) {

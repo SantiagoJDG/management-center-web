@@ -1,16 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Grid, Box, Avatar, Typography, Card, CardActionArea } from '@mui/material';
+import { Avatar, Box, Card, CardActionArea, Grid, Typography } from '@mui/material';
+import { useRouter } from 'next/router';
 
-const UserProfile = ({ userDataLogged, profilePicture }) => {
-  const [roleProfile, setRoleProfile] = useState('');
-  const { roles, name } = userDataLogged;
+const UserProfile = ({ userDataLogged }) => {
+  const { roles, name, picture } = userDataLogged;
 
-  useEffect(() => {
-    localStorage.setItem('user', { profile: JSON.stringify(roleProfile) });
-  }, [roleProfile]);
+  const router = useRouter();
 
   const storeUserRoleProfile = (profile) => {
-    setRoleProfile(profile);
+    localStorage.setItem('user', { profile: JSON.stringify(profile) });
+
+    router.push('/');
   };
 
   const profileSelection = (profile) => {
@@ -29,7 +28,7 @@ const UserProfile = ({ userDataLogged, profilePicture }) => {
               alignItems: 'center'
             }}
           >
-            <Avatar alt={name} src={profilePicture} />
+            <Avatar alt={name} src={picture} />
           </Box>
           <Box sx={{ justifyContent: 'start', padding: 0.5 }}>
             <Typography variant="h5" align="center" fontWeight="bold">

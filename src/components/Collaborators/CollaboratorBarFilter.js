@@ -6,7 +6,7 @@ import { Grid } from '@mui/material';
 
 import CollaboratorFilter from './CollaboratorFilter';
 
-export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
+const CollaboratorBarFilter = ({ collaborators }) => {
   const { userToken, waitingUser } = useAuth();
   const [residencies, setResidencies] = useState([]);
   const [cities, setCities] = useState([]);
@@ -22,10 +22,10 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
     const filtersAdd = {
       [collaboratorKey]: value
     };
-    setFilters((previousState) => {
-      if (!Object.keys(previousState).length) return filtersAdd;
+    setFilters((filters) => {
+      if (!Object.keys(filters).length) return filtersAdd;
       return {
-        ...previousState,
+        ...filters,
         ...filtersAdd
       };
     });
