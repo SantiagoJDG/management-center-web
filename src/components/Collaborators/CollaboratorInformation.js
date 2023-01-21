@@ -41,7 +41,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
         identityRoleData,
         seniorityData,
         readinessData,
-        roles
+        internalRoles
       } = collaborator;
 
       const admissionDateFormated = moment(admissionDate).format('LL');
@@ -60,7 +60,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
 
             <AccordionDetails>
               <List>
-                <ListItem>
+                <ListItem >
                   <ListItemText primary="Código consultor" secondary={internalCode} />
                   <ListItemText primary="Nombres y Apellidos" secondary={name} />
                   <ListItemText primary="Email corporativo" secondary={email} />
@@ -193,20 +193,20 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <ListItem>
                   <Grid container>
                     <Grid item sm={12}>
-                      <ListItemText primary="N3-tecnologías predominantes" />
-                    </Grid>
-                    <Grid item sm={12}>
-                      {technologies.map((technology) => {
-                        return (
-                          <Chip
-                            key={technology.id}
-                            label={technology.name}
-                            color="info"
-                            variant="outlined"
-                            size="small"
-                          />
-                        );
-                      })}
+                      <ListItemText
+                        primary="N3-tecnologías predominantes"
+                        secondary={technologies.map((technology) => {
+                          return (
+                            <Chip
+                              key={technology.id}
+                              label={technology.name}
+                              color="info"
+                              variant="outlined"
+                              size="small"
+                            />
+                          );
+                        })}
+                      />
                     </Grid>
                   </Grid>
                 </ListItem>
@@ -246,7 +246,17 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                   <ListItemText primary="Firma de correo" secondary={emailSignature} />
                   <ListItemText
                     primary="Rol dentro del sistema"
-                    secondary={roles.length > 0 ? roles[0].name : ''}
+                    secondary={internalRoles.map((internalRole) => {
+                      return (
+                        <Chip
+                          key={internalRole.id}
+                          label={internalRole.name}
+                          color="info"
+                          variant="outlined"
+                          size="small"
+                        />
+                      );
+                    })}
                   />
                 </ListItem>
                 <Divider />

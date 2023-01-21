@@ -1,8 +1,9 @@
 import { Grid, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import useAuth from '../hooks/useAuth';
 import { getAxiosInstance } from '../utils/axiosClient';
+import { useRouter } from 'next/router';
 
+import useAuth from '../hooks/useAuth';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
 import CollaboratorSliderFilter from 'components/Collaborators/CollaboratorSliderFilter';
 import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
@@ -14,6 +15,8 @@ const Collaborators = () => {
   const [AllCollaborators, setAllCollaborators] = useState([]);
   const [searchValueName, setSearchValueName] = useState('');
   const [searchValueCode, setSearchValueCode] = useState('');
+
+  const router = useRouter();
 
   const getCollaborators = async () => {
     try {
@@ -38,7 +41,11 @@ const Collaborators = () => {
   };
 
   useEffect(() => {
-    if (!userToken) return;
+    if (waitingUser) return;
+    if (!userToken) {
+      router.replace('/login');
+      return;
+    }
 
     getCollaborators();
   }, [userToken, waitingUser]);
