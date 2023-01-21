@@ -1,25 +1,13 @@
+import { Drawer } from '@mui/material';
 import { useRouter } from 'next/router';
-import {
-  Drawer,
-  ListItem,
-  List,
-  ListItemIcon,
-  ListItemButton,
-  ListItemText,
-  Toolbar,
-  Divider
-} from '@mui/material';
-import GroupsIcon from '@mui/icons-material/Groups';
-import PersonIcon from '@mui/icons-material/Person';
-import HomeIcon from '@mui/icons-material/Home';
 
-import UserInfo from '../User/UserInfo';
 import useAuth from '../../hooks/useAuth';
+import UserInfo from '../User/UserInfo';
 
 const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
   const router = useRouter();
 
-  const { userToken, waitingUser, userData } = useAuth();
+  const { userData } = useAuth();
 
   const container = window !== undefined ? () => window().document.body : undefined;
 
@@ -38,52 +26,6 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleRouting = (path) => {
-    router.push(path);
-  };
-
-  const getIcon = (path) => {
-    switch (path) {
-      case '/new-collaborator':
-      case '/collaborator':
-        return (
-          <ListItemIcon>
-            <PersonIcon />
-          </ListItemIcon>
-        );
-      case '/collaborators':
-        return (
-          <ListItemIcon>
-            <GroupsIcon />
-          </ListItemIcon>
-        );
-
-      default:
-        return (
-          <ListItemIcon>
-            <HomeIcon />
-          </ListItemIcon>
-        );
-    }
-  };
-
-  const menuOptions = (
-    <>
-      <Toolbar />
-      <Divider />
-      <List>
-        {pagesList.map((page, index) => (
-          <ListItem key={index} disablePadding>
-            <ListItemButton onClick={() => handleRouting(page.path)}>
-              {getIcon(page.path)}
-              <ListItemText primary={page.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-    </>
-  );
-
   return (
     <>
       <Drawer
@@ -96,7 +38,6 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
         }}
       >
-        {/* {menuOptions} */}
         <UserInfo userDataLogged={userData}></UserInfo>
       </Drawer>
 
@@ -113,7 +54,6 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
         }}
       >
-        {/* {menuOptions} */}
         <UserInfo userDataLogged={userData}></UserInfo>
       </Drawer>
     </>
