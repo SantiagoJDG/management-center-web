@@ -4,7 +4,7 @@ import Script from 'next/script';
 import useAuth from '../hooks/useAuth';
 
 export default function Login() {
-  const { userToken, waitingUser, userData, saveUserSession } = useAuth();
+  const { userToken, waitingUser, saveUserSession } = useAuth();
 
   const router = useRouter();
 

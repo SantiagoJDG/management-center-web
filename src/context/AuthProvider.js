@@ -1,6 +1,6 @@
-import { useState, useEffect, createContext } from 'react';
-import { getAxiosInstance } from '../utils/axiosClient';
 import jwt_decode from 'jwt-decode';
+import { createContext, useEffect, useState } from 'react';
+import { getAxiosInstance } from '../utils/axiosClient';
 
 const AuthContext = createContext();
 
@@ -35,8 +35,8 @@ const AuthProvider = ({ children }) => {
       setUserData(userData);
       setUserToken(credential);
       sessionStorage.setItem('center-token', credential);
-    }else{
-      console.error("User doesn't exist")
+    } else {
+      console.error("User doesn't exist");
     }
     setWaitingUser(false);
   };

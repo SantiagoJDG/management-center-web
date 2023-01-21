@@ -1,15 +1,15 @@
+import { Box, CssBaseline, Grid } from '@mui/material';
 import Head from 'next/head';
-import { Grid, Box, CssBaseline } from '@mui/material';
 
 import useAuth from '../hooks/useAuth';
 
-import Sidebar from '../components/Layout/Sidebar';
 import { useState } from 'react';
+import Sidebar from '../components/Layout/Sidebar';
 
 const drawerWidth = 240;
 
 const MainLayout = (props) => {
-  const { userToken, waitingUser, userData, saveUserSession } = useAuth();
+  const { userToken, waitingUser } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (

@@ -5,22 +5,9 @@ import useAuth from '../../hooks/useAuth';
 import UserInfo from '../User/UserInfo';
 
 const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
-  const router = useRouter();
-
   const { userData } = useAuth();
 
   const container = window !== undefined ? () => window().document.body : undefined;
-
-  const pagesList = [
-    { name: 'Home', path: '/', view: ['administrador'] },
-    {
-      name: 'Lista Consultores',
-      path: '/collaborators',
-      view: ['administrador']
-    },
-    { name: 'Mi Ficha', path: '/collaborator', view: ['administrador'] },
-    { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] }
-  ];
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
