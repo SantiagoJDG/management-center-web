@@ -161,17 +161,17 @@ const CollaboratorTable = ({ collaborators }) => {
               <TableBody>
                 {stableSort(collaborators, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
+                  .map((collaborator, index) => {
                     return (
                       <TableRow
                         hover
                         role="checkbox"
                         tabIndex={-1}
                         key={index}
-                        onClick={(event) => handleOpenMenuByCollaborator(event, row.collaboratorid)}
+                        onClick={(event) => handleOpenMenuByCollaborator(event, collaborator.id)}
                       >
                         {columns.map((column) => {
-                          let value = Object.byString(row, column.id);
+                          let value = Object.byString(collaborator, column.id);
                           return (
                             <TableCell key={column.id} align={column.align}>
                               {column.format && typeof value === 'number'
@@ -180,9 +180,9 @@ const CollaboratorTable = ({ collaborators }) => {
                             </TableCell>
                           );
                         })}
-                        <TableCell key={row.id} align="center">
+                        <TableCell key={collaborator.id} align="center">
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                            {row.profiles.map((value, index) => (
+                            {collaborator.profiles.map((value, index) => (
                               <Chip key={index} label={value.name} />
                             ))}
                           </Box>
