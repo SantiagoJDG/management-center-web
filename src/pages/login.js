@@ -11,14 +11,13 @@ export default function Login() {
   const saveToken = async (response) => {
     await saveUserSession(response.credential);
 
-    router.push('/user-profile?id=1');
+    router.push('/user-profile');
   };
 
   return (
     <>
       <Script
         src="https://accounts.google.com/gsi/client"
-        // strategy="beforeInteractive"
         onReady={() => {
           google.accounts.id.initialize({
             client_id: process.env.NEXT_PUBLIC_MANAGEMENT_CENTER_CLIENT_ID,
@@ -34,8 +33,6 @@ export default function Login() {
               shape: 'pill',
               select_by: 'auto'
             });
-
-            // google.accounts.id.prompt();
           }
         }}
       />
@@ -71,7 +68,7 @@ export default function Login() {
                   <Button
                     variant="contained"
                     onClick={() => {
-                      router.push('/user-profile?id=1');
+                      router.push('/user-profile');
                     }}
                   >
                     Volver al sistema
