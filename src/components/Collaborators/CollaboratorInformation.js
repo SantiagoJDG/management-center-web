@@ -246,7 +246,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                   <ListItemText primary="Firma de correo" secondary={emailSignature} />
                   <ListItemText
                     primary="Rol dentro del sistema"
-                    secondary={roles[0].name}
+                    secondary={roles.length > 0 ? roles[0].name : ''}
                   />
                 </ListItem>
                 <Divider />
