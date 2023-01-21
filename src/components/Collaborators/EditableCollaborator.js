@@ -422,10 +422,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
       return;
     }
-    saveCollaborator(newCollaborator);
-    router.push({
-      pathname: '/collaborators'
-    });
+    const collaboratorId = saveCollaborator(newCollaborator);
+    if (collaboratorId > 0) {
+      router.push({
+        pathname: '/collaborators'
+      });
+    }
   }
 
   const showInformation = () => {
