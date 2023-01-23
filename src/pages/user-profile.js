@@ -1,57 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import useAuth from '../hooks/useAuth';
-import { getAxiosInstance } from '../utils/axiosClient';
 import { Grid } from '@mui/material';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import useAuth from '../hooks/useAuth';
 
-import UserInfo from 'components/User/UserInfo';
 import UserProfile from 'components/User/UserProfile';
 
 const UserInfoPage = () => {
   const { userToken, waitingUser, userData } = useAuth();
-  const [collaboratorData, setCollaboratorData] = useState();
 
   const router = useRouter();
-  const {
-    query: { id }
-  } = router;
 
   useEffect(() => {
     if (waitingUser) return;
-    if (!userToken) return;
-
     if (!userToken) {
-      router.push('/login');
+      router.replace('/login');
       return;
     }
+  }, [userToken, waitingUser]);
 
-    const userId = id ? id : userData.consultecId;
-    if (userId) {
-      getCollaboratorData(userId);
-    }
-  }, [userToken, waitingUser, id, userData, router]);
-
-  const getCollaboratorData = async (id) => {
-    try {
-      let path = `/api/collaborator/${id}`;
-      await getAxiosInstance()
-        .get(path)
-        .then((response) => {
-          setCollaboratorData(response.data);
-        });
-    } catch (error) {
-      console.error('Error while get Collaborator..', error);
-    }
-  };
   const render = () => {
-    if (collaboratorData) {
+    if (userData) {
       return (
         <Grid container spacing={2} direction="row">
-          <Grid item alignContent={'start'}>
-            <UserInfo userDataLogged={collaboratorData} profilePicture={userData.picture} />
-          </Grid>
-          <Grid item sx={{ display: 'flex', alignItems: 'center' }} xs={4}>
-            <UserProfile userDataLogged={collaboratorData} profilePicture={userData.picture} />
+          <Grid item sx={{ display: 'flex', alignItems: 'center' }} xs={12} md={10} lg={6} xl={4}>
+            <UserProfile userDataLogged={userData} />
           </Grid>
         </Grid>
       );
