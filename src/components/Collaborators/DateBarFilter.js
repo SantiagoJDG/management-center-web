@@ -14,17 +14,9 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
 
   useEffect(() => {
     if (!userToken) return;
-  }, [userToken, waitingUser]);
-
-  useEffect(() => {
-    if (!endDate) return;
+    if (!endDate || !initialDate) return;
     executeFilter();
-  }, [initialDate]);
-
-  useEffect(() => {
-    if (!initialDate) return;
-    executeFilter();
-  }, [endDate]);
+  }, [userToken, waitingUser, initialDate, endDate]);
 
   const setCollaboratorAdmissionDate = async () => {
     return new Promise((res) => {
