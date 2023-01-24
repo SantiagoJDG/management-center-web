@@ -20,7 +20,10 @@ const CollaboratorSliderFilter = ({ setCollaborators, allCollaborators }) => {
 
   const filterBySalary = () => {
     return allCollaborators.filter((collaborator) => {
-      if (collaborator.salary > value1[0] && collaborator.salary < value1[1]) {
+      if (
+        collaborator.salaries[0].amount > value1[0] &&
+        collaborator.salaries[0].amount < value1[1]
+      ) {
         return true;
       } else {
         return false;

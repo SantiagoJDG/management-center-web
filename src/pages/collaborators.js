@@ -1,8 +1,9 @@
 import { Grid, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import useAuth from '../hooks/useAuth';
 import { getAxiosInstance } from '../utils/axiosClient';
+import { useRouter } from 'next/router';
 
+import useAuth from '../hooks/useAuth';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
 import CollaboratorSliderFilter from 'components/Collaborators/CollaboratorSliderFilter';
 import CollaboratorTable from 'components/Collaborators/CollaboratorTable';
@@ -14,6 +15,8 @@ const Collaborators = () => {
   const [AllCollaborators, setAllCollaborators] = useState([]);
   const [searchValueName, setSearchValueName] = useState('');
   const [searchValueCode, setSearchValueCode] = useState('');
+
+  const router = useRouter();
 
   const getCollaborators = async () => {
     try {
@@ -31,41 +34,51 @@ const Collaborators = () => {
 
   const onSearchNameValueChange = (event) => {
     setSearchValueName(event.target.value);
-    setCollaborators(filterByName(searchValueName, AllCollaborators));
-  };
-
-  const filterByName = (searchValue, filteredCollaborators) => {
-    if (!searchValue.length >= 1 || searchValue === '') {
-      return AllCollaborators;
-    } else {
-      return filteredCollaborators.filter((collaborator) => {
-        const collaboratorLowerCase = collaborator.name.toLowerCase();
-        const searchTextLowerCase = searchValue.toLowerCase();
-        return collaboratorLowerCase.includes(searchTextLowerCase);
-      });
-    }
   };
 
   const onSearchCodeValueChange = (event) => {
     setSearchValueCode(event.target.value);
-    setCollaborators(filterByCode(searchValueCode, AllCollaborators));
-  };
-
-  const filterByCode = (searchValue, filteredCollaborators) => {
-    if (!searchValue.length >= 1 || searchValue === ' ' || searchValue === '') {
-      return AllCollaborators;
-    } else {
-      return filteredCollaborators.filter((collaborator) => {
-        return collaborator.code.includes(searchValue);
-      });
-    }
   };
 
   useEffect(() => {
-    if (!userToken) return;
+    if (waitingUser) return;
+    if (!userToken) {
+      router.replace('/login');
+      return;
+    }
 
     getCollaborators();
   }, [userToken, waitingUser]);
+
+  useEffect(() => {
+    const filterByName = (searchValue, filteredCollaborators) => {
+      if (!searchValue.length >= 1 || searchValue === '') {
+        return AllCollaborators;
+      } else {
+        return filteredCollaborators.filter((collaborator) => {
+          const collaboratorLowerCase = collaborator.name.toLowerCase();
+          const searchTextLowerCase = searchValue.toLowerCase();
+          return collaboratorLowerCase.includes(searchTextLowerCase);
+        });
+      }
+    };
+    setCollaborators(filterByName(searchValueName, AllCollaborators));
+  }, [searchValueName, AllCollaborators]);
+
+  useEffect(() => {
+    const filterByCode = (searchValue, filteredCollaborators) => {
+      if (!searchValue.length >= 1) {
+        return AllCollaborators;
+      } else {
+        return filteredCollaborators.filter((collaborator) => {
+          const collaboratorCodeLowerCase = collaborator.internalCode.toLowerCase();
+          const searchTextLowerCase = searchValue.toLowerCase();
+          return collaboratorCodeLowerCase.includes(searchTextLowerCase);
+        });
+      }
+    };
+    setCollaborators(filterByCode(searchValueCode, AllCollaborators));
+  }, [searchValueCode, AllCollaborators]);
 
   return (
     <Grid container>

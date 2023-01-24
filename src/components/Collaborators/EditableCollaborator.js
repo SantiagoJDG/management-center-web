@@ -16,6 +16,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import moment from 'moment';
 import 'moment/locale/es';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import Joi from 'joi';
@@ -43,7 +44,7 @@ const CollaboratorSchema = Joi.object({
   seniority: Joi.any(),
   readiness: Joi.any(),
   emailSignature: Joi.string().required(),
-  internalRole: Joi.number().required(),
+  internalRoles: Joi.array().required(),
   admissionDate: Joi.any()
 });
 
@@ -68,7 +69,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     seniority: null,
     readiness: null,
     emailSignature: '',
-    internalRole: null,
+    internalRoles: null,
     admissionDate: moment().format('YYYY-MM-DD')
   });
   const [initialDataCollaborator, setInitialDataCollaborator] = useState({});
@@ -96,6 +97,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   const [readinessList, setReadinessList] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
 
+  const router = useRouter();
+
   const getDataInformation = (path, callbackMethod) => {
     getAxiosInstance()
       .get(path)
@@ -107,6 +110,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       });
   };
 
+  const preChargeStatus = (statusList) => {
+    setStatusList(statusList);
+    if (!collaboratorData) {
+      setNewCollaborator({ ...newCollaborator, status: statusList[0].id });
+    }
+  };
+
   const getResidenceData = async () => {
     getDataInformation('/api/residence/countries', setCountries);
     getDataInformation('/api/residence/states', setStates);
@@ -116,7 +126,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     getDataInformation('/api/hiring/offices', setOffices);
     getDataInformation('/api/hiring/types', setContractTypes);
     getDataInformation('/api/hiring/companies', setCompanies);
-    getDataInformation('/api/hiring/status', setStatusList);
+    getDataInformation('/api/hiring/status', preChargeStatus);
   };
 
   const getOperationData = async () => {
@@ -159,7 +169,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
           collaboratorToSave
         );
       }
-      return modifiedCollaborator.data.id;
+      return modifiedCollaborator.data;
     } catch (error) {
       console.error('Error while save new Collaborator...', error);
     }
@@ -278,17 +288,40 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setReadinessList([...readinessList, readiness]);
     }
     setNewCollaborator({ ...newCollaborator, readiness: readiness.id });
-    console.log(newCollaborator);
   }
 
-  async function handleInternalRole(internalRole) {
-    if (!internalRole) return;
-    if (!internalRole.id) {
-      let idReturned = await saveNewItem('/api/consultec-identity/readiness', internalRole);
-      internalRole.id = idReturned;
-      setInternalRoles([...internalRoles, internalRole]);
-    }
-    setNewCollaborator({ ...newCollaborator, internalRole: internalRole.id });
+  async function handleInternalRoles(_internalRoles) {
+    if (!_internalRoles) return;
+
+    let actualInternalRoles = newCollaborator.internalRoles
+      ? [...newCollaborator.internalRoles]
+      : [];
+
+    const newInternalRoles = _internalRoles.map((internalRole, index) => {
+      if (internalRole.inputValue) {
+        const internalRoleCreatedBefore = actualInternalRoles.find(
+          (item) => item.name === internalRole.inputValue
+        );
+        if (!internalRoleCreatedBefore) {
+          saveNewItem('/api/operation/profiles', internalRole).then((idReturned) => {
+            newInternalRoles[index] = {
+              id: idReturned,
+              name: internalRole.inputValue
+            };
+
+            setNewCollaborator({ ...newCollaborator, internalRoles: newInternalRoles });
+            setInternalRoles([...profiles, newInternalRoles[index]]);
+          });
+          return {
+            name: internalRole.inputValue
+          };
+        }
+        return internalRoleCreatedBefore;
+      }
+      return internalRole;
+    });
+
+    setNewCollaborator({ ...newCollaborator, internalRoles: [...newInternalRoles] });
   }
 
   async function handleProfiles(_profiles) {
@@ -406,8 +439,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     setRelativeDateFromAdmission(`${yearOfRelativeDate} y ${monthOfRelativeDate}`);
   }
 
-  function handleSaveCollaborator() {
-    console.log(newCollaborator);
+  async function handleSaveCollaborator() {
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
       console.log(error);
@@ -416,9 +448,15 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         newErrors[detail.path] = true;
       });
       setFormErrors(newErrors);
+
       return;
     }
-    saveCollaborator(newCollaborator);
+    const collaboratorId = await saveCollaborator(newCollaborator);
+    if (collaboratorId > 0) {
+      router.push({
+        pathname: '/collaborators'
+      });
+    }
   }
 
   const showInformation = () => {
@@ -588,7 +626,11 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       optionList={statusList}
                       elmentCallback={handleStatus}
                       requiredField={true}
-                      prechargedValue={initialDataCollaborator.status}
+                      prechargedValue={
+                        initialDataCollaborator.status
+                          ? initialDataCollaborator.status
+                          : statusList[0]
+                      }
                     />
                   </Grid>
                 </Grid>
@@ -808,9 +850,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       name="internalRole"
                       label="Rol dentro del sistema"
                       optionList={internalRoles}
-                      elmentCallback={handleInternalRole}
+                      elmentCallback={handleInternalRoles}
                       requiredField={true}
-                      prechargedValue={initialDataCollaborator.internalRole}
+                      multiple={true}
+                      prechargedValue={initialDataCollaborator.internalRoles}
                     />
                   </Grid>
                 </Grid>
@@ -863,7 +906,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         role: collaboratorData.identityRoleData.id,
         seniority: collaboratorData.seniorityData.id,
         readiness: collaboratorData.readinessData.id,
-        internalRole: collaboratorData.internalRoleData.id
+        internalRoles: collaboratorData.internalRoles
       });
 
       setInitialDataCollaborator({
@@ -888,7 +931,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         role: collaboratorData.identityRoleData,
         seniority: collaboratorData.seniorityData,
         readiness: collaboratorData.readinessData,
-        internalRole: collaboratorData.internalRoleData
+        internalRoles: collaboratorData.internalRoles
       });
     }
   }, [collaboratorData]);

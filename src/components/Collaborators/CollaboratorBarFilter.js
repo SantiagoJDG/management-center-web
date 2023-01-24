@@ -117,6 +117,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       return setCollaborators(response);
     });
   }, [filters, setCollaborators, allCollaborators]);
+
   return (
     !!collaborators && (
       <Grid container spacing={1}>
@@ -126,7 +127,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Paises'}
               dropdownData={residencies}
               filterData={executeFilter}
-              collaboratorKey={'residency'}
+              collaboratorKey={'countryData'}
             />
           </Grid>
 
@@ -135,7 +136,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Ciudad'}
               dropdownData={cities}
               filterData={executeFilter}
-              collaboratorKey={'state'}
+              collaboratorKey={'stateData'}
             />
           </Grid>
 
@@ -171,7 +172,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'N1'}
               dropdownData={profile}
               filterData={executeFilter}
-              collaboratorKey={'profileid'}
+              collaboratorKey={'profiles'}
             />
           </Grid>
 
@@ -180,7 +181,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'N2'}
               dropdownData={knowledge}
               filterData={executeFilter}
-              collaboratorKey={'knowledgeid'}
+              collaboratorKey={'knowledges'}
             />
           </Grid>
 
@@ -189,7 +190,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'N3'}
               dropdownData={technologies}
               filterData={executeFilter}
-              collaboratorKey={'knowledgeid'}
+              collaboratorKey={'technologies'}
             />
           </Grid>
         </Grid>

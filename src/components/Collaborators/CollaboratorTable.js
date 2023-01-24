@@ -12,52 +12,46 @@ import {
   TableSortLabel,
   Box,
   Menu,
+  Chip,
   MenuItem
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
 
-const columns = [
-  { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
-  {
-    id: 'admission_date',
-    label: 'Fecha de Ingreso',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'residency',
-    label: 'País de Residencia',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'office',
-    label: 'País de Contrato',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'salary',
-    label: 'Tarifa mensual bruta',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'supervisor',
-    label: 'Supervisor',
-    minWidth: 170,
-    align: 'center'
-  },
-  {
-    id: 'profile',
-    label: 'N1-Profile',
-    minWidth: 170,
-    align: 'center'
-  }
-];
-
 const CollaboratorTable = ({ collaborators }) => {
+  const columns = [
+    { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
+    {
+      id: 'admissionDate',
+      label: 'Fecha de Ingreso',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: `residencyData.countryData.name`,
+      label: 'País de Residencia',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'officeData.name',
+      label: 'País de Contrato',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'salaries[0].amount',
+      label: 'Tarifa mensual bruta',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'supervisorData.name',
+      label: 'Supervisor',
+      minWidth: 170,
+      align: 'center'
+    }
+  ];
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [page, setPage] = useState(0);
@@ -109,10 +103,10 @@ const CollaboratorTable = ({ collaborators }) => {
   };
 
   const descendingComparator = (firstCollab, nextCollab, orderBy) => {
-    if (nextCollab[orderBy] < firstCollab[orderBy]) {
+    if (Object.byString(nextCollab, orderBy) < Object.byString(firstCollab, orderBy)) {
       return -1;
     }
-    if (nextCollab[orderBy] > firstCollab[orderBy]) {
+    if (Object.byString(nextCollab, orderBy) > Object.byString(firstCollab, orderBy)) {
       return 1;
     }
     return 0;
@@ -122,6 +116,21 @@ const CollaboratorTable = ({ collaborators }) => {
     return order === 'desc'
       ? (firstCollab, nextCollab) => descendingComparator(firstCollab, nextCollab, orderBy)
       : (fisrtCollab, nextCollab) => -descendingComparator(fisrtCollab, nextCollab, orderBy);
+  };
+
+  Object.byString = function (row, accessProperty) {
+    var accessPropertyReplaced = accessProperty.replace(/\[(\w+)\]/g, '.$1');
+    var accessPropertyNew = accessPropertyReplaced.replace(/^\./, '');
+    var accessPropertySplitted = accessPropertyNew.split('.');
+    for (var i = 0, n = accessPropertySplitted.length; i < n; ++i) {
+      var eachProperty = accessPropertySplitted[i];
+      if (eachProperty in row) {
+        row = row[eachProperty];
+      } else {
+        return;
+      }
+    }
+    return row;
   };
 
   const stableSort = (collaborators, comparator) => {
@@ -152,17 +161,17 @@ const CollaboratorTable = ({ collaborators }) => {
               <TableBody>
                 {stableSort(collaborators, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
+                  .map((collaborator, index) => {
                     return (
                       <TableRow
                         hover
                         role="checkbox"
                         tabIndex={-1}
                         key={index}
-                        onClick={(event) => handleOpenMenuByCollaborator(event, row.collaboratorid)}
+                        onClick={(event) => handleOpenMenuByCollaborator(event, collaborator.id)}
                       >
                         {columns.map((column) => {
-                          var value = row[column.id];
+                          let value = Object.byString(collaborator, column.id);
                           return (
                             <TableCell key={column.id} align={column.align}>
                               {column.format && typeof value === 'number'
@@ -171,6 +180,13 @@ const CollaboratorTable = ({ collaborators }) => {
                             </TableCell>
                           );
                         })}
+                        <TableCell key={collaborator.id} align="center">
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                            {collaborator.profiles.map((value, index) => (
+                              <Chip key={index} label={value.name} />
+                            ))}
+                          </Box>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -218,31 +234,73 @@ const EnhancedTableHead = (props) => {
     onRequestSort(event, property);
   };
 
+  const columnsHeader = [
+    { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
+    {
+      id: 'admissionDate',
+      label: 'Fecha de Ingreso',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: `residencyData.countryData.name`,
+      label: 'País de Residencia',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'officeData.name',
+      label: 'País de Contrato',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'salaries[0].amount',
+      label: 'Tarifa mensual bruta',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'supervisorData.name',
+      label: 'Supervisor',
+      minWidth: 170,
+      align: 'center'
+    },
+    {
+      id: 'profiles',
+      label: 'N1-Profile',
+      minWidth: 170,
+      align: 'center'
+    }
+  ];
+
   return (
     <TableHead>
       <TableRow>
-        {columns.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.align}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-            style={{ minWidth: headCell.minWidth, background: 'grey' }}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
+        {columnsHeader.map((headCell) => {
+          return (
+            <TableCell
+              key={headCell.id}
+              align={headCell.align}
+              padding={headCell.disablePadding ? 'none' : 'normal'}
+              sortDirection={orderBy === headCell.id ? order : false}
+              style={{ minWidth: headCell.minWidth, background: 'grey' }}
             >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+          );
+        })}
       </TableRow>
     </TableHead>
   );

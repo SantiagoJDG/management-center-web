@@ -14,13 +14,15 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
 
   useEffect(() => {
     if (!userToken) return;
-  }, [userToken, waitingUser]);
+    if (!endDate || !initialDate) return;
+    executeFilter();
+  }, [userToken, waitingUser, initialDate, endDate]);
 
   const setCollaboratorAdmissionDate = async () => {
     return new Promise((res) => {
       const admissionDateRaw = [];
       for (let index = 0; index < allCollaborators.length; index++) {
-        admissionDateRaw.push(allCollaborators[index].admission_date);
+        admissionDateRaw.push(allCollaborators[index].admissionDate);
       }
       if (admissionDateRaw.length === allCollaborators.length) {
         setAdmissionDate(admissionDateRaw);
@@ -33,21 +35,17 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
     setCollaboratorAdmissionDate();
     const startFilter = new Date(newValue);
     setInitialDate(startFilter);
-    if (!initialDate) return;
-    executeFilter();
   };
 
   const onChangeEndDate = (newValue) => {
     setCollaboratorAdmissionDate();
     const endFilter = new Date(newValue);
     setEndDate(endFilter);
-    if (!endDate) return;
-    executeFilter();
   };
 
   const executeFilter = () => {
     const betweenDates = isBetweenDates(initialDate, endDate, admissionDate);
-    setCollaborators(filteredCollaborator(allCollaborators, betweenDates, 'admission_date'));
+    setCollaborators(filteredCollaborator(allCollaborators, betweenDates, 'admissionDate'));
   };
 
   const filteredCollaborator = (collaborators, betweenDates, collaboratorKey) => {

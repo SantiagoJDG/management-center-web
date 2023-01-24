@@ -82,7 +82,6 @@ const CustomAutoComplete = ({
           handleSelectedOption(newValue);
         }}
         onInputChange={(event, newInputValue) => {
-          console.log('inoutCahnge', newInputValue);
           setInputValue(newInputValue);
         }}
         renderOption={(props, option) => (
