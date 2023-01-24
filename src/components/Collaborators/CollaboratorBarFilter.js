@@ -127,7 +127,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Paises'}
               dropdownData={residencies}
               filterData={executeFilter}
-              collaboratorKey={'country'}
+              collaboratorKey={'countryData'}
             />
           </Grid>
 
@@ -136,7 +136,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Ciudad'}
               dropdownData={cities}
               filterData={executeFilter}
-              collaboratorKey={'state'}
+              collaboratorKey={'stateData'}
             />
           </Grid>
 
