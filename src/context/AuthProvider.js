@@ -30,12 +30,13 @@ const AuthProvider = ({ children }) => {
   };
 
   const saveUserSession = async (credential) => {
+    sessionStorage.setItem('center-token', credential);
     const userData = await getUserData(credential);
     if (userData) {
       setUserData(userData);
       setUserToken(credential);
-      sessionStorage.setItem('center-token', credential);
     } else {
+      sessionStorage.removeItem('center-token');
       console.error("User doesn't exist");
     }
     setWaitingUser(false);
