@@ -127,7 +127,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Paises'}
               dropdownData={residencies}
               filterData={executeFilter}
-              collaboratorKey={'country'}
+              collaboratorKey={'$residencyData.countryData.id$'}
             />
           </Grid>
 
@@ -136,7 +136,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'Ciudad'}
               dropdownData={cities}
               filterData={executeFilter}
-              collaboratorKey={'state'}
+              collaboratorKey={'$residencyData.stateData.id$'}
             />
           </Grid>
 
@@ -172,7 +172,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'N1'}
               dropdownData={profile}
               filterData={executeFilter}
-              collaboratorKey={'profiles'}
+              collaboratorKey={'$profiles.id$'}
             />
           </Grid>
 
@@ -181,7 +181,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'N2'}
               dropdownData={knowledge}
               filterData={executeFilter}
-              collaboratorKey={'knowledges'}
+              collaboratorKey={'$knowledges.id$'}
             />
           </Grid>
 
@@ -190,7 +190,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'N3'}
               dropdownData={technologies}
               filterData={executeFilter}
-              collaboratorKey={'technologies'}
+              collaboratorKey={'$technologies.id$'}
             />
           </Grid>
         </Grid>
