@@ -13,7 +13,7 @@ import {
 import { Box } from '@mui/system';
 import moment from 'moment';
 import 'moment/locale/es';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const CollaboratorInformation = ({ collaboratorData }) => {
   const [collaborator, setCollaborator] = useState();
@@ -60,7 +60,7 @@ const CollaboratorInformation = ({ collaboratorData }) => {
 
             <AccordionDetails>
               <List>
-                <ListItem >
+                <ListItem>
                   <ListItemText primary="Código consultor" secondary={internalCode} />
                   <ListItemText primary="Nombres y Apellidos" secondary={name} />
                   <ListItemText primary="Email corporativo" secondary={email} />
