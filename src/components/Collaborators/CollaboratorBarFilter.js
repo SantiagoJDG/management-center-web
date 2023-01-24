@@ -6,7 +6,7 @@ import { Grid } from '@mui/material';
 
 import CollaboratorFilter from './CollaboratorFilter';
 
-const CollaboratorBarFilter = ({ collaborators }) => {
+export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
   const { userToken, waitingUser } = useAuth();
   const [residencies, setResidencies] = useState([]);
   const [cities, setCities] = useState([]);
@@ -18,14 +18,27 @@ const CollaboratorBarFilter = ({ collaborators }) => {
   const [profile, setProfile] = useState([]);
   const [filters, setFilters] = useState({});
 
+  const filteredCollaborator = async (collaborators, filters) => {
+    try {
+      let statePath = '/api/collaborator/filterBy';
+      return await getAxiosInstance()
+        .get(statePath, { params: filters })
+        .then((rows) => {
+          return rows.data;
+        });
+    } catch {
+      console.log('error catched');
+    }
+  };
+
   const executeFilter = (value, collaboratorKey) => {
     const filtersAdd = {
       [collaboratorKey]: value
     };
-    setFilters((filters) => {
-      if (!Object.keys(filters).length) return filtersAdd;
+    setFilters((previousState) => {
+      if (!Object.keys(previousState).length) return filtersAdd;
       return {
-        ...filters,
+        ...previousState,
         ...filtersAdd
       };
     });
@@ -99,6 +112,12 @@ const CollaboratorBarFilter = ({ collaborators }) => {
     getResidencies();
   }, [userToken, waitingUser]);
 
+  useEffect(() => {
+    filteredCollaborator(allCollaborators, filters).then((response) => {
+      return setCollaborators(response);
+    });
+  }, [filters, setCollaborators, allCollaborators]);
+
   return (
     !!collaborators && (
       <Grid container spacing={1}>
@@ -108,7 +127,7 @@ const CollaboratorBarFilter = ({ collaborators }) => {
               title={'Paises'}
               dropdownData={residencies}
               filterData={executeFilter}
-              collaboratorKey={'residency'}
+              collaboratorKey={'country'}
             />
           </Grid>
 
@@ -153,7 +172,7 @@ const CollaboratorBarFilter = ({ collaborators }) => {
               title={'N1'}
               dropdownData={profile}
               filterData={executeFilter}
-              collaboratorKey={'profileid'}
+              collaboratorKey={'profiles'}
             />
           </Grid>
 
@@ -162,7 +181,7 @@ const CollaboratorBarFilter = ({ collaborators }) => {
               title={'N2'}
               dropdownData={knowledge}
               filterData={executeFilter}
-              collaboratorKey={'knowledgeid'}
+              collaboratorKey={'knowledges'}
             />
           </Grid>
 
@@ -171,7 +190,7 @@ const CollaboratorBarFilter = ({ collaborators }) => {
               title={'N3'}
               dropdownData={technologies}
               filterData={executeFilter}
-              collaboratorKey={'knowledgeid'}
+              collaboratorKey={'technologies'}
             />
           </Grid>
         </Grid>
