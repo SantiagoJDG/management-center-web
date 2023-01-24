@@ -181,7 +181,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
               title={'N2'}
               dropdownData={knowledge}
               filterData={executeFilter}
-              collaboratorKey={'technologies'}
+              collaboratorKey={'knowledges'}
             />
           </Grid>
 
