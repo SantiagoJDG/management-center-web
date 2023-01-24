@@ -17,6 +17,7 @@ export default function Login() {
   return (
     <>
       <Script
+        /*global google */
         src="https://accounts.google.com/gsi/client"
         onReady={() => {
           google.accounts.id.initialize({
