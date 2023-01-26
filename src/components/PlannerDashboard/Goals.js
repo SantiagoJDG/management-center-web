@@ -9,7 +9,8 @@ import {
   Divider
 } from '@mui/material';
 
-const Goals = () => {
+const Goals = ({ goals }) => {
+  console.log(goals);
   return (
     <Grid container>
       <Card sx={{ width: '100%' }}>
@@ -20,24 +21,26 @@ const Goals = () => {
               G
             </Avatar>
           }
-          title={'My Goals'}
+          title={'Goals'}
         />
         <CardContent>
-          <Card>
-            <CardHeader subheader={'My super Goal'} />
-            <CardContent>
-              <Stack
-                direction="column"
-                spacing={1}
-                divider={<Divider orientation="horizontal" flexItem />}
-              >
-                <Typography variant="body1">ciernfne4igt</Typography>
-                <Typography variant="body1">f3f3f3wrf</Typography>
-                <Typography variant="body1">fwerfef4g5pl,</Typography>
-                <Typography variant="body1">k loienq2w3</Typography>
-              </Stack>
-            </CardContent>
-          </Card>
+          {goals.goal.map((eachGoal) => {
+            <Card>
+              <CardHeader subheader={'My super Goal'} />
+              <CardContent>
+                <Stack
+                  direction="column"
+                  spacing={1}
+                  divider={<Divider orientation="horizontal" flexItem />}
+                >
+                  <Typography variant="body1">ciernfne4igt</Typography>
+                  <Typography variant="body1">f3f3f3wrf</Typography>
+                  <Typography variant="body1">fwerfef4g5pl,</Typography>
+                  <Typography variant="body1">k loienq2w3</Typography>
+                </Stack>
+              </CardContent>
+            </Card>;
+          })}
         </CardContent>
       </Card>
     </Grid>
