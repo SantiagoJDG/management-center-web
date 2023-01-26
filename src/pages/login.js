@@ -1,7 +1,7 @@
 import { Avatar, Button, Grid, Paper } from '@mui/material';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
-import useAuth from '../hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 
 export default function Login() {
   const { userToken, waitingUser, saveUserSession } = useAuth();

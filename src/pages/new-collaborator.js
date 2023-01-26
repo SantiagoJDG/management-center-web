@@ -5,8 +5,8 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { useEffect, useState } from 'react';
 
-import EditableCollaborator from '../components/Collaborators/EditableCollaborator';
-import useAuth from '../hooks/useAuth';
+import EditableCollaborator from 'components/Collaborators/EditableCollaborator';
+import useAuth from 'hooks/useAuth';
 
 const Collaborator = () => {
   const { userToken, waitingUser, userData } = useAuth();

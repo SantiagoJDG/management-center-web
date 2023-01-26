@@ -92,6 +92,7 @@ const CustomAutoComplete = ({
         renderInput={(params) => (
           <TextField {...params} label={label} required={requiredField} error={showError} />
         )}
+        data-testid="autocompleteComponent"
       />
     );
   };
