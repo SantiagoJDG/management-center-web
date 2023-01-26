@@ -1,12 +1,22 @@
 import { Grid, Card, CardHeader } from '@mui/material';
+import Goals from 'components/PlannerDashboard/Goals';
+import Strategy from 'components/PlannerDashboard/Strategy';
 
 const Objective = () => {
   return (
-    <Grid container sx={{ padding: 1 }}>
+    <>
       <Card sx={{ width: '100%', bgcolor: 'primary.main' }}>
         <CardHeader title="My Objective" />
       </Card>
-    </Grid>
+      <Grid container sx={{ paddingTop: 1 }} direction="row" spacing={1}>
+        <Grid item lg={3} xl={3}>
+          <Goals />
+        </Grid>
+        <Grid item lg={9} xl={9}>
+          <Strategy />
+        </Grid>
+      </Grid>
+    </>
   );
 };
 

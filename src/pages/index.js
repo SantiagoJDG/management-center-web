@@ -27,7 +27,7 @@ export default function Home() {
       view: ['administrador']
     },
     {
-      name: 'Planificacion Dashboard',
+      name: 'Planificacion Estrategica',
       path: '/planner',
       view: ['administrador']
     },
