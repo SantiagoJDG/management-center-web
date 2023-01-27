@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import Actions from './Actions';
 
-const Measures = () => {
+const Measures = ({ measures }) => {
   return (
     <Grid container>
       <Card sx={{ width: '100%' }}>
@@ -28,22 +28,33 @@ const Measures = () => {
             <Grid item lg={4} xl={4}>
               <Card>
                 <CardHeader subheader={'Dashboard'} />
-                <CardContent>
-                  <Stack
-                    direction="column"
-                    spacing={1}
-                    divider={<Divider orientation="horizontal" flexItem />}
-                  >
-                    <Typography variant="body1">dwefer</Typography>
-                    <Typography variant="body1">dwefer</Typography>
-                    <Typography variant="body1">dwefer</Typography>
-                    <Typography variant="body1">dwefer</Typography>
-                  </Stack>
-                </CardContent>
+                {measures?.map((eachMeasurable, index) => {
+                  return (
+                    <Card key={index} sx={{ margin: 0.5 }}>
+                      <CardContent>
+                        <Stack
+                          direction="column"
+                          spacing={1}
+                          divider={<Divider orientation="horizontal" flexItem />}
+                        >
+                          {eachMeasurable.measurable_objectives.dashboard.map(
+                            (eachMeasurableDescription, index) => {
+                              return (
+                                <Typography variant="body1" key={index}>
+                                  {eachMeasurableDescription}
+                                </Typography>
+                              );
+                            }
+                          )}
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </Card>
             </Grid>
             <Grid item lg={8} xl={8}>
-              <Actions />
+              <Actions measures={measures} />
             </Grid>
           </Grid>
         </CardContent>

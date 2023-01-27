@@ -10,7 +10,50 @@ import {
 } from '@mui/material';
 import Measures from './Measures';
 
-const Strategy = () => {
+const Strategy = ({ strategies }) => {
+  const measures = [
+    {
+      id: 1,
+      strategy_id: 1,
+      measurable_objectives: {
+        id: 1,
+        dashboard: [
+          'ahora estamos lograndolo',
+          'giran como astros solares',
+          'lava en mi aerde como volcanes'
+        ]
+      },
+      actions: {
+        id: 1,
+        description: [
+          'ahora estamos lograndolo',
+          'giran como astros solares',
+          'lava en mi aerde como volcanes'
+        ]
+      }
+    },
+    {
+      id: 1,
+      strategy_id: 1,
+      measurable_objectives: {
+        id: 1,
+        dashboard: [
+          'ahora estamos lograndolo',
+          'giran como astros solares',
+          'lava en mi aerde como volcanes'
+        ]
+      },
+      actions: {
+        id: 1,
+        description: [
+          'ahora estamos lograndolo',
+          'giran como astros solares',
+          'lava en mi aerde como volcanes'
+        ]
+      }
+    }
+  ];
+
   return (
     <Grid container spacing={0.5} direction="row">
       <Grid item lg={4} xl={4}>
@@ -33,10 +76,13 @@ const Strategy = () => {
                   spacing={1}
                   divider={<Divider orientation="horizontal" flexItem />}
                 >
-                  <Typography variant="body1">cnenrieirvie</Typography>
-                  <Typography variant="body1">cnenrieirvie</Typography>
-                  <Typography variant="body1">cnenrieirvie</Typography>
-                  <Typography variant="body1">cnenrieirvie</Typography>
+                  {strategies.map((eachStrategy, index) => {
+                    return (
+                      <Typography variant="body1" key={index}>
+                        {eachStrategy.description}
+                      </Typography>
+                    );
+                  })}
                 </Stack>
               </CardContent>
             </Card>
@@ -44,7 +90,7 @@ const Strategy = () => {
         </Card>
       </Grid>
       <Grid item lg={8} xl={8}>
-        <Measures />
+        <Measures measures={measures} />
       </Grid>
     </Grid>
   );

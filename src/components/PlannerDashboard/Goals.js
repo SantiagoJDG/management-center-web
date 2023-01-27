@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 
 const Goals = ({ goals }) => {
-  console.log(goals);
   return (
     <Grid container>
       <Card sx={{ width: '100%' }}>
@@ -24,22 +23,27 @@ const Goals = ({ goals }) => {
           title={'Goals'}
         />
         <CardContent>
-          {goals.goal.map((eachGoal) => {
-            <Card>
-              <CardHeader subheader={'My super Goal'} />
-              <CardContent>
-                <Stack
-                  direction="column"
-                  spacing={1}
-                  divider={<Divider orientation="horizontal" flexItem />}
-                >
-                  <Typography variant="body1">ciernfne4igt</Typography>
-                  <Typography variant="body1">f3f3f3wrf</Typography>
-                  <Typography variant="body1">fwerfef4g5pl,</Typography>
-                  <Typography variant="body1">k loienq2w3</Typography>
-                </Stack>
-              </CardContent>
-            </Card>;
+          {goals.map((eachGoal, index) => {
+            return (
+              <Card key={index}>
+                <CardHeader subheader={eachGoal.title} />
+                <CardContent>
+                  <Stack
+                    direction="column"
+                    spacing={1}
+                    divider={<Divider orientation="horizontal" flexItem />}
+                  >
+                    {eachGoal.goals.map((eachGoalName, index) => {
+                      return (
+                        <Typography variant="body1" key={index}>
+                          {eachGoalName}
+                        </Typography>
+                      );
+                    })}
+                  </Stack>
+                </CardContent>
+              </Card>
+            );
           })}
         </CardContent>
       </Card>
