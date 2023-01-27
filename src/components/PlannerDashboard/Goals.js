@@ -26,20 +26,20 @@ const Goals = ({ goals }) => {
           {goals.map((eachGoal, index) => {
             return (
               <Card key={index}>
-                <CardHeader subheader={eachGoal.title} />
+                {eachGoal.categoryData ? (
+                  <CardHeader subheader={eachGoal.categoryData.name} />
+                ) : (
+                  'no data'
+                )}
                 <CardContent>
                   <Stack
                     direction="column"
                     spacing={1}
                     divider={<Divider orientation="horizontal" flexItem />}
                   >
-                    {eachGoal.goals.map((eachGoalName, index) => {
-                      return (
-                        <Typography variant="body1" key={index}>
-                          {eachGoalName}
-                        </Typography>
-                      );
-                    })}
+                    <Typography variant="body1" key={index}>
+                      {eachGoal.description}
+                    </Typography>
                   </Stack>
                 </CardContent>
               </Card>

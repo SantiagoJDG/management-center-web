@@ -8,27 +8,52 @@ const Dashboard = () => {
 
   const objectivesMock = {
     id: 1,
-    description: 'The Objective in the world',
-    goal: [
+    startDate: '2022-12-12',
+    endDate: '2023-12-12',
+    commentData: {
+      id: 1,
+      author: 1,
+      description: 'Comentario inicial y principal de plan de negocio',
+      created_at: '2022-01-26',
+      updated_at: null
+    },
+    goals: [
       {
         id: 1,
-        id_objective: 1,
-        title: 'My Goal is better than yours',
-        goals: [
-          'Prepare goal to be better than yoyrs',
-          'Make Sure that my goal is better than yours',
-          'Look the free man and pass de ball'
-        ]
+        description: 'Mejorar la rentabilidad de los proyectos en Europa en 5%.',
+        categoryData: {
+          id: 1,
+          name: 'Financieras'
+        },
+        authorData: {
+          id: 1,
+          name: 'Edgar Alexander Guevara Naranjo'
+        },
+        business_plan_goal: {
+          id: 1,
+          business_plan_id: 1,
+          business_goal_id: 1
+        }
       }
     ],
-    strategy: [
+    strategies: [
       {
         id: 1,
-        description: 'Look out for goals which are better than yours'
-      },
-      {
-        id: 2,
-        description: 'Look out for goals which are better than yours'
+        description: 'Estrategia para Mejorar la rentabilidad de los proyectos en Europa en 5%.',
+        strategyCategoryData: {
+          id: 1,
+          name: 'Indicadores'
+        },
+        businessGoalData: null,
+        authorData: {
+          id: 1,
+          name: 'Edgar Alexander Guevara Naranjo'
+        },
+        business_plan_strategy: {
+          id: 1,
+          business_plan_id: 1,
+          business_strategy_id: 1
+        }
       }
     ]
   };

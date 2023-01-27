@@ -6,7 +6,7 @@ import Strategy from 'components/PlannerDashboard/Strategy';
 
 const Objective = ({ objectives }) => {
   const { userToken, waitingUser } = useAuth();
-  const { goal, strategy } = objectives;
+  const { goals, strategies } = objectives;
   useEffect(() => {
     if (!userToken) return;
   }, [userToken, waitingUser]);
@@ -14,14 +14,14 @@ const Objective = ({ objectives }) => {
   return (
     <>
       <Card sx={{ width: '100%', bgcolor: 'primary.main' }}>
-        <CardHeader title={objectives ? objectives.description : 'No data available'} />
+        <CardHeader title={objectives ? objectives.commentData.description : 'No data available'} />
       </Card>
       <Grid container sx={{ paddingTop: 1 }} direction="row" spacing={1}>
         <Grid item lg={3} xl={3}>
-          <Goals goals={goal} />
+          <Goals goals={goals} />
         </Grid>
         <Grid item lg={9} xl={9}>
-          <Strategy strategies={strategy} />
+          <Strategy strategies={strategies} />
         </Grid>
       </Grid>
     </>
