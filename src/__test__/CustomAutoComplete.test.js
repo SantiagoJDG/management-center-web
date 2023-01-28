@@ -1,7 +1,7 @@
-import CustomAutoComplete from 'components/CustomAutoComplete';
-
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, within, wait } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+
+import CustomAutoComplete from 'components/CustomAutoComplete';
 
 const testOptions = [
   { id: 1, name: 'test1' },
