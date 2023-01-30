@@ -4,7 +4,6 @@ import Strategy from 'components/PlannerDashboard/Strategy';
 
 const Objective = ({ objectives }) => {
   const { goals, strategies } = objectives;
-  console.log(objectives);
 
   return (
     <>
