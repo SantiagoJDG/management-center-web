@@ -1,11 +1,15 @@
-import Objective from 'components/PlannerDashboard/Objective';
 import { useState, useEffect } from 'react';
 import { getAxiosInstance } from 'utils/axiosClient';
+import { useRouter } from 'next/router';
+
 import useAuth from '../../hooks/useAuth';
+import Objective from 'components/PlannerDashboard/Objective';
 
 const Dashboard = () => {
   const [businessPlan, setBusinessPlan] = useState();
   const { userToken, waitingUser } = useAuth();
+
+  const router = useRouter();
 
   const getBusinessPlan = async () => {
     try {
