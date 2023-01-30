@@ -7,7 +7,7 @@ const Dashboard = () => {
   const [businessPlan, setBusinessPlan] = useState();
   const { userToken, waitingUser } = useAuth();
 
-  const getObjectives = async () => {
+  const getBusinessPlans = async () => {
     try {
       let path = `/api/business-plan/1`;
       let response = await getAxiosInstance().get(path);
@@ -19,7 +19,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!userToken) return;
-    getObjectives();
+    if (waitingUser) return;
+
+    getBusinessPlans();
   }, [userToken, waitingUser]);
 
   return (

@@ -2,13 +2,13 @@ import { Grid, Card, CardHeader } from '@mui/material';
 import Goals from 'components/PlannerDashboard/Goals';
 import Strategy from 'components/PlannerDashboard/Strategy';
 
-const Objective = ({ objectives }) => {
-  const { goals, strategies } = objectives;
+const Objective = ({ objective }) => {
+  const { goals, strategies, description } = objective;
 
   return (
     <>
       <Card sx={{ width: '100%', bgcolor: 'primary.main' }}>
-        <CardHeader title={objectives ? objectives.description : 'No data available'} />
+        <CardHeader title={objective ? description : 'No data available'} />
       </Card>
       <Grid container sx={{ paddingTop: 1 }} direction="row" spacing={1}>
         <Grid item lg={3} xl={3}>

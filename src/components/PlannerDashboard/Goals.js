@@ -26,11 +26,7 @@ const Goals = ({ goals }) => {
           {goals.map((eachGoal, index) => {
             return (
               <Card key={index}>
-                {eachGoal.categoryData ? (
-                  <CardHeader subheader={eachGoal.categoryData.name} />
-                ) : (
-                  'no data'
-                )}
+                {eachGoal.categoryData ? <CardHeader subheader={eachGoal.categoryData.name} /> : ''}
                 <CardContent>
                   <Stack
                     direction="column"
