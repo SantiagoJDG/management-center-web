@@ -53,10 +53,11 @@ const Strategy = ({ strategies }) => {
       }
     }
   ];
+
   return (
     <Grid container spacing={0.5} direction="row">
       <Grid item lg={4} xl={4}>
-        <Card>
+        <Card sx={{ minHeight: '100%' }}>
           <CardHeader
             sx={{ bgcolor: 'primary.main' }}
             avatar={
@@ -68,9 +69,8 @@ const Strategy = ({ strategies }) => {
           />
           <CardContent>
             {strategies.map((eachStrategy, index) => {
-              console.log(eachStrategy.strategyCategoryData.name);
               return (
-                <Card key={index}>
+                <Card key={index} sx={{ boxShadow: 0 }}>
                   {eachStrategy.strategyCategoryData ? (
                     <CardHeader subheader={eachStrategy.strategyCategoryData.name} />
                   ) : (
