@@ -1,6 +1,6 @@
 import { Drawer } from '@mui/material';
 
-import useAuth from '../../hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 import UserInfo from '../User/UserInfo';
 
 const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {

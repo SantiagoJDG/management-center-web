@@ -1,5 +1,5 @@
-import MainLayout from '../layouts/MainLayout';
-import { AuthProvider } from '../context/AuthProvider';
+import MainLayout from 'layouts/MainLayout';
+import { AuthProvider } from 'context/AuthProvider';
 
 function MyApp({ Component, pageProps }) {
   return (

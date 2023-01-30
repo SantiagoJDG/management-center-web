@@ -20,8 +20,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import Joi from 'joi';
-import CustomAutoComplete from '../../components/CustomAutoComplete';
-import { getAxiosInstance } from '../../utils/axiosClient';
+import CustomAutoComplete from 'components/CustomAutoComplete';
+import { getAxiosInstance } from 'utils/axiosClient';
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),

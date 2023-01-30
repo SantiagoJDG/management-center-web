@@ -7,7 +7,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useRouter } from 'next/router';
 
-import useAuth from '../hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 
 export default function Home() {
   const { userData, userToken, waitingUser } = useAuth();
@@ -80,7 +80,7 @@ export default function Home() {
 
   const menuOptions = (
     <>
-      <List>
+      <List data-testid="result">
         {pagesList.map((page, index) => (
           <ListItem key={index} disablePadding>
             <ListItemButton onClick={() => handleRouting(page.path)}>
