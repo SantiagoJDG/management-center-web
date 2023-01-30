@@ -48,6 +48,7 @@ const CustomAutoComplete = ({
         selectOnFocus
         clearOnBlur
         options={optionList}
+        data-testid="autocomplete-component"
         getOptionLabel={(option) => {
           // Value selected with enter, right from the input
           if (option.name === undefined) {

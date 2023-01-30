@@ -1,8 +1,7 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import useAuth from '../../hooks/useAuth';
-import { getAxiosInstance } from '../../utils/axiosClient';
 import { Grid } from '@mui/material';
+import useAuth from 'hooks/useAuth';
+import { useEffect, useState } from 'react';
+import { getAxiosInstance } from 'utils/axiosClient';
 
 import CollaboratorFilter from './CollaboratorFilter';
 
