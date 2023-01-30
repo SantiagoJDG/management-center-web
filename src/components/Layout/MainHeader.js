@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { AppBar, Toolbar, IconButton, Typography, Box, Tooltip, Avatar } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
-import useAuth from '../../hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 
 const MainHeader = ({ drawerWidth, mobileOpen, setMobileOpen }) => {
   const { userToken, userData, deleteUserSession } = useAuth();

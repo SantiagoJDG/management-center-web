@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { getAxiosInstance } from '../utils/axiosClient';
 import { useRouter } from 'next/router';
 
-import useAuth from '../hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 import CollaboratorBarFilter from 'components/Collaborators/CollaboratorBarFilter';
 import CollaboratorSliderFilter from 'components/Collaborators/CollaboratorSliderFilter';
 import CollaboratorTable from 'components/Collaborators/CollaboratorTable';

@@ -15,10 +15,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import moment from 'moment';
 import 'moment/locale/es';
 
-import { getAxiosInstance } from '../utils/axiosClient';
-import useAuth from '../hooks/useAuth';
-import EditableCollaborator from '../components/Collaborators/EditableCollaborator';
-import CollaboratorInformation from '../components/Collaborators/CollaboratorInformation';
+import { getAxiosInstance } from 'utils/axiosClient';
+import useAuth from 'hooks/useAuth';
+import EditableCollaborator from 'components/Collaborators/EditableCollaborator';
+import CollaboratorInformation from 'components/Collaborators/CollaboratorInformation';
 
 const Collaborator = () => {
   const router = useRouter();

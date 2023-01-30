@@ -1,10 +1,10 @@
 import { Box, CssBaseline, Grid } from '@mui/material';
 import Head from 'next/head';
 
-import useAuth from '../hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 
 import { useState } from 'react';
-import Sidebar from '../components/Layout/Sidebar';
+import Sidebar from 'components/Layout/Sidebar';
 
 const drawerWidth = 240;
 

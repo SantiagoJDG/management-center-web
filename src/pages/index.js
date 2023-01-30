@@ -3,10 +3,11 @@ import { useEffect } from 'react';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import { useRouter } from 'next/router';
 
-import useAuth from '../hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 
 export default function Home() {
   const { userData, userToken, waitingUser } = useAuth();
@@ -25,6 +26,11 @@ export default function Home() {
       path: `/collaborator?id=${userData ? userData.id : ''}`,
       view: ['administrador']
     },
+    {
+      name: 'Planificacion Estrategica',
+      path: '/planner',
+      view: ['administrador']
+    },
     { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] }
   ];
 
@@ -41,6 +47,13 @@ export default function Home() {
         return (
           <ListItemIcon>
             <GroupsIcon />
+          </ListItemIcon>
+        );
+
+      case '/planner':
+        return (
+          <ListItemIcon>
+            <DashboardIcon />
           </ListItemIcon>
         );
 
@@ -67,7 +80,7 @@ export default function Home() {
 
   const menuOptions = (
     <>
-      <List>
+      <List data-testid="result">
         {pagesList.map((page, index) => (
           <ListItem key={index} disablePadding>
             <ListItemButton onClick={() => handleRouting(page.path)}>

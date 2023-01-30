@@ -4,19 +4,15 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import 'moment/locale/es';
 import { useEffect, useState } from 'react';
-import useAuth from '../../hooks/useAuth';
 
 export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
-  const { userToken, waitingUser } = useAuth();
   const [initialDate, setInitialDate] = useState();
   const [endDate, setEndDate] = useState();
   const [admissionDate, setAdmissionDate] = useState([]);
 
   useEffect(() => {
-    if (!userToken) return;
-    if (!endDate || !initialDate) return;
     executeFilter();
-  }, [userToken, waitingUser, initialDate, endDate]);
+  }, [initialDate, endDate]);
 
   const setCollaboratorAdmissionDate = async () => {
     return new Promise((res) => {
