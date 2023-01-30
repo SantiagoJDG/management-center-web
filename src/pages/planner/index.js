@@ -7,7 +7,7 @@ const Dashboard = () => {
   const [businessPlan, setBusinessPlan] = useState();
   const { userToken, waitingUser } = useAuth();
 
-  const getBusinessPlans = async () => {
+  const getBusinessPlan = async () => {
     try {
       let path = `/api/business-plan/1`;
       let response = await getAxiosInstance().get(path);
@@ -18,16 +18,19 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (!userToken) return;
     if (waitingUser) return;
+    if (!userToken) {
+      router.replace('/login');
+      return;
+    }
 
-    getBusinessPlans();
+    getBusinessPlan();
   }, [userToken, waitingUser]);
 
   return (
     !!businessPlan &&
-    businessPlan.objectives.map((objective, index) => {
-      return <Objective key={index} objectives={objective} />;
+    businessPlan.objectives.map((objective) => {
+      return <Objective key={objective.id} objective={objective} />;
     })
   );
 };
