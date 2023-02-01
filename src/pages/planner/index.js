@@ -26,16 +26,6 @@ const Dashboard = () => {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (waitingUser) return;
-    if (!userToken) {
-      router.replace('/login');
-      return;
-    }
-
-    getBusinessPlan();
-  }, [userToken, waitingUser]);
-
   const getBusinessPlan = async () => {
     try {
       let path = `/api/business-plan/1`;
@@ -46,11 +36,11 @@ const Dashboard = () => {
     }
   };
 
-  const handleDescription = (event) => {
+  const handleNewObjectiveDescription = (event) => {
     setNewObjectiveDescription(event.target.value);
   };
 
-  const createOBjectiveObject = () => {
+  const createObjectiveObject = () => {
     const { id } = userData;
     const { id: businessPlanId } = businessPlan;
     const objetiveObject = {
@@ -65,7 +55,7 @@ const Dashboard = () => {
     try {
       let objetiveObjectPath = 'api/business-plan/objective';
       await getAxiosInstance()
-        .post(objetiveObjectPath, createOBjectiveObject())
+        .post(objetiveObjectPath, createObjectiveObject())
         .then(() => {
           getBusinessPlan();
         });
@@ -75,7 +65,10 @@ const Dashboard = () => {
     setNewObjective(false);
   };
 
-  const renderCreateNewObjective = (boolean) => setNewObjective(boolean);
+  const renderCreateNewObjective = () => {
+    if (newObjective) setNewObjective(false);
+    if (!newObjective) setNewObjective(true);
+  };
 
   const displayObjectives = () => {
     return businessPlan
@@ -95,8 +88,7 @@ const Dashboard = () => {
                   <IconButton
                     aria-label="add"
                     onClick={() => {
-                      if (newObjective) renderCreateNewObjective(false);
-                      if (!newObjective) renderCreateNewObjective(true);
+                      renderCreateNewObjective();
                     }}
                   >
                     <AddIcon />
@@ -123,7 +115,7 @@ const Dashboard = () => {
             sx={{ paddingRight: 10, width: '50%' }}
             inputProps={{ maxLength: 500 }}
             value={newObjectiveDescription}
-            onChange={handleDescription}
+            onChange={handleNewObjectiveDescription}
           />
           <Button variant="outlined" onClick={() => saveNewObjective()}>
             Guardar
@@ -132,6 +124,16 @@ const Dashboard = () => {
       </Accordion>
     );
   };
+
+  useEffect(() => {
+    if (waitingUser) return;
+    if (!userToken) {
+      router.replace('/login');
+      return;
+    }
+
+    getBusinessPlan();
+  }, [userToken, waitingUser]);
 
   if (!newObjective) {
     return displayObjectives();
