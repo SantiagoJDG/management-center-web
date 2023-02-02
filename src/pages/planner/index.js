@@ -72,7 +72,7 @@ const Dashboard = () => {
 
   const displayObjectives = () => {
     return businessPlan
-      ? businessPlan.business_objectives.slice(0, 5).map((objective, index) => {
+      ? businessPlan.business_objectives.map((objective, index) => {
           return (
             <Accordion key={index}>
               <AccordionSummary
