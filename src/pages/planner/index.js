@@ -96,7 +96,11 @@ const Dashboard = () => {
                 </Card>
               </AccordionSummary>
               <AccordionDetails>
-                <Objective key={objective.id} objective={objective} />
+                <Objective
+                  key={objective.id}
+                  objective={objective}
+                  businessPlanObjective={objective.id}
+                />
               </AccordionDetails>
             </Accordion>
           );

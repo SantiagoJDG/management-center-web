@@ -68,7 +68,7 @@ const Strategy = ({ strategies }) => {
             title={'Strategy'}
           />
           <CardContent>
-            {strategies.map((eachStrategy, index) => {
+            {strategies?.map((eachStrategy, index) => {
               return (
                 <Card key={index} sx={{ boxShadow: 0 }}>
                   {eachStrategy.strategyCategoryData ? (
