@@ -32,7 +32,6 @@ const Goals = ({ goals, userId, businessPlanObjective }) => {
     try {
       let path = `/api/business-plan/category`;
       let response = await getAxiosInstance().get(path);
-      console.log(response.data);
       setCategories(response.data);
     } catch {
       console.error('ERROR');
@@ -62,28 +61,30 @@ const Goals = ({ goals, userId, businessPlanObjective }) => {
             }
           />
           <CardContent>
-            {goals?.map((eachGoal, index) => {
-              return (
-                <Card key={index}>
-                  {eachGoal.categoryData ? (
-                    <CardHeader subheader={eachGoal.categoryData.name} />
-                  ) : (
-                    ''
-                  )}
-                  <CardContent>
-                    <Stack
-                      direction="column"
-                      spacing={1}
-                      divider={<Divider orientation="horizontal" flexItem />}
-                    >
-                      <Typography variant="body1" key={index}>
-                        {eachGoal.description}
-                      </Typography>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {goals
+              ? goals.map((eachGoal, index) => {
+                  return (
+                    <Card key={index}>
+                      {eachGoal.categoryData ? (
+                        <CardHeader subheader={eachGoal.categoryData.name} />
+                      ) : (
+                        ''
+                      )}
+                      <CardContent>
+                        <Stack
+                          direction="column"
+                          spacing={1}
+                          divider={<Divider orientation="horizontal" flexItem />}
+                        >
+                          <Typography variant="body1" key={index}>
+                            {eachGoal.description}
+                          </Typography>
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              : 'no Goals'}
           </CardContent>
         </Card>
       </Grid>

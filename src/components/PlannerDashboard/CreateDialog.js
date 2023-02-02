@@ -2,14 +2,12 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
-  // DialogContentText,
   Button,
   DialogContent,
   TextField
 } from '@mui/material';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import { getAxiosInstance } from 'utils/axiosClient';
-
 import { useState } from 'react';
 
 const CreateDialog = ({
@@ -85,7 +83,7 @@ const CreateDialog = ({
           <TextField
             margin="dense"
             label="Description"
-            type="email"
+            type="text"
             fullWidth
             variant="standard"
             value={newObject.description}

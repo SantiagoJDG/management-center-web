@@ -6,7 +6,6 @@ import useAuth from '../../hooks/useAuth';
 const Objective = ({ objective, businessPlanObjective }) => {
   const { goals, strategies } = objective;
   const { userData } = useAuth();
-  console.log(businessPlanObjective);
   return (
     <Grid container sx={{ paddingTop: 1 }} direction="row" spacing={1}>
       <Grid item lg={3} xl={3}>
