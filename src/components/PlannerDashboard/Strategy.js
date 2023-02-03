@@ -68,26 +68,28 @@ const Strategy = ({ strategies }) => {
             title={'Strategy'}
           />
           <CardContent>
-            {strategies.map((eachStrategy, index) => {
-              return (
-                <Card key={index} sx={{ boxShadow: 0 }}>
-                  {eachStrategy.strategyCategoryData ? (
-                    <CardHeader subheader={eachStrategy.strategyCategoryData.name} />
-                  ) : (
-                    'no data'
-                  )}
-                  <CardContent>
-                    <Stack
-                      direction="column"
-                      spacing={1}
-                      divider={<Divider orientation="horizontal" flexItem />}
-                    >
-                      <Typography variant="body1">{eachStrategy.description}</Typography>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {strategies
+              ? strategies.map((eachStrategy, index) => {
+                  return (
+                    <Card key={index} sx={{ boxShadow: 0 }}>
+                      {eachStrategy.strategyCategoryData ? (
+                        <CardHeader subheader={eachStrategy.strategyCategoryData.name} />
+                      ) : (
+                        'no data'
+                      )}
+                      <CardContent>
+                        <Stack
+                          direction="column"
+                          spacing={1}
+                          divider={<Divider orientation="horizontal" flexItem />}
+                        >
+                          <Typography variant="body1">{eachStrategy.description}</Typography>
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              : 'No strategies'}
           </CardContent>
         </Card>
       </Grid>
