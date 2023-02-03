@@ -33,6 +33,7 @@ const CreateDialog = ({
     setNewObject({ ...newObject, category: goal.id });
     if (!goal) return;
     if (!goal.id) {
+      console.log();
       let idReturned = await saveNewItem(path, goal);
       goal.id = idReturned;
       setDropdownListState([...dropdownList, goal]);
@@ -42,7 +43,7 @@ const CreateDialog = ({
 
   async function saveNewItem(paths, newItem) {
     try {
-      let createdItem = await getAxiosInstance().post(paths, newItem);
+      let createdItem = await getAxiosInstance().post('/api/business-plan/goal/category', newItem);
       return createdItem.data.id;
     } catch (error) {
       console.error('Error while save new item...', error);

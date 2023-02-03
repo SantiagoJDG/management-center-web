@@ -17,20 +17,20 @@ import { useState, useEffect } from 'react';
 import CreateDialog from 'components/PlannerDashboard/CreateDialog';
 
 const Goals = ({ goals, userId, businessPlanObjective }) => {
-  const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [categories, setCategories] = useState();
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleClickCloseDialog = () => {
+    setOpenDialog(false);
   };
 
   const getCategories = async () => {
     try {
-      let path = `/api/business-plan/category`;
+      let path = `/api/business-plan/goal/category`;
       let response = await getAxiosInstance().get(path);
       setCategories(response.data);
     } catch {
@@ -55,7 +55,7 @@ const Goals = ({ goals, userId, businessPlanObjective }) => {
             }
             title={'Goals'}
             action={
-              <IconButton aria-label="settings" onClick={() => handleClickOpen()}>
+              <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
                 <AddIcon />
               </IconButton>
             }
@@ -64,7 +64,7 @@ const Goals = ({ goals, userId, businessPlanObjective }) => {
             {goals
               ? goals.map((eachGoal, index) => {
                   return (
-                    <Card key={index}>
+                    <Card key={index} sx={{ margin: 0.5 }}>
                       {eachGoal.categoryData ? (
                         <CardHeader subheader={eachGoal.categoryData.name} />
                       ) : (
@@ -84,14 +84,14 @@ const Goals = ({ goals, userId, businessPlanObjective }) => {
                     </Card>
                   );
                 })
-              : 'no Goals'}
+              : 'No existen metas creadas'}
           </CardContent>
         </Card>
       </Grid>
       <CreateDialog
-        open={open}
+        open={openDialog}
         title={'Nueva meta'}
-        handleClose={handleClose}
+        handleClose={handleClickCloseDialog}
         dropdownList={categories}
         setDropdownListState={setCategories}
         requiredField={true}

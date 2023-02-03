@@ -30,6 +30,7 @@ const Dashboard = () => {
     try {
       let path = `/api/business-plan/1`;
       let response = await getAxiosInstance().get(path);
+      console.log(response.data);
       setBusinessPlan(response.data);
     } catch {
       console.error('ERROR');
@@ -96,11 +97,7 @@ const Dashboard = () => {
                 </Card>
               </AccordionSummary>
               <AccordionDetails>
-                <Objective
-                  key={objective.id}
-                  objective={objective}
-                  businessPlanObjective={objective.id}
-                />
+                <Objective key={objective.id} objective={objective} />
               </AccordionDetails>
             </Accordion>
           );
