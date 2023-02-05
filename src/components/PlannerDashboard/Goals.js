@@ -16,7 +16,7 @@ import { useState, useEffect } from 'react';
 
 import CreateDialog from 'components/PlannerDashboard/CreateDialog';
 
-const Goals = ({ goals, userId, businessPlanObjective }) => {
+const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [categories, setCategories] = useState();
 
@@ -90,13 +90,13 @@ const Goals = ({ goals, userId, businessPlanObjective }) => {
       </Grid>
       <CreateDialog
         open={openDialog}
-        title={'Nueva meta'}
+        title={'Meta'}
         handleClose={handleClickCloseDialog}
         dropdownList={categories}
         setDropdownListState={setCategories}
         requiredField={true}
         path={'/api/business-plan/goal'}
-        getList={getCategories}
+        getBusinessObjectives={getBusinessObjective}
         authorid={userId}
         businessObjectiveId={businessPlanObjective}
       />
