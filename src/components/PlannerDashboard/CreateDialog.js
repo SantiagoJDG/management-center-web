@@ -18,7 +18,7 @@ const CreateDialog = ({
   setDropdownListState,
   requiredField,
   path,
-  getList,
+  getBusinessObjectives,
   authorid,
   businessObjectiveId
 }) => {
@@ -33,7 +33,6 @@ const CreateDialog = ({
     setNewObject({ ...newObject, category: goal.id });
     if (!goal) return;
     if (!goal.id) {
-      console.log();
       let idReturned = await saveNewItem(path, goal);
       goal.id = idReturned;
       setDropdownListState([...dropdownList, goal]);
@@ -59,44 +58,41 @@ const CreateDialog = ({
       let objetiveObjectPath = path;
       await getAxiosInstance()
         .post(objetiveObjectPath, newObject)
-        .then((response) => {
-          console.log(response);
-          getList();
+        .then(() => {
+          handleClose();
+          getBusinessObjectives();
         });
     } catch (error) {
       console.log('error');
     }
-    handleClose;
   };
 
   return (
-    <>
-      <Dialog open={open}>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogContent>
-          <CustomAutoComplete
-            name="categoryid"
-            label="Categorias"
-            optionList={dropdownList}
-            elmentCallback={handleGoal}
-            requiredField={requiredField}
-          />
-          <TextField
-            margin="dense"
-            label="Description"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={newObject.description}
-            onChange={handleNewObjectiveDescription}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={saveNew}>Create Goal</Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    <Dialog open={open} fullWidth maxWidth="sm">
+      <DialogTitle sx={{ bgcolor: 'primary.main', marginBottom: 2 }}>{title}</DialogTitle>
+      <DialogContent>
+        <CustomAutoComplete
+          name="categoryid"
+          label="Categorias"
+          optionList={dropdownList}
+          elmentCallback={handleGoal}
+          requiredField={requiredField}
+        />
+        <TextField
+          margin="dense"
+          label="Description"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={newObject.description}
+          onChange={handleNewObjectiveDescription}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={saveNew}>Create Goal</Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
