@@ -14,10 +14,17 @@ const CreateDialog = ({
   open,
   title,
   handleClose,
-  dropdownList,
-  setDropdownListState,
+
   requiredField,
-  path,
+  savePath,
+
+  categoryDropdownList,
+  setCategoryDropdownListState,
+  useCategories,
+
+  useGoals,
+  goalsDropdownList,
+
   getBusinessObjectives,
   authorid,
   businessObjectiveId
@@ -29,13 +36,13 @@ const CreateDialog = ({
     businessObjective: businessObjectiveId
   });
 
-  async function handleGoal(goal) {
+  async function handleCategory(goal) {
     setNewObject({ ...newObject, category: goal.id });
     if (!goal) return;
     if (!goal.id) {
-      let idReturned = await saveNewItem(path, goal);
+      let idReturned = await saveNewItem(savePath, goal);
       goal.id = idReturned;
-      setDropdownListState([...dropdownList, goal]);
+      setCategoryDropdownListState([...categoryDropdownList, goal]);
     }
     setNewObject({ ...newObject, category: goal.id });
   }
@@ -55,7 +62,7 @@ const CreateDialog = ({
 
   const saveNew = async () => {
     try {
-      let objetiveObjectPath = path;
+      let objetiveObjectPath = savePath;
       await getAxiosInstance()
         .post(objetiveObjectPath, newObject)
         .then(() => {
@@ -67,20 +74,43 @@ const CreateDialog = ({
     }
   };
 
+  const renderCategoryDropdown = () => {
+    return (
+      <CustomAutoComplete
+        name="categoryid"
+        label="Categorias"
+        optionList={categoryDropdownList}
+        elmentCallback={handleCategory}
+        requiredField={requiredField}
+      />
+    );
+  };
+
+  const renderGoalsDropdown = () => {
+    var array = Object.keys(goalsDropdownList).map(function (key) {
+      return goalsDropdownList[key];
+    });
+
+    return (
+      <CustomAutoComplete
+        name="categoryid"
+        label="Selecciona una Meta"
+        optionList={array}
+        elmentCallback={handleCategory}
+        requiredField={requiredField}
+      />
+    );
+  };
+
   return (
     <Dialog open={open} fullWidth maxWidth="sm">
       <DialogTitle sx={{ bgcolor: 'primary.main', marginBottom: 2 }}>{title}</DialogTitle>
       <DialogContent>
-        <CustomAutoComplete
-          name="categoryid"
-          label="Categorias"
-          optionList={dropdownList}
-          elmentCallback={handleGoal}
-          requiredField={requiredField}
-        />
+        {useCategories ? renderCategoryDropdown() : ''}
+        {useGoals ? renderGoalsDropdown() : ''}
         <TextField
           margin="dense"
-          label="Description"
+          label="Descripcion"
           type="text"
           fullWidth
           variant="outlined"
@@ -89,8 +119,8 @@ const CreateDialog = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={saveNew}>Create Goal</Button>
+        <Button onClick={handleClose}>Cancelar</Button>
+        <Button onClick={saveNew}>Crear {title}</Button>
       </DialogActions>
     </Dialog>
   );

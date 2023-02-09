@@ -92,13 +92,14 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         open={openDialog}
         title={'Meta'}
         handleClose={handleClickCloseDialog}
-        dropdownList={categories}
-        setDropdownListState={setCategories}
+        categoryDropdownList={categories}
+        setCategoryDropdownListState={setCategories}
         requiredField={true}
-        path={'/api/business-plan/goal'}
+        savePath={'/api/business-plan/goal'}
         getBusinessObjectives={getBusinessObjective}
         authorid={userId}
         businessObjectiveId={businessPlanObjective}
+        useCategories={true}
       />
     </>
   );
