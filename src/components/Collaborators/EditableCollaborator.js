@@ -20,8 +20,11 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import Joi from 'joi';
-import CustomAutoComplete from 'components/CustomAutoComplete';
+
 import { getAxiosInstance } from 'utils/axiosClient';
+import useMessage from 'hooks/useMessage';
+
+import CustomAutoComplete from 'components/CustomAutoComplete';
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
@@ -49,6 +52,8 @@ const CollaboratorSchema = Joi.object({
 });
 
 const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
+  const { handleNewMessage } = useMessage();
+
   const [formErrors, setFormErrors] = useState({});
   const [newCollaborator, setNewCollaborator] = useState({
     internalCode: '',
@@ -447,6 +452,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       error.details.map((detail) => {
         newErrors[detail.path] = true;
       });
+
+      handleNewMessage({
+        text: 'Campos incompletos, favor revisar nuevamente el formulario',
+        severity: 'error'
+      });
+
       setFormErrors(newErrors);
 
       return;
