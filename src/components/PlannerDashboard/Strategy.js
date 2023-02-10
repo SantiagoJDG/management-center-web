@@ -95,7 +95,6 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
   };
 
   const saveNew = async () => {
-    console.log(newObject);
     try {
       let objetiveObjectPath = '/api/business-plan/strategy';
       await getAxiosInstance()
