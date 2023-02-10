@@ -9,12 +9,14 @@ import {
   Divider,
   IconButton
 } from '@mui/material';
+import { getAxiosInstance } from 'utils/axiosClient';
 import Measures from './Measures';
 
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 
 import CreateDialog from 'components/PlannerDashboard/CreateDialog';
+import CustomAutoComplete from 'components/CustomAutoComplete';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
@@ -59,8 +61,13 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       }
     }
   ];
-
   const [openDialog, setOpenDialog] = useState(false);
+  const [newObject, setNewObject] = useState({
+    description: '',
+    goal: null,
+    author: userId,
+    businessObjective: businessPlanObjective
+  });
 
   const handleClickOpenDialog = () => {
     setOpenDialog(true);
@@ -68,6 +75,38 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
 
   const handleClickCloseDialog = () => {
     setOpenDialog(false);
+  };
+
+  async function handleCategory(goal) {
+    setNewObject({ ...newObject, goal: goal.id });
+  }
+
+  const renderGoalsDropdown = () => {
+    const goalsDescription = goals.map((goal) => goal.description);
+    return (
+      <CustomAutoComplete
+        name="categoryid"
+        label="Selecciona una Meta"
+        optionList={goalsDescription}
+        elmentCallback={handleCategory}
+        requiredField={true}
+      />
+    );
+  };
+
+  const saveNew = async () => {
+    console.log(newObject);
+    try {
+      let objetiveObjectPath = '/api/business-plan/strategy';
+      await getAxiosInstance()
+        .post(objetiveObjectPath, newObject)
+        .then(() => {
+          handleClickCloseDialog();
+          getBusinessObjective();
+        });
+    } catch (error) {
+      console.log('error');
+    }
   };
 
   return (
@@ -123,13 +162,10 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         open={openDialog}
         title={'Estrategias'}
         handleClose={handleClickCloseDialog}
-        goalsDropdownList={goals}
-        requiredField={true}
-        path={'/api/business-plan/strategy'}
-        getBusinessObjectives={getBusinessObjective}
-        authorid={userId}
-        businessObjectiveId={businessPlanObjective}
-        useGoals={true}
+        displayDropdown={renderGoalsDropdown()}
+        saveNew={saveNew}
+        newObject={newObject}
+        setNewObject={setNewObject}
       />
     </>
   );
