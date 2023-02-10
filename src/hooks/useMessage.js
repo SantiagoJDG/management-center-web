@@ -1,8 +1,8 @@
-import { useContext} from 'react';
-import  Messagecontext from 'context/MessageProvider';
+import Messagecontext from 'context/MessageProvider';
+import { useContext } from 'react';
 
 const useMessage = () => {
-    return useContext(Messagecontext);
+  return useContext(Messagecontext);
 };
 
 export default useMessage;
