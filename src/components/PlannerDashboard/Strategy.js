@@ -79,7 +79,6 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
   };
 
   async function handleCategory(event) {
-    console.log(event.target);
     setNewObject({ ...newObject, goal: event.target.value });
   }
 
