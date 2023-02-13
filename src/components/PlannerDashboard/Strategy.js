@@ -165,6 +165,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         saveNew={saveNew}
         newObject={newObject}
         setNewObject={setNewObject}
+        nameMethod={'create'}
       />
     </>
   );

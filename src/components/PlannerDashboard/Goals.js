@@ -47,8 +47,12 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     setEditOpenDialog(true);
   };
 
-  const handleClickCloseCreateDialog = () => {
+  const handleClickCloseEditDialog = () => {
     setEditOpenDialog(false);
+  };
+
+  const handleClickCloseCreateDialog = () => {
+    setCreateOpenDialog(false);
   };
 
   const handleClickCloseDeleteDialog = () => {
@@ -243,7 +247,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       <CustomDialog
         open={openEditDialog}
         title={'Meta'}
-        handleClose={handleClickCloseCreateDialog}
+        handleClose={handleClickCloseEditDialog}
         displayDropdown={renderCategoryDropdown()}
         requestMethod={editGoal}
         newObject={newObject}

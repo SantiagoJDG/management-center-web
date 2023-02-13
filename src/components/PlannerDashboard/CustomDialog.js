@@ -29,11 +29,11 @@ const CustomDialog = ({
           Eliminar {title}
         </DialogTitle>
         <DialogContent>
-          <Typography>¿Estas seguro que quieres eliminar la meta seleccionada?</Typography>
+          <Typography>¿Estas seguro que quieres eliminar la {title} seleccionada?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={requestMethod}>Eliminar Meta</Button>
+          <Button onClick={requestMethod}>Eliminar {title}</Button>
         </DialogActions>
       </Dialog>
     );
