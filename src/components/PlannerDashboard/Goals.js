@@ -9,15 +9,21 @@ import {
   Divider,
   IconButton
 } from '@mui/material';
-import { getAxiosInstance } from 'utils/axiosClient';
+import useAuth from 'hooks/useAuth';
 
+import { getAxiosInstance } from 'utils/axiosClient';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import CreateDialog from 'components/PlannerDashboard/CreateDialog';
 
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
-  const [openDialog, setOpenDialog] = useState(false);
+  const { userData } = useAuth();
+  const [openCreateDialog, setCreateOpenDialog] = useState(false);
+  const [openDeleteDialog, setDeleteOpenDialog] = useState(false);
+  const [goalIdSelected, setGoalSelected] = useState();
   const [categories, setCategories] = useState();
   const [newObject, setNewObject] = useState({
     description: '',
@@ -26,12 +32,26 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     businessObjective: businessPlanObjective
   });
 
-  const handleClickOpenDialog = () => {
-    setOpenDialog(true);
+  const handleClickOpenCreateDialog = () => {
+    setCreateOpenDialog(true);
   };
 
-  const handleClickCloseDialog = () => {
-    setOpenDialog(false);
+  const handleClickOpenDeleteDialog = (idGoal) => {
+    setGoalSelected(idGoal);
+    setDeleteOpenDialog(true);
+  };
+
+  const handleClickOpenEditDialog = (idGoal) => {
+    setGoalSelected(idGoal);
+    setCreateOpenDialog(true);
+  };
+
+  const handleClickCloseCreateDialog = () => {
+    setCreateOpenDialog(false);
+  };
+
+  const handleClickCloseDeleteDialog = () => {
+    setDeleteOpenDialog(false);
   };
 
   const getCategories = async () => {
@@ -70,7 +90,35 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       await getAxiosInstance()
         .post(objetiveObjectPath, newObject)
         .then(() => {
-          handleClickCloseDialog();
+          handleClickCloseCreateDialog();
+          getBusinessObjective();
+        });
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
+  const deleteGoal = async () => {
+    try {
+      let objetiveObjectPath = `/api/business-plan/goal/${goalIdSelected}`;
+      await getAxiosInstance()
+        .delete(objetiveObjectPath, newObject)
+        .then(() => {
+          handleClickCloseCreateDialog();
+          getBusinessObjective();
+        });
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
+  const editGoal = async () => {
+    try {
+      let objetiveObjectPath = `/api/business-plan/goal/${goalIdSelected}`;
+      await getAxiosInstance()
+        .put(objetiveObjectPath, newObject)
+        .then(() => {
+          handleClickCloseCreateDialog();
           getBusinessObjective();
         });
     } catch (error) {
@@ -90,6 +138,30 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     );
   };
 
+  const editableGoal = (authorData, idGoal) => {
+    const { id } = authorData;
+    if (id === userData.id) {
+      return (
+        <>
+          <Grid container direction="row" justifyContent="space-between" alignItems="center">
+            <Grid item>
+              <IconButton onClick={() => handleClickOpenDeleteDialog(idGoal)}>
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+            <Grid item justifySelf="end">
+              <IconButton onClick={() => handleClickOpenEditDialog(idGoal)}>
+                <EditIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </>
+      );
+    } else {
+      return;
+    }
+  };
+
   useEffect(() => {
     getCategories();
   }, []);
@@ -107,7 +179,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
             }
             title={'Goals'}
             action={
-              <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
+              <IconButton aria-label="settings" onClick={() => handleClickOpenCreateDialog()}>
                 <AddIcon />
               </IconButton>
             }
@@ -115,6 +187,8 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
           <CardContent>
             {goals
               ? goals.map((eachGoal, index) => {
+                  const { authorData } = eachGoal;
+                  const { id: idGoal } = eachGoal;
                   return (
                     <Card key={index} sx={{ margin: 0.5 }}>
                       {eachGoal.categoryData ? (
@@ -133,6 +207,14 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
                           </Typography>
                         </Stack>
                       </CardContent>
+                      <Grid
+                        container
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        {editableGoal(authorData, idGoal)}
+                      </Grid>
                     </Card>
                   );
                 })
@@ -141,13 +223,31 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         </Card>
       </Grid>
       <CreateDialog
-        open={openDialog}
+        open={openCreateDialog}
         title={'Meta'}
-        handleClose={handleClickCloseDialog}
+        handleClose={handleClickCloseCreateDialog}
         displayDropdown={renderCategoryDropdown()}
-        saveNew={saveNew}
+        requestMethod={saveNew}
         newObject={newObject}
         setNewObject={setNewObject}
+        nameMethod={'create'}
+      />
+      <CreateDialog
+        open={openDeleteDialog}
+        title={'Meta'}
+        handleClose={handleClickCloseDeleteDialog}
+        requestMethod={deleteGoal}
+        nameMethod={'delete'}
+      />
+      <CreateDialog
+        open={openCreateDialog}
+        title={'Meta'}
+        handleClose={handleClickCloseCreateDialog}
+        displayDropdown={renderCategoryDropdown()}
+        requestMethod={editGoal}
+        newObject={newObject}
+        setNewObject={setNewObject}
+        nameMethod={'edit'}
       />
     </>
   );

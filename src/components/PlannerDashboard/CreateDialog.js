@@ -4,7 +4,8 @@ import {
   DialogTitle,
   Button,
   DialogContent,
-  TextField
+  TextField,
+  Typography
 } from '@mui/material';
 
 const CreateDialog = ({
@@ -12,33 +13,61 @@ const CreateDialog = ({
   title,
   handleClose,
   displayDropdown,
-  saveNew,
+  requestMethod,
   newObject,
-  setNewObject
+  setNewObject,
+  nameMethod
 }) => {
   const handleDescription = (event) => {
     setNewObject({ ...newObject, description: event.target.value });
   };
 
+  const deleteDialog = () => {
+    return (
+      <Dialog open={open} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ bgcolor: 'primary.main', marginBottom: 2 }}>Eliminar Meta</DialogTitle>
+        <DialogContent>
+          <Typography>¿Estas seguro que quieres eliminar la meta seleccionada?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={requestMethod}>Eliminar Meta</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
+  const createEditDialog = (method) => {
+    return (
+      <Dialog open={open} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ bgcolor: 'primary.main', marginBottom: 2 }}>{title}</DialogTitle>
+        <DialogContent>
+          {displayDropdown ? displayDropdown : ''}
+          <TextField
+            margin="dense"
+            label="Descripcion"
+            type="text"
+            fullWidth
+            variant="outlined"
+            onChange={handleDescription}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={requestMethod}>
+            {method} {title}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
+
   return (
-    <Dialog open={open} fullWidth maxWidth="sm">
-      <DialogTitle sx={{ bgcolor: 'primary.main', marginBottom: 2 }}>{title}</DialogTitle>
-      <DialogContent>
-        {displayDropdown ? displayDropdown : ''}
-        <TextField
-          margin="dense"
-          label="Descripcion"
-          type="text"
-          fullWidth
-          variant="outlined"
-          onChange={handleDescription}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancelar</Button>
-        <Button onClick={saveNew}>Crear {title}</Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      {nameMethod === 'create' ? createEditDialog('Crear') : ''}
+      {nameMethod === 'delete' ? deleteDialog() : ''}
+      {nameMethod === 'edit' ? createEditDialog('Editar') : ''}
+    </>
   );
 };
 
