@@ -22,6 +22,7 @@ import CustomDialog from 'components/PlannerDashboard/CustomDialog';
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const { userData } = useAuth();
   const [openCreateDialog, setCreateOpenDialog] = useState(false);
+  const [openEditDialog, setEditOpenDialog] = useState(false);
   const [openDeleteDialog, setDeleteOpenDialog] = useState(false);
   const [goalIdSelected, setGoalSelected] = useState();
   const [categories, setCategories] = useState();
@@ -43,11 +44,11 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
 
   const handleClickOpenEditDialog = (idGoal) => {
     setGoalSelected(idGoal);
-    setCreateOpenDialog(true);
+    setEditOpenDialog(true);
   };
 
   const handleClickCloseCreateDialog = () => {
-    setCreateOpenDialog(false);
+    setEditOpenDialog(false);
   };
 
   const handleClickCloseDeleteDialog = () => {
@@ -240,7 +241,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         nameMethod={'delete'}
       />
       <CustomDialog
-        open={openCreateDialog}
+        open={openEditDialog}
         title={'Meta'}
         handleClose={handleClickCloseCreateDialog}
         displayDropdown={renderCategoryDropdown()}
