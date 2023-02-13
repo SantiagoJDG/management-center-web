@@ -6,11 +6,20 @@ import {
   CardContent,
   Stack,
   Typography,
-  Divider
+  Divider,
+  IconButton,
+  Autocomplete,
+  TextField
 } from '@mui/material';
+import { getAxiosInstance } from 'utils/axiosClient';
 import Measures from './Measures';
 
-const Strategy = ({ strategies }) => {
+import AddIcon from '@mui/icons-material/Add';
+import { useState } from 'react';
+
+import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+
+const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
     {
       id: 1,
@@ -53,50 +62,123 @@ const Strategy = ({ strategies }) => {
       }
     }
   ];
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newObject, setNewObject] = useState({
+    description: '',
+    goal: null,
+    author: userId,
+    businessObjective: businessPlanObjective
+  });
+
+  const handleClickOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClickCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  async function handleCategory(event) {
+    setNewObject({ ...newObject, goal: event.target.value });
+  }
+
+  const renderGoalsDropdown = () => {
+    const goalsDescription = goals.map((goal) => goal.description);
+    return (
+      <Autocomplete
+        freeSolo
+        id="free-solo-2-demo"
+        disableClearable
+        options={goalsDescription}
+        onChange={handleCategory}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Metas"
+            InputProps={{
+              ...params.InputProps,
+              type: 'search'
+            }}
+          />
+        )}
+      />
+    );
+  };
+
+  const saveNew = async () => {
+    try {
+      let objetiveObjectPath = '/api/business-plan/strategy';
+      await getAxiosInstance()
+        .post(objetiveObjectPath, newObject)
+        .then(() => {
+          handleClickCloseDialog();
+          getBusinessObjective();
+        });
+    } catch (error) {
+      console.log('error');
+    }
+  };
 
   return (
-    <Grid container spacing={0.5} direction="row">
-      <Grid item lg={4} xl={4}>
-        <Card sx={{ minHeight: '100%' }}>
-          <CardHeader
-            sx={{ bgcolor: 'primary.main' }}
-            avatar={
-              <Avatar sx={{ bgcolor: 'success.main' }} aria-label="recipe">
-                S
-              </Avatar>
-            }
-            title={'Strategy'}
-          />
-          <CardContent>
-            {strategies
-              ? strategies.map((eachStrategy, index) => {
-                  return (
-                    <Card key={index} sx={{ boxShadow: 0 }}>
-                      {eachStrategy.strategyCategoryData ? (
-                        <CardHeader subheader={eachStrategy.strategyCategoryData.name} />
-                      ) : (
-                        'no data'
-                      )}
-                      <CardContent>
-                        <Stack
-                          direction="column"
-                          spacing={1}
-                          divider={<Divider orientation="horizontal" flexItem />}
-                        >
-                          <Typography variant="body1">{eachStrategy.description}</Typography>
-                        </Stack>
-                      </CardContent>
-                    </Card>
-                  );
-                })
-              : 'No strategies'}
-          </CardContent>
-        </Card>
+    <>
+      <Grid container spacing={0.5} direction="row">
+        <Grid item lg={4} xl={4}>
+          <Card sx={{ minHeight: '100%' }}>
+            <CardHeader
+              sx={{ bgcolor: 'primary.main' }}
+              avatar={
+                <Avatar sx={{ bgcolor: 'success.main' }} aria-label="recipe">
+                  S
+                </Avatar>
+              }
+              title={'Strategy'}
+              action={
+                <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
+                  <AddIcon />
+                </IconButton>
+              }
+            />
+            <CardContent>
+              {strategies
+                ? strategies.map((eachStrategy, index) => {
+                    return (
+                      <Card key={index} sx={{ boxShadow: 0 }}>
+                        {eachStrategy.strategyCategoryData ? (
+                          <CardHeader subheader={eachStrategy.strategyCategoryData.name} />
+                        ) : (
+                          'no data'
+                        )}
+                        <CardContent>
+                          <Stack
+                            direction="column"
+                            spacing={1}
+                            divider={<Divider orientation="horizontal" flexItem />}
+                          >
+                            <Typography variant="body1">{eachStrategy.description}</Typography>
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                : 'No strategies'}
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item lg={8} xl={8}>
+          <Measures measures={measures} />
+        </Grid>
       </Grid>
-      <Grid item lg={8} xl={8}>
-        <Measures measures={measures} />
-      </Grid>
-    </Grid>
+      <CustomDialog
+        open={openDialog}
+        title={'Estrategias'}
+        handleClose={handleClickCloseDialog}
+        displayDropdown={renderGoalsDropdown()}
+        requestMethod={saveNew}
+        newObject={newObject}
+        setNewObject={setNewObject}
+        nameMethod={'create'}
+      />
+    </>
   );
 };
 

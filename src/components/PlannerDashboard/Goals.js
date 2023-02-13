@@ -9,23 +9,54 @@ import {
   Divider,
   IconButton
 } from '@mui/material';
-import { getAxiosInstance } from 'utils/axiosClient';
+import useAuth from 'hooks/useAuth';
 
+import { getAxiosInstance } from 'utils/axiosClient';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
-
-import CreateDialog from 'components/PlannerDashboard/CreateDialog';
+import CustomAutoComplete from 'components/CustomAutoComplete';
+import CustomDialog from 'components/PlannerDashboard/CustomDialog';
 
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
-  const [openDialog, setOpenDialog] = useState(false);
+  const { userData } = useAuth();
+  const [openCreateDialog, setCreateOpenDialog] = useState(false);
+  const [openEditDialog, setEditOpenDialog] = useState(false);
+  const [openDeleteDialog, setDeleteOpenDialog] = useState(false);
+  const [goalIdSelected, setGoalSelected] = useState();
   const [categories, setCategories] = useState();
+  const [newObject, setNewObject] = useState({
+    description: '',
+    category: null,
+    author: userId,
+    businessObjective: businessPlanObjective
+  });
 
-  const handleClickOpenDialog = () => {
-    setOpenDialog(true);
+  const handleClickOpenCreateDialog = () => {
+    setCreateOpenDialog(true);
   };
 
-  const handleClickCloseDialog = () => {
-    setOpenDialog(false);
+  const handleClickOpenDeleteDialog = (idGoal) => {
+    setGoalSelected(idGoal);
+    setDeleteOpenDialog(true);
+  };
+
+  const handleClickOpenEditDialog = (idGoal) => {
+    setGoalSelected(idGoal);
+    setEditOpenDialog(true);
+  };
+
+  const handleClickCloseEditDialog = () => {
+    setEditOpenDialog(false);
+  };
+
+  const handleClickCloseCreateDialog = () => {
+    setCreateOpenDialog(false);
+  };
+
+  const handleClickCloseDeleteDialog = () => {
+    setDeleteOpenDialog(false);
   };
 
   const getCategories = async () => {
@@ -35,6 +66,104 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       setCategories(response.data);
     } catch {
       console.error('ERROR');
+    }
+  };
+
+  async function handleCategory(goal) {
+    setNewObject({ ...newObject, category: goal.id });
+    if (!goal) return;
+    if (!goal.id) {
+      let idReturned = await saveNewItem('/api/business-plan/goal', goal);
+      goal.id = idReturned;
+      setCategories([...categories, goal]);
+    }
+    setNewObject({ ...newObject, category: goal.id });
+  }
+
+  async function saveNewItem(paths, newItem) {
+    try {
+      let createdItem = await getAxiosInstance().post('/api/business-plan/goal/category', newItem);
+      return createdItem.data.id;
+    } catch (error) {
+      console.error('Error while save new item...', error);
+    }
+  }
+
+  const saveNew = async () => {
+    try {
+      let objetiveObjectPath = '/api/business-plan/goal';
+      await getAxiosInstance()
+        .post(objetiveObjectPath, newObject)
+        .then(() => {
+          handleClickCloseCreateDialog();
+          getBusinessObjective();
+        });
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
+  const deleteGoal = async () => {
+    try {
+      let objetiveObjectPath = `/api/business-plan/goal/${goalIdSelected}`;
+      await getAxiosInstance()
+        .delete(objetiveObjectPath, newObject)
+        .then(() => {
+          handleClickCloseCreateDialog();
+          getBusinessObjective();
+        });
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
+  const editGoal = async () => {
+    try {
+      let objetiveObjectPath = `/api/business-plan/goal/${goalIdSelected}`;
+      await getAxiosInstance()
+        .put(objetiveObjectPath, newObject)
+        .then(() => {
+          handleClickCloseCreateDialog();
+          getBusinessObjective();
+        });
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
+  const renderCategoryDropdown = () => {
+    return (
+      <CustomAutoComplete
+        name="categoryid"
+        label="Categorias"
+        optionList={categories}
+        elmentCallback={handleCategory}
+        requiredField={true}
+      />
+    );
+  };
+
+  const editableGoal = (authorData, idGoal) => {
+    const { id } = authorData;
+    if (id === userData.id) {
+      return (
+        <>
+          <Grid container direction="row" justifyContent="space-between" alignItems="center">
+            <Grid item>
+              <IconButton onClick={() => handleClickOpenDeleteDialog(idGoal)}>
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+            <Grid item justifySelf="end">
+              <IconButton onClick={() => handleClickOpenEditDialog(idGoal)}>
+                <EditIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </>
+      );
+    } else {
+      return;
     }
   };
 
@@ -55,7 +184,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
             }
             title={'Goals'}
             action={
-              <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
+              <IconButton aria-label="settings" onClick={() => handleClickOpenCreateDialog()}>
                 <AddIcon />
               </IconButton>
             }
@@ -63,6 +192,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
           <CardContent>
             {goals
               ? goals.map((eachGoal, index) => {
+                  const { authorData, id: idGoal } = eachGoal;
                   return (
                     <Card key={index} sx={{ margin: 0.5 }}>
                       {eachGoal.categoryData ? (
@@ -81,6 +211,14 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
                           </Typography>
                         </Stack>
                       </CardContent>
+                      <Grid
+                        container
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        {editableGoal(authorData, idGoal)}
+                      </Grid>
                     </Card>
                   );
                 })
@@ -88,17 +226,32 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
           </CardContent>
         </Card>
       </Grid>
-      <CreateDialog
-        open={openDialog}
+      <CustomDialog
+        open={openCreateDialog}
         title={'Meta'}
-        handleClose={handleClickCloseDialog}
-        dropdownList={categories}
-        setDropdownListState={setCategories}
-        requiredField={true}
-        path={'/api/business-plan/goal'}
-        getBusinessObjectives={getBusinessObjective}
-        authorid={userId}
-        businessObjectiveId={businessPlanObjective}
+        handleClose={handleClickCloseCreateDialog}
+        displayDropdown={renderCategoryDropdown()}
+        requestMethod={saveNew}
+        newObject={newObject}
+        setNewObject={setNewObject}
+        nameMethod={'create'}
+      />
+      <CustomDialog
+        open={openDeleteDialog}
+        title={'Meta'}
+        handleClose={handleClickCloseDeleteDialog}
+        requestMethod={deleteGoal}
+        nameMethod={'delete'}
+      />
+      <CustomDialog
+        open={openEditDialog}
+        title={'Meta'}
+        handleClose={handleClickCloseEditDialog}
+        displayDropdown={renderCategoryDropdown()}
+        requestMethod={editGoal}
+        newObject={newObject}
+        setNewObject={setNewObject}
+        nameMethod={'edit'}
       />
     </>
   );
