@@ -17,7 +17,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import CustomAutoComplete from 'components/CustomAutoComplete';
-import CreateDialog from 'components/PlannerDashboard/CreateDialog';
+import CustomDialog from 'components/PlannerDashboard/CustomDialog';
 
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const { userData } = useAuth();
@@ -222,7 +222,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
           </CardContent>
         </Card>
       </Grid>
-      <CreateDialog
+      <CustomDialog
         open={openCreateDialog}
         title={'Meta'}
         handleClose={handleClickCloseCreateDialog}
@@ -232,14 +232,14 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         setNewObject={setNewObject}
         nameMethod={'create'}
       />
-      <CreateDialog
+      <CustomDialog
         open={openDeleteDialog}
         title={'Meta'}
         handleClose={handleClickCloseDeleteDialog}
         requestMethod={deleteGoal}
         nameMethod={'delete'}
       />
-      <CreateDialog
+      <CustomDialog
         open={openCreateDialog}
         title={'Meta'}
         handleClose={handleClickCloseCreateDialog}

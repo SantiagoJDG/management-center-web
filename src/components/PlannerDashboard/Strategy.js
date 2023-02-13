@@ -15,7 +15,7 @@ import Measures from './Measures';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 
-import CreateDialog from 'components/PlannerDashboard/CreateDialog';
+import CustomDialog from 'components/PlannerDashboard/CustomDialog';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
@@ -157,7 +157,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
           <Measures measures={measures} />
         </Grid>
       </Grid>
-      <CreateDialog
+      <CustomDialog
         open={openDialog}
         title={'Estrategias'}
         handleClose={handleClickCloseDialog}
