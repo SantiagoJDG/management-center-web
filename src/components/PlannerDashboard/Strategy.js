@@ -7,7 +7,9 @@ import {
   Stack,
   Typography,
   Divider,
-  IconButton
+  IconButton,
+  Autocomplete,
+  TextField
 } from '@mui/material';
 import { getAxiosInstance } from 'utils/axiosClient';
 import Measures from './Measures';
@@ -16,7 +18,6 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
-import CustomAutoComplete from 'components/CustomAutoComplete';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
@@ -77,19 +78,30 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     setOpenDialog(false);
   };
 
-  async function handleCategory(goal) {
-    setNewObject({ ...newObject, goal: goal.id });
+  async function handleCategory(event) {
+    console.log(event.target);
+    setNewObject({ ...newObject, goal: event.target.value });
   }
 
   const renderGoalsDropdown = () => {
     const goalsDescription = goals.map((goal) => goal.description);
     return (
-      <CustomAutoComplete
-        name="categoryid"
-        label="Selecciona una Meta"
-        optionList={goalsDescription}
-        elmentCallback={handleCategory}
-        requiredField={true}
+      <Autocomplete
+        freeSolo
+        id="free-solo-2-demo"
+        disableClearable
+        options={goalsDescription}
+        onChange={handleCategory}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Metas"
+            InputProps={{
+              ...params.InputProps,
+              type: 'search'
+            }}
+          />
+        )}
       />
     );
   };
@@ -162,7 +174,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         title={'Estrategias'}
         handleClose={handleClickCloseDialog}
         displayDropdown={renderGoalsDropdown()}
-        saveNew={saveNew}
+        requestMethod={saveNew}
         newObject={newObject}
         setNewObject={setNewObject}
         nameMethod={'create'}
