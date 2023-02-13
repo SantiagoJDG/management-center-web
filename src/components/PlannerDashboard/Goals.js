@@ -192,8 +192,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
           <CardContent>
             {goals
               ? goals.map((eachGoal, index) => {
-                  const { authorData } = eachGoal;
-                  const { id: idGoal } = eachGoal;
+                  const { authorData, id: idGoal } = eachGoal;
                   return (
                     <Card key={index} sx={{ margin: 0.5 }}>
                       {eachGoal.categoryData ? (
