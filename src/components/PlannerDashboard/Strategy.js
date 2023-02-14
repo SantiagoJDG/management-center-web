@@ -78,8 +78,9 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     setOpenDialog(false);
   };
 
-  async function handleCategory(event) {
-    setNewObject({ ...newObject, goal: event.target.value });
+  async function handleCategory(event, value) {
+    const goalId = goals.find((goal) => goal.description === value);
+    setNewObject({ ...newObject, goal: goalId.id });
   }
 
   const renderGoalsDropdown = () => {
@@ -142,11 +143,11 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
               {strategies
                 ? strategies.map((eachStrategy, index) => {
                     return (
-                      <Card key={index} sx={{ boxShadow: 0 }}>
+                      <Card key={index} sx={{ margin: 0.5 }}>
                         {eachStrategy.strategyCategoryData ? (
                           <CardHeader subheader={eachStrategy.strategyCategoryData.name} />
                         ) : (
-                          'no data'
+                          ''
                         )}
                         <CardContent>
                           <Stack
