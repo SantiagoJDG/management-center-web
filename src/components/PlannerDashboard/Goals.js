@@ -43,6 +43,8 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
   };
 
   const handleClickOpenEditDialog = (idGoal) => {
+    const findGoal = goals.find((goal) => goal.id === idGoal);
+    setNewObject({ description: findGoal.description, category: findGoal.categoryData.id });
     setGoalSelected(idGoal);
     setEditOpenDialog(true);
   };
@@ -109,7 +111,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       await getAxiosInstance()
         .delete(objetiveObjectPath, newObject)
         .then(() => {
-          handleClickCloseCreateDialog();
+          handleClickCloseDeleteDialog();
           getBusinessObjective();
         });
     } catch (error) {
@@ -123,7 +125,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       await getAxiosInstance()
         .put(objetiveObjectPath, newObject)
         .then(() => {
-          handleClickCloseCreateDialog();
+          handleClickCloseEditDialog();
           getBusinessObjective();
         });
     } catch (error) {
@@ -143,7 +145,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     );
   };
 
-  const editableGoal = (authorData, idGoal) => {
+  const editableGoal = (authorData, idGoal, eachGoal) => {
     const { id } = authorData;
     if (id === userData.id) {
       return (
@@ -217,7 +219,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
                         justifyContent="space-between"
                         alignItems="center"
                       >
-                        {editableGoal(authorData, idGoal)}
+                        {editableGoal(authorData, idGoal, eachGoal)}
                       </Grid>
                     </Card>
                   );
