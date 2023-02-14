@@ -43,6 +43,8 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
   };
 
   const handleClickOpenEditDialog = (idGoal) => {
+    const findGoal = goals.find((goal) => goal.id === idGoal);
+    setNewObject({ description: findGoal.description, category: findGoal.categoryData.id });
     setGoalSelected(idGoal);
     setEditOpenDialog(true);
   };
@@ -109,7 +111,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       await getAxiosInstance()
         .delete(objetiveObjectPath, newObject)
         .then(() => {
-          handleClickCloseCreateDialog();
+          handleClickCloseDeleteDialog();
           getBusinessObjective();
         });
     } catch (error) {
@@ -123,7 +125,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       await getAxiosInstance()
         .put(objetiveObjectPath, newObject)
         .then(() => {
-          handleClickCloseCreateDialog();
+          handleClickCloseEditDialog();
           getBusinessObjective();
         });
     } catch (error) {
