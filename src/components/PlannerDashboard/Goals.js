@@ -145,7 +145,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     );
   };
 
-  const editableGoal = (authorData, idGoal, eachGoal) => {
+  const editableGoal = (authorData, idGoal) => {
     const { id } = authorData;
     if (id === userData.id) {
       return (
@@ -219,7 +219,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
                         justifyContent="space-between"
                         alignItems="center"
                       >
-                        {editableGoal(authorData, idGoal, eachGoal)}
+                        {editableGoal(authorData, idGoal)}
                       </Grid>
                     </Card>
                   );
