@@ -30,6 +30,7 @@ const Dashboard = () => {
     try {
       let path = `/api/business-plan/1`;
       let response = await getAxiosInstance().get(path);
+      console.log(response.data);
       setBusinessPlan(response.data);
     } catch {
       console.error('ERROR');

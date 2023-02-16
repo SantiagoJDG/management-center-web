@@ -132,7 +132,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                   S
                 </Avatar>
               }
-              title={'Strategy'}
+              title={'Strategias'}
               action={
                 <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
                   <AddIcon />
@@ -166,7 +166,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
           </Card>
         </Grid>
         <Grid item lg={8} xl={8}>
-          <Measures measures={measures} />
+          <Measures measures={measures} strategies={strategies} userId={userId} />
         </Grid>
       </Grid>
       <CustomDialog
