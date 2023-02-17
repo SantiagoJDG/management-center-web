@@ -11,13 +11,12 @@ import {
   Autocomplete,
   TextField
 } from '@mui/material';
-import { getAxiosInstance } from 'utils/axiosClient';
-import Measures from './Measures';
-
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-
+import Measures from './Measures';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+import useToggle from 'hooks/useToggle';
+import useCreate from 'hooks/useCreate';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
@@ -62,21 +61,14 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       }
     }
   ];
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useToggle();
   const [newObject, setNewObject] = useState({
     description: '',
     goal: null,
     author: userId,
     businessObjective: businessPlanObjective
   });
-
-  const handleClickOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleClickCloseDialog = () => {
-    setOpenDialog(false);
-  };
+  const [create] = useCreate('/api/business-plan/strategy', newObject);
 
   async function handleCategory(event, value) {
     const goalId = goals.find((goal) => goal.description === value);
@@ -106,18 +98,10 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     );
   };
 
-  const saveNew = async () => {
-    try {
-      let objetiveObjectPath = '/api/business-plan/strategy';
-      await getAxiosInstance()
-        .post(objetiveObjectPath, newObject)
-        .then(() => {
-          handleClickCloseDialog();
-          getBusinessObjective();
-        });
-    } catch (error) {
-      console.log('error');
-    }
+  const createGoal = async () => {
+    create();
+    setOpenDialog(false);
+    getBusinessObjective();
   };
 
   return (
@@ -134,7 +118,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
               }
               title={'Strategias'}
               action={
-                <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
+                <IconButton aria-label="settings" onClick={setOpenDialog}>
                   <AddIcon />
                 </IconButton>
               }
@@ -172,9 +156,9 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       <CustomDialog
         open={openDialog}
         title={'Estrategias'}
-        handleClose={handleClickCloseDialog}
+        handleClose={setOpenDialog}
         displayDropdown={renderGoalsDropdown()}
-        requestMethod={saveNew}
+        requestMethod={createGoal}
         newObject={newObject}
         setNewObject={setNewObject}
         nameMethod={'create'}

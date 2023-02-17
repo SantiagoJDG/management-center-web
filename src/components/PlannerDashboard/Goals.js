@@ -10,7 +10,6 @@ import {
   IconButton
 } from '@mui/material';
 import useAuth from 'hooks/useAuth';
-
 import { getAxiosInstance } from 'utils/axiosClient';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,12 +17,16 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+import useToggle from 'hooks/useToggle';
+import useCreate from 'hooks/useCreate';
+import useEdit from 'hooks/useEdit';
+import useDelete from 'hooks/useDelete';
 
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const { userData } = useAuth();
-  const [openCreateDialog, setCreateOpenDialog] = useState(false);
-  const [openEditDialog, setEditOpenDialog] = useState(false);
-  const [openDeleteDialog, setDeleteOpenDialog] = useState(false);
+  const [openCreateDialog, setCreateOpenDialog] = useToggle();
+  const [openEditDialog, setEditOpenDialog] = useToggle();
+  const [openDeleteDialog, setDeleteOpenDialog] = useToggle();
   const [goalIdSelected, setGoalSelected] = useState();
   const [categories, setCategories] = useState();
   const [newObject, setNewObject] = useState({
@@ -32,33 +35,20 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     author: userId,
     businessObjective: businessPlanObjective
   });
+  const [create] = useCreate('/api/business-plan/goal', newObject);
+  const [edit] = useEdit(`/api/business-plan/goal/${goalIdSelected}`, newObject);
+  const [deletion] = useDelete(`/api/business-plan/goal/${goalIdSelected}`, newObject);
 
-  const handleClickOpenCreateDialog = () => {
-    setCreateOpenDialog(true);
+  const handleClickOpenEditDialog = (idGoal) => {
+    setEditOpenDialog(true);
+    const findGoal = goals.find((goal) => goal.id === idGoal);
+    setNewObject({ description: findGoal.description, category: findGoal.categoryData.id });
+    setGoalSelected(idGoal);
   };
 
   const handleClickOpenDeleteDialog = (idGoal) => {
     setGoalSelected(idGoal);
     setDeleteOpenDialog(true);
-  };
-
-  const handleClickOpenEditDialog = (idGoal) => {
-    const findGoal = goals.find((goal) => goal.id === idGoal);
-    setNewObject({ description: findGoal.description, category: findGoal.categoryData.id });
-    setGoalSelected(idGoal);
-    setEditOpenDialog(true);
-  };
-
-  const handleClickCloseEditDialog = () => {
-    setEditOpenDialog(false);
-  };
-
-  const handleClickCloseCreateDialog = () => {
-    setCreateOpenDialog(false);
-  };
-
-  const handleClickCloseDeleteDialog = () => {
-    setDeleteOpenDialog(false);
   };
 
   const getCategories = async () => {
@@ -91,46 +81,22 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     }
   }
 
-  const saveNew = async () => {
-    try {
-      let objetiveObjectPath = '/api/business-plan/goal';
-      await getAxiosInstance()
-        .post(objetiveObjectPath, newObject)
-        .then(() => {
-          handleClickCloseCreateDialog();
-          getBusinessObjective();
-        });
-    } catch (error) {
-      console.log('error');
-    }
+  const createGoal = async () => {
+    create();
+    setCreateOpenDialog(false);
+    getBusinessObjective();
   };
 
   const deleteGoal = async () => {
-    try {
-      let objetiveObjectPath = `/api/business-plan/goal/${goalIdSelected}`;
-      await getAxiosInstance()
-        .delete(objetiveObjectPath, newObject)
-        .then(() => {
-          handleClickCloseDeleteDialog();
-          getBusinessObjective();
-        });
-    } catch (error) {
-      console.log('error');
-    }
+    deletion();
+    setDeleteOpenDialog(false);
+    getBusinessObjective();
   };
 
   const editGoal = async () => {
-    try {
-      let objetiveObjectPath = `/api/business-plan/goal/${goalIdSelected}`;
-      await getAxiosInstance()
-        .put(objetiveObjectPath, newObject)
-        .then(() => {
-          handleClickCloseEditDialog();
-          getBusinessObjective();
-        });
-    } catch (error) {
-      console.log('error');
-    }
+    edit();
+    setEditOpenDialog(false);
+    getBusinessObjective();
   };
 
   const renderCategoryDropdown = () => {
@@ -186,7 +152,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
             }
             title={'Goals'}
             action={
-              <IconButton aria-label="settings" onClick={() => handleClickOpenCreateDialog()}>
+              <IconButton aria-label="settings" onClick={setCreateOpenDialog}>
                 <AddIcon />
               </IconButton>
             }
@@ -231,9 +197,9 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       <CustomDialog
         open={openCreateDialog}
         title={'Meta'}
-        handleClose={handleClickCloseCreateDialog}
+        handleClose={setCreateOpenDialog}
         displayDropdown={renderCategoryDropdown()}
-        requestMethod={saveNew}
+        requestMethod={createGoal}
         newObject={newObject}
         setNewObject={setNewObject}
         nameMethod={'create'}
@@ -241,14 +207,14 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       <CustomDialog
         open={openDeleteDialog}
         title={'Meta'}
-        handleClose={handleClickCloseDeleteDialog}
+        handleClose={setDeleteOpenDialog}
         requestMethod={deleteGoal}
         nameMethod={'delete'}
       />
       <CustomDialog
         open={openEditDialog}
         title={'Meta'}
-        handleClose={handleClickCloseEditDialog}
+        handleClose={setEditOpenDialog}
         displayDropdown={renderCategoryDropdown()}
         requestMethod={editGoal}
         newObject={newObject}

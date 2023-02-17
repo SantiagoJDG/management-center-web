@@ -12,44 +12,30 @@ import {
   TextField
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { getAxiosInstance } from 'utils/axiosClient';
 import { useState } from 'react';
 import Actions from './Actions';
 import CustomDialog from './CustomDialog';
+import useToggle from 'hooks/useToggle';
+import useCreate from 'hooks/useCreate';
 
 const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useToggle(false);
   const [newObject, setNewObject] = useState({
     description: '',
     strategy: null,
     author: userId
   });
-
-  const handleClickOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleClickCloseDialog = () => {
-    setOpenDialog(false);
-  };
+  const [create] = useCreate('/api/business-plan/strategy/businessKpi', newObject);
 
   async function handleCategory(value) {
     const strategyId = strategies.find((goal) => goal.description === value);
     setNewObject({ ...newObject, strategy: strategyId.id });
   }
 
-  const saveNew = async () => {
-    try {
-      let objetiveObjectPath = '/api/business-plan/strategy/businessKpi';
-      await getAxiosInstance()
-        .post(objetiveObjectPath, newObject)
-        .then(() => {
-          handleClickCloseDialog();
-          getBusinessObjective();
-        });
-    } catch (error) {
-      console.log('error');
-    }
+  const createGoal = async () => {
+    create();
+    setOpenDialog(false);
+    getBusinessObjective();
   };
 
   const renderStrategiesDropdown = () => {
@@ -94,7 +80,7 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
                   <CardHeader
                     subheader={'Indicador de gestión'}
                     action={
-                      <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
+                      <IconButton aria-label="settings" onClick={setOpenDialog}>
                         <AddIcon />
                       </IconButton>
                     }
@@ -135,8 +121,8 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
       <CustomDialog
         open={openDialog}
         title={'Indicador de gestión'}
-        handleClose={handleClickCloseDialog}
-        requestMethod={saveNew}
+        handleClose={setOpenDialog}
+        requestMethod={createGoal}
         displayDropdown={renderStrategiesDropdown()}
         nameMethod={'create'}
       />
