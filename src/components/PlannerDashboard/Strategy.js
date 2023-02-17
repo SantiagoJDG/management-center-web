@@ -15,7 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import Measures from './Measures';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
-import useToggle from 'hooks/useToggle';
+import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
@@ -61,7 +61,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       }
     }
   ];
-  const [openDialog, setOpenDialog] = useToggle();
+  const [openDialog, setOpenDialog] = useOnOffSwitch();
   const [newObject, setNewObject] = useState({
     description: '',
     goal: null,
@@ -74,6 +74,12 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     const goalId = goals.find((goal) => goal.description === value);
     setNewObject({ ...newObject, goal: goalId.id });
   }
+
+  const createGoal = async () => {
+    create();
+    setOpenDialog(false);
+    getBusinessObjective();
+  };
 
   const renderGoalsDropdown = () => {
     const goalsDescription = goals.map((goal) => goal.description);
@@ -96,12 +102,6 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         )}
       />
     );
-  };
-
-  const createGoal = async () => {
-    create();
-    setOpenDialog(false);
-    getBusinessObjective();
   };
 
   return (
@@ -150,7 +150,12 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
           </Card>
         </Grid>
         <Grid item lg={8} xl={8}>
-          <Measures measures={measures} strategies={strategies} userId={userId} />
+          <Measures
+            measures={measures}
+            strategies={strategies}
+            userId={userId}
+            getBusinessObjective={getBusinessObjective}
+          />
         </Grid>
       </Grid>
       <CustomDialog

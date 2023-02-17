@@ -17,16 +17,16 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
-import useToggle from 'hooks/useToggle';
+import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
 import useEdit from 'hooks/useEdit';
 import useDelete from 'hooks/useDelete';
 
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const { userData } = useAuth();
-  const [openCreateDialog, setCreateOpenDialog] = useToggle();
-  const [openEditDialog, setEditOpenDialog] = useToggle();
-  const [openDeleteDialog, setDeleteOpenDialog] = useToggle();
+  const [openCreateDialog, setCreateOpenDialog] = useOnOffSwitch();
+  const [openEditDialog, setEditOpenDialog] = useOnOffSwitch();
+  const [openDeleteDialog, setDeleteOpenDialog] = useOnOffSwitch();
   const [goalIdSelected, setGoalSelected] = useState();
   const [categories, setCategories] = useState();
   const [newObject, setNewObject] = useState({

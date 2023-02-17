@@ -15,21 +15,21 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import Actions from './Actions';
 import CustomDialog from './CustomDialog';
-import useToggle from 'hooks/useToggle';
+import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
 
 const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
-  const [openDialog, setOpenDialog] = useToggle(false);
+  const [openDialog, setOpenDialog] = useOnOffSwitch(false);
   const [newObject, setNewObject] = useState({
     description: '',
-    strategy: null,
+    business_strategy: null,
     author: userId
   });
-  const [create] = useCreate('/api/business-plan/strategy/businessKpi', newObject);
+  const [create] = useCreate('/api/business-plan/kpi', newObject);
 
-  async function handleCategory(value) {
+  async function handleCategory(event, value) {
     const strategyId = strategies.find((goal) => goal.description === value);
-    setNewObject({ ...newObject, strategy: strategyId.id });
+    setNewObject({ ...newObject, business_strategy: strategyId.id });
   }
 
   const createGoal = async () => {
@@ -86,7 +86,7 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
                     }
                   />
 
-                  {measures?.map((eachMeasurable, index) => {
+                  {strategies.business_kpis?.map((eachMeasurable, index) => {
                     return (
                       <Card key={index} sx={{ margin: 0.5 }}>
                         <CardContent>
@@ -95,15 +95,13 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
                             spacing={1}
                             divider={<Divider orientation="horizontal" flexItem />}
                           >
-                            {eachMeasurable.measurable_objectives.dashboard.map(
-                              (eachMeasurableDescription, index) => {
-                                return (
-                                  <Typography variant="body1" key={index}>
-                                    {eachMeasurableDescription}
-                                  </Typography>
-                                );
-                              }
-                            )}
+                            {eachMeasurable.description.map((eachMeasurableDescription, index) => {
+                              return (
+                                <Typography variant="body1" key={index}>
+                                  {eachMeasurableDescription}
+                                </Typography>
+                              );
+                            })}
                           </Stack>
                         </CardContent>
                       </Card>
@@ -124,6 +122,8 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
         handleClose={setOpenDialog}
         requestMethod={createGoal}
         displayDropdown={renderStrategiesDropdown()}
+        newObject={newObject}
+        setNewObject={setNewObject}
         nameMethod={'create'}
       />
     </>
