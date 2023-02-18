@@ -88,7 +88,7 @@ const Dashboard = () => {
     if (businessPlan) {
       return (
         <Box>
-          {businessPlan.business_objectives.map((objective, index) => {
+          {businessPlan.objectivesData.map((objective, index) => {
             return (
               <Accordion key={index}>
                 <AccordionSummary
