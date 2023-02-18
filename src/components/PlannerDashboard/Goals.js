@@ -25,15 +25,15 @@ import useDelete from 'hooks/useDelete';
 import useMessage from 'hooks/useMessage';
 
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
-  const [goalIdSelected, setGoalIdSelected] = useState();
   const [categories, setCategories] = useState();
+  const [categoryToEdited, setCategoryToEdited] = useState();
+
   const [selectedGoal, setSelectedGoal] = useState({
     description: '',
     category: null,
     author: userId,
     businessObjective: businessPlanObjective
   });
-  const [categoryToEdited, setCategoryToEdited] = useState();
 
   const { userData } = useAuth();
   const { handleNewMessage } = useMessage();
@@ -45,6 +45,16 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
   const [create] = useCreate('/api/business-plan/goal', selectedGoal);
   const [edit] = useEdit(`/api/business-plan/goal/${selectedGoal.id}`, selectedGoal);
   const [deletion] = useDelete(`/api/business-plan/goal/${selectedGoal.id}`);
+
+  const handleClickOpenCreateDialog = () => {
+    setSelectedGoal({
+      description: '',
+      category: null,
+      author: userId,
+      businessObjective: businessPlanObjective
+    });
+    setOpenCreateDialog(true);
+  };
 
   const handleClickOpenEditDialog = (goal) => {
     setCategoryToEdited(goal.categoryData);
@@ -134,6 +144,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     if (error) return;
     await getBusinessObjective();
     setOpenDeleteDialog(false);
+    setSelectedGoal({ ...selectedGoal, description: '', category: null, id: null });
   };
 
   const editGoal = async () => {
@@ -203,7 +214,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
             }
             title={'Metas'}
             action={
-              <IconButton aria-label="settings" onClick={() => setOpenCreateDialog(true)}>
+              <IconButton aria-label="settings" onClick={handleClickOpenCreateDialog}>
                 <AddIcon />
               </IconButton>
             }
