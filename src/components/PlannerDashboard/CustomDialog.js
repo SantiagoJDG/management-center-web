@@ -1,9 +1,9 @@
 import {
+  Button,
   Dialog,
   DialogActions,
-  DialogTitle,
-  Button,
   DialogContent,
+  DialogTitle,
   TextField,
   Typography
 } from '@mui/material';
@@ -40,7 +40,7 @@ const CustomDialog = ({
     );
   };
 
-  const createEditDialog = (method) => {
+  const createEditDialog = () => {
     return (
       <Dialog open={open} fullWidth maxWidth="sm">
         <DialogTitle sx={{ bgcolor: 'info.main', color: 'info.contrastText', marginBottom: 2 }}>
