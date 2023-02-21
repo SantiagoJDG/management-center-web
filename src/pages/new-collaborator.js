@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import EditableCollaborator from 'components/Collaborators/EditableCollaborator';
 import useAuth from 'hooks/useAuth';
 
+
 const Collaborator = () => {
   const { userToken, waitingUser, userData } = useAuth();
 
@@ -50,6 +51,7 @@ const Collaborator = () => {
       return 'There is loading page';
     }
   };
+
 
   useEffect(() => {
     if (waitingUser) return;

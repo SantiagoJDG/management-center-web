@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Alert,
   Button,
   Divider,
   Grid,
@@ -19,12 +20,13 @@ import 'moment/locale/es';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import Joi from 'joi';
+import Joi, { number } from 'joi';
 
 import { getAxiosInstance } from 'utils/axiosClient';
 import useMessage from 'hooks/useMessage';
 
 import CustomAutoComplete from 'components/CustomAutoComplete';
+
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
@@ -51,7 +53,7 @@ const CollaboratorSchema = Joi.object({
   admissionDate: Joi.any()
 });
 
-const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
+const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
   const { handleNewMessage } = useMessage();
 
   const [formErrors, setFormErrors] = useState({});
@@ -77,6 +79,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     internalRoles: null,
     admissionDate: moment().format('YYYY-MM-DD')
   });
+ 
   const [initialDataCollaborator, setInitialDataCollaborator] = useState({});
 
   const [admissionDate, setAdmissionDate] = useState(moment().format());
@@ -201,6 +204,11 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   async function handleCompany(company) {
+    handleNewMessage({
+      text: 'Campos incompletos, favor revisar nuevamente el formulario',
+      severity: 'error'
+    });
+
     if (!company) return;
     if (!company.id) {
       let idReturned = await saveNewItem('/api/hiring/companies', company);
@@ -430,11 +438,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setFormErrors({ ...formErrors, [event.target.name]: true });
     } else {
       setFormErrors({ ...formErrors, [event.target.name]: false });
-    }
+    } 
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
-  }
 
+
+    }
   function handleAdmissionDateChange(newValue) {
     setAdmissionDate(newValue.format('YYYY-MM-DD'));
     setNewCollaborator({ ...newCollaborator, admissionDate: newValue.format('YYYY-MM-DD') });
@@ -453,9 +462,11 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         newErrors[detail.path] = true;
       });
 
+
       handleNewMessage({
         text: 'Campos incompletos, favor revisar nuevamente el formulario',
         severity: 'error'
+
       });
 
       setFormErrors(newErrors);
@@ -469,6 +480,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       });
     }
   }
+
+
 
   const showInformation = () => {
     return (
@@ -496,9 +509,11 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       value={newCollaborator.internalCode}
                       onChange={handleTextChange}
                       required
+                      type={number}
+                      isError = {true}
                     />
                   </Grid>
-
+                
                   <Grid item xs={12} lg={5}>
                     <TextField
                       error={formErrors.name}
@@ -510,9 +525,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      helperText='Este campo no es numérico'
                     />
                   </Grid>
-
+                  
                   <Grid item xs={12} lg={5}>
                     <TextField
                       error={formErrors.email}
@@ -520,10 +536,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       name="email"
                       label="Email corporativo"
                       value={newCollaborator.email}
-                      onChange={handleTextChange}
+                      onChange={handleTextChange }
                       size="small"
-                      fullWidth
+                      fullWidth 
                       required
+                      type="email"
+                      helperText='Este campo no es numérico'
+                      
                     />
                   </Grid>
                 </Grid>
@@ -664,7 +683,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={10} lg={4}>
                     <TextField
-                      error={formErrors.salaryAmount}
+                      error={formErrors.email}
                       id="salaryAmount"
                       name="salaryAmount"
                       label="Tarifa mensual bruta"
@@ -673,6 +692,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      helperText="Este campo es solo numérico"
+                      
                     />
                   </Grid>
                 </Grid>
@@ -852,6 +873,9 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       required
                       fullWidth
+                      helperText='Este campo no es numérico'
+                     
+                      
                     />
                   </Grid>
 
@@ -874,7 +898,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
           </AccordionDetails>
         </Accordion>
 
-        <Button variant="contained" onClick={handleSaveCollaborator}>
+        <Button variant="contained" onClick={handleSaveCollaborator}  onChange={handleTextChange}>
           Guardar
         </Button>
       </Box>
@@ -950,4 +974,4 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   return showInformation();
 };
 
-export default EditableCollaborator;
+export default EditableCollaborator;                               
