@@ -20,7 +20,7 @@ import 'moment/locale/es';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import Joi, { number } from 'joi';
+import Joi, { number, string } from 'joi';
 
 import { getAxiosInstance } from 'utils/axiosClient';
 import useMessage from 'hooks/useMessage';
@@ -81,7 +81,7 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
   });
  
   const [initialDataCollaborator, setInitialDataCollaborator] = useState({});
-
+   
   const [admissionDate, setAdmissionDate] = useState(moment().format());
   const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
 
@@ -104,6 +104,20 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
   const [seniorities, setSeniorities] = useState([]);
   const [readinessList, setReadinessList] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
+  const [names, setNames] = useState('')
+  const [nameError, setNameError] = useState(false)
+  const [Emails, setEmails] = useState('')
+  const [EmailError, setEmailError] = useState(false)
+  const [Firma, setFirma] = useState('')
+  const [FirmaError, setFirmaError] = useState(false)
+  const [Tarifa, setTarifa] = useState('')
+  const [TarifaError, setTarifaError] = useState(false)
+  
+  
+   
+
+  
+
 
   const router = useRouter();
 
@@ -441,7 +455,7 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
     } 
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
-
+       
 
     }
   function handleAdmissionDateChange(newValue) {
@@ -468,6 +482,37 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
         severity: 'error'
 
       });
+
+      if(Tarifa != string){
+        setTarifaError(true);
+        setTarifa('Esto no es un string')
+       } else {
+        setTarifaError(false);
+        setTarifa('')
+       }     
+       
+      if(Firma != string){
+        setFirmaError(true);
+        setFirma('Esto no es un string')
+       } else {
+        setFirmaError(false);
+        setFirma('')
+       }     
+
+       if(Emails != string){
+        setEmailError(false);
+        setEmails('Esto no es un string')
+       } else {
+        setEmailError(true);
+        setEmails('')
+       }  
+      
+       if(names != string){
+        setNameError(true);
+        setNames('Esto no es un string')
+       } else {
+        setNames('')
+       }    
 
       setFormErrors(newErrors);
 
@@ -516,32 +561,51 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                 
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      error={formErrors.name}
                       id="name"
                       name="name"
                       label="Nombres y Apellidos"
-                      value={newCollaborator.name}
-                      onChange={handleTextChange}
+                      type=''
+                      onChange={(e) => {setNames(e.target.value);
+                       if(names != string){
+                        setNameError(true);
+                        setNames('Esto no es un string')
+                       } else {
+                        setNames('correcto')
+                       }     
+                      
+                      } }
+                      error={nameError}
                       size="small"
                       fullWidth
                       required
-                      helperText='Este campo no es numérico'
+                      helperText={names}
                     />
                   </Grid>
                   
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      error={formErrors.email}
+                      
                       id="email"
                       name="email"
                       label="Email corporativo"
                       value={newCollaborator.email}
-                      onChange={handleTextChange }
+                      onChange={ (e) => {setEmails(e.target.value);
+                        if(names != string){
+                          setEmailError(false);
+                          setEmails('Esto no es un string')
+                         } else {
+                          setEmailError(true);
+                          setEmails('Esto no es un string')
+                         }  
+                        } }
+                       
                       size="small"
                       fullWidth 
                       required
                       type="email"
-                      helperText='Este campo no es numérico'
+                      error={EmailError}
+                      helperText={Emails}
+                    
                       
                     />
                   </Grid>
@@ -692,7 +756,7 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       size="small"
                       fullWidth
                       required
-                      helperText="Este campo es solo numérico"
+                      helperText={Tarifa}
                       
                     />
                   </Grid>
@@ -864,16 +928,25 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <TextField
-                      error={formErrors.emailSignature}
                       id="emailSignature"
                       name="emailSignature"
                       label="Firma de correo"
                       value={newCollaborator.emailSignature}
-                      onChange={handleTextChange}
+                      onChange={(e) => {setFirma(e.target.value);
+                        if(Firma != string){
+                         setFirmaError(true);
+                         setFirma('Esto no es un string')
+                        } else {
+                         setFirmaError(false);
+                         setFirma('Esto no es un string')
+                        }     
+                       
+                       } }
                       size="small"
                       required
                       fullWidth
-                      helperText='Este campo no es numérico'
+                      
+                      helperText={Firma}
                      
                       
                     />
