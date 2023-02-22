@@ -2,7 +2,6 @@ import {
   Card,
   Grid,
   CardHeader,
-  Avatar,
   CardContent,
   Stack,
   Typography,
@@ -13,10 +12,10 @@ import useAuth from 'hooks/useAuth';
 import { getAxiosInstance } from 'utils/axiosClient';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import AddIcon from '@mui/icons-material/Add';
 import { useState, useEffect } from 'react';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+import CustomCardHeader from './CustomCardHeader';
 import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
 import useEdit from 'hooks/useEdit';
@@ -141,59 +140,47 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
 
   return (
     <>
-      <Grid container>
-        <Card sx={{ width: '100%' }}>
-          <CardHeader
-            sx={{ bgcolor: 'primary.main' }}
-            avatar={
-              <Avatar sx={{ bgcolor: 'warning.main' }} aria-label="recipe">
-                G
-              </Avatar>
-            }
-            title={'Goals'}
-            action={
-              <IconButton aria-label="settings" onClick={setCreateOpenDialog}>
-                <AddIcon />
-              </IconButton>
-            }
-          />
-          <CardContent>
-            {goals
-              ? goals.map((eachGoal, index) => {
-                  const { authorData, id: idGoal } = eachGoal;
-                  return (
-                    <Card key={index} sx={{ margin: 0.5 }}>
-                      {eachGoal.categoryData ? (
-                        <CardHeader subheader={eachGoal.categoryData.name} />
-                      ) : (
-                        ''
-                      )}
-                      <CardContent>
-                        <Stack
-                          direction="column"
-                          spacing={1}
-                          divider={<Divider orientation="horizontal" flexItem />}
-                        >
-                          <Typography variant="body1" key={index}>
-                            {eachGoal.description}
-                          </Typography>
-                        </Stack>
-                      </CardContent>
-                      <Grid
-                        container
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        {editableGoal(authorData, idGoal)}
-                      </Grid>
-                    </Card>
-                  );
-                })
-              : 'No existen metas creadas'}
-          </CardContent>
-        </Card>
-      </Grid>
+      <CustomCardHeader
+        title={'Metas'}
+        initial={'M'}
+        onClickMethod={setCreateOpenDialog}
+        avatarColor={'warning.main'}
+      />
+      <CardContent>
+        {goals
+          ? goals.map((eachGoal, index) => {
+              const { authorData, id: idGoal } = eachGoal;
+              return (
+                <Card key={index} sx={{ margin: 0.5 }}>
+                  {eachGoal.categoryData ? (
+                    <CardHeader subheader={eachGoal.categoryData.name} />
+                  ) : (
+                    ''
+                  )}
+                  <CardContent>
+                    <Stack
+                      direction="column"
+                      spacing={1}
+                      divider={<Divider orientation="horizontal" flexItem />}
+                    >
+                      <Typography variant="body1" key={index}>
+                        {eachGoal.description}
+                      </Typography>
+                    </Stack>
+                  </CardContent>
+                  <Grid
+                    container
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    {editableGoal(authorData, idGoal)}
+                  </Grid>
+                </Card>
+              );
+            })
+          : 'No existen metas creadas'}
+      </CardContent>
       <CustomDialog
         open={openCreateDialog}
         title={'Meta'}

@@ -22,14 +22,14 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
   const [openDialog, setOpenDialog] = useOnOffSwitch(false);
   const [newObject, setNewObject] = useState({
     description: '',
-    business_strategy: null,
+    businessStrategy: null,
     author: userId
   });
   const [create] = useCreate('/api/business-plan/kpi', newObject);
 
   async function handleCategory(event, value) {
     const strategyId = strategies.find((goal) => goal.description === value);
-    setNewObject({ ...newObject, business_strategy: strategyId.id });
+    setNewObject({ ...newObject, businessStrategy: strategyId.id });
   }
 
   const createGoal = async () => {
