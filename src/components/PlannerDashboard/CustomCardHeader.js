@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 const CustomCardHeader = ({ title, initial, onClickMethod, avatarColor }) => {
   return (
     <CardHeader
-      sx={{ bgcolor: 'primary.main' }}
+      sx={{ bgcolor: 'info.main', color: 'info.contrastText' }}
       avatar={
         <Avatar sx={{ bgcolor: avatarColor }} aria-label="recipe">
           {initial}
@@ -12,9 +12,13 @@ const CustomCardHeader = ({ title, initial, onClickMethod, avatarColor }) => {
       }
       title={title}
       action={
-        <IconButton aria-label="settings" onClick={onClickMethod}>
-          <AddIcon />
-        </IconButton>
+        onClickMethod ? (
+          <IconButton aria-label="settings" onClick={onClickMethod}>
+            <AddIcon />
+          </IconButton>
+        ) : (
+          ''
+        )
       }
     />
   );

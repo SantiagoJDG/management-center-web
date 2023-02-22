@@ -1,8 +1,6 @@
-import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
-  Avatar,
   Card,
   CardContent,
   CardHeader,
@@ -18,6 +16,7 @@ import { getAxiosInstance } from 'utils/axiosClient';
 
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+import CustomCardHeader from './CustomCardHeader';
 import useCreate from 'hooks/useCreate';
 import useDelete from 'hooks/useDelete';
 import useEdit from 'hooks/useEdit';
@@ -204,19 +203,11 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     <>
       <Grid container>
         <Card>
-          <CardHeader
-            sx={{ bgcolor: 'info.main', color: 'info.contrastText' }}
-            avatar={
-              <Avatar sx={{ bgcolor: 'warning.main' }} aria-label="Goals">
-                M
-              </Avatar>
-            }
+          <CustomCardHeader
             title={'Metas'}
-            action={
-              <IconButton aria-label="settings" onClick={handleClickOpenCreateDialog}>
-                <AddIcon />
-              </IconButton>
-            }
+            initial={'M'}
+            onClickMethod={handleClickOpenCreateDialog}
+            avatarColor={'warning.main'}
           />
           <CardContent>
             {goals
