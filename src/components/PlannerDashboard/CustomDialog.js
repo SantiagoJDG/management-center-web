@@ -1,9 +1,9 @@
 import {
+  Button,
   Dialog,
   DialogActions,
-  DialogTitle,
-  Button,
   DialogContent,
+  DialogTitle,
   TextField,
   Typography
 } from '@mui/material';
@@ -25,11 +25,12 @@ const CustomDialog = ({
   const deleteDialog = () => {
     return (
       <Dialog open={open} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ bgcolor: 'primary.main', marginBottom: 2 }}>
-          Eliminar {title}
+        <DialogTitle sx={{ bgcolor: 'info.main', color: 'info.contrastText', marginBottom: 2 }}>
+          {title}
         </DialogTitle>
         <DialogContent>
-          <Typography>¿Estas seguro que quieres eliminar la {title} seleccionada?</Typography>
+          <Typography>{`¿Estas seguro que desea eliminar a ${newObject.description}?`}</Typography>
+          <Typography></Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
@@ -39,26 +40,29 @@ const CustomDialog = ({
     );
   };
 
-  const createEditDialog = (method) => {
+  const createEditDialog = () => {
     return (
       <Dialog open={open} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ bgcolor: 'primary.main', marginBottom: 2 }}>{title}</DialogTitle>
+        <DialogTitle sx={{ bgcolor: 'info.main', color: 'info.contrastText', marginBottom: 2 }}>
+          {title}
+        </DialogTitle>
+
         <DialogContent>
-          {displayDropdown ? displayDropdown : ''}
+          {displayDropdown && displayDropdown}
           <TextField
             margin="dense"
-            label="Descripcion"
+            label="Descripción"
             type="text"
             fullWidth
             variant="outlined"
+            value={newObject.description}
             onChange={handleDescription}
           />
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={requestMethod}>
-            {method} {title}
-          </Button>
+          <Button onClick={requestMethod}>Aceptar</Button>
         </DialogActions>
       </Dialog>
     );

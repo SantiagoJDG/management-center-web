@@ -1,22 +1,24 @@
-import { useState } from 'react';
 import { getAxiosInstance } from 'utils/axiosClient';
 
+import useMessage from 'hooks/useMessage';
+
 const useCreate = (path, body) => {
-  const [isSaved, setIsSaved] = useState(false);
+  const { handleNewMessage } = useMessage();
+
   const create = async () => {
     try {
-      await getAxiosInstance()
-        .post(path, body)
-        .then(() => {
-          setIsSaved(true);
-        });
+      await getAxiosInstance().post(path, body);
     } catch (error) {
-      console.log('error');
-      setIsSaved(false);
+      console.error(error);
+      handleNewMessage({
+        text: 'Error de comunicación, por favor vuelva a intentar en unos segundos.',
+        severity: 'error'
+      });
+      return error;
     }
   };
 
-  return [create, isSaved];
+  return [create];
 };
 
 export default useCreate;
