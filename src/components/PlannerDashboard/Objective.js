@@ -1,4 +1,4 @@
-import { Grid, Card } from '@mui/material';
+import { Grid } from '@mui/material';
 import Goals from 'components/PlannerDashboard/Goals';
 import Strategy from 'components/PlannerDashboard/Strategy';
 import useAuth from '../../hooks/useAuth';
