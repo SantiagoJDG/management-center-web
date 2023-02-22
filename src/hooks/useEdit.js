@@ -1,22 +1,24 @@
-import { useState } from 'react';
 import { getAxiosInstance } from 'utils/axiosClient';
 
+import useMessage from 'hooks/useMessage';
+
 const useEdit = (path, body) => {
-  const [isEdited, setIsEdited] = useState(false);
+  const { handleNewMessage } = useMessage();
+
   const edit = async () => {
     try {
-      await getAxiosInstance()
-        .put(path, body)
-        .then(() => {
-          setIsEdited(true);
-        });
+      await getAxiosInstance().put(path, body);
     } catch (error) {
-      console.log('error');
-      setIsEdited(false);
+      console.error(error);
+      handleNewMessage({
+        text: 'Error de comunicación, por favor vuelva a intentar en unos segundos.',
+        severity: 'error'
+      });
+      return error;
     }
   };
 
-  return [edit, isEdited];
+  return [edit];
 };
 
 export default useEdit;

@@ -1,128 +1,190 @@
-import {
-  Card,
-  Grid,
-  CardHeader,
-  CardContent,
-  Stack,
-  Typography,
-  Divider,
-  IconButton
-} from '@mui/material';
-import useAuth from 'hooks/useAuth';
-import { getAxiosInstance } from 'utils/axiosClient';
+import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useState, useEffect } from 'react';
+import {
+  Avatar,
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  Grid,
+  IconButton,
+  Stack,
+  Typography
+} from '@mui/material';
+import useAuth from 'hooks/useAuth';
+import { useEffect, useState } from 'react';
+import { getAxiosInstance } from 'utils/axiosClient';
+
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
-import CustomCardHeader from './CustomCardHeader';
-import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
-import useEdit from 'hooks/useEdit';
 import useDelete from 'hooks/useDelete';
+import useEdit from 'hooks/useEdit';
+import useMessage from 'hooks/useMessage';
 
 const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
-  const { userData } = useAuth();
-  const [openCreateDialog, setCreateOpenDialog] = useOnOffSwitch();
-  const [openEditDialog, setEditOpenDialog] = useOnOffSwitch();
-  const [openDeleteDialog, setDeleteOpenDialog] = useOnOffSwitch();
-  const [goalIdSelected, setGoalSelected] = useState();
   const [categories, setCategories] = useState();
-  const [newObject, setNewObject] = useState({
+  const [categoryToEdited, setCategoryToEdited] = useState();
+
+  const [selectedGoal, setSelectedGoal] = useState({
     description: '',
     category: null,
     author: userId,
     businessObjective: businessPlanObjective
   });
-  const [create] = useCreate('/api/business-plan/goal', newObject);
-  const [edit] = useEdit(`/api/business-plan/goal/${goalIdSelected}`, newObject);
-  const [deletion] = useDelete(`/api/business-plan/goal/${goalIdSelected}`, newObject);
 
-  const handleClickOpenEditDialog = (idGoal) => {
-    setEditOpenDialog(true);
-    const findGoal = goals.find((goal) => goal.id === idGoal);
-    setNewObject({ description: findGoal.description, category: findGoal.categoryData.id });
-    setGoalSelected(idGoal);
+  const { userData } = useAuth();
+  const { handleNewMessage } = useMessage();
+
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  const [create] = useCreate('/api/business-plan/goal', selectedGoal);
+  const [edit] = useEdit(`/api/business-plan/goal/${selectedGoal.id}`, selectedGoal);
+  const [deletion] = useDelete(`/api/business-plan/goal/${selectedGoal.id}`);
+
+  const handleClickOpenCreateDialog = () => {
+    setSelectedGoal({
+      description: '',
+      category: null,
+      author: userId,
+      businessObjective: businessPlanObjective
+    });
+    setOpenCreateDialog(true);
   };
 
-  const handleClickOpenDeleteDialog = (idGoal) => {
-    setGoalSelected(idGoal);
-    setDeleteOpenDialog(true);
+  const handleClickOpenEditDialog = (goal) => {
+    setCategoryToEdited(goal.categoryData);
+    setSelectedGoal({
+      id: goal.id,
+      description: goal.description,
+      category: goal.categoryData && goal.categoryData.id,
+      author: userId,
+      businessObjective: businessPlanObjective
+    });
+
+    setOpenEditDialog(true);
+  };
+
+  const handleClickOpenDeleteDialog = (goal) => {
+    setSelectedGoal({
+      id: goal.id,
+      description: goal.description
+    });
+    setOpenDeleteDialog(true);
   };
 
   const getCategories = async () => {
     try {
-      let path = `/api/business-plan/goal/category`;
-      let response = await getAxiosInstance().get(path);
+      let response = await getAxiosInstance().get('/api/business-plan/goal/category');
       setCategories(response.data);
-    } catch {
-      console.error('ERROR');
+    } catch (error) {
+      console.error(error);
+      handleNewMessage({
+        text: 'Error de comunicación, por favor vuelva a intentar en unos segundos.',
+        severity: 'error'
+      });
     }
   };
 
-  async function handleCategory(goal) {
-    setNewObject({ ...newObject, category: goal.id });
-    if (!goal) return;
-    if (!goal.id) {
-      let idReturned = await saveNewItem('/api/business-plan/goal', goal);
-      goal.id = idReturned;
-      setCategories([...categories, goal]);
-    }
-    setNewObject({ ...newObject, category: goal.id });
+  async function handleCategory(category) {
+    const savedCategory = await saveNewCategory(category);
+
+    setSelectedGoal({ ...selectedGoal, category: savedCategory ? savedCategory.id : '' });
   }
 
-  async function saveNewItem(paths, newItem) {
-    try {
-      let createdItem = await getAxiosInstance().post('/api/business-plan/goal/category', newItem);
-      return createdItem.data.id;
-    } catch (error) {
-      console.error('Error while save new item...', error);
+  async function saveNewCategory(category) {
+    if (!category) return;
+    if (!category.id) {
+      try {
+        const response = await getAxiosInstance().post(
+          '/api/business-plan/goal/category',
+          category
+        );
+        category.id = response.data.id;
+        setCategories([...categories, category]);
+      } catch (error) {
+        console.error(error);
+        handleNewMessage({
+          text: 'Error de comunicación, por favor vuelva a intentar en unos segundos.',
+          severity: 'error'
+        });
+        return;
+      }
     }
+    return category;
+  }
+
+  function hanldeCloseDialog(methodToClose) {
+    setSelectedGoal({ ...selectedGoal, description: '', category: null, id: null });
+    setCategoryToEdited();
+    methodToClose(false);
   }
 
   const createGoal = async () => {
-    create();
-    setCreateOpenDialog(false);
-    getBusinessObjective();
+    if (selectedGoal.description == '' || selectedGoal.category < 1) {
+      handleNewMessage({
+        text: 'Por favor ingrese una meta valida antes de continuar.',
+        severity: 'error'
+      });
+      return;
+    }
+    const error = await create();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenCreateDialog(false);
+    setSelectedGoal({ ...selectedGoal, description: '', category: null, id: null });
   };
 
   const deleteGoal = async () => {
-    deletion();
-    setDeleteOpenDialog(false);
-    getBusinessObjective();
+    const error = await deletion();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenDeleteDialog(false);
+    setSelectedGoal({ ...selectedGoal, description: '', category: null, id: null });
   };
 
   const editGoal = async () => {
-    edit();
-    setEditOpenDialog(false);
-    getBusinessObjective();
+    if (selectedGoal.description == '' || selectedGoal.category < 1) {
+      handleNewMessage({
+        text: 'Por favor ingrese una meta valida antes de continuar.',
+        severity: 'error'
+      });
+      return;
+    }
+    const error = await edit();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenEditDialog(false);
+    setSelectedGoal({ ...selectedGoal, description: '', category: null, id: null });
   };
 
-  const renderCategoryDropdown = () => {
+  function renderCategoryDropdown() {
     return (
       <CustomAutoComplete
         name="categoryid"
         label="Categorias"
         optionList={categories}
         elmentCallback={handleCategory}
-        requiredField={true}
+        prechargedValue={categoryToEdited}
       />
     );
-  };
+  }
 
-  const editableGoal = (authorData, idGoal) => {
-    const { id } = authorData;
-    if (id === userData.id) {
+  const editableGoal = (goal) => {
+    if (goal.authorData.id === userData.id) {
       return (
         <>
           <Grid container direction="row" justifyContent="space-between" alignItems="center">
             <Grid item>
-              <IconButton onClick={() => handleClickOpenDeleteDialog(idGoal)}>
+              <IconButton onClick={() => handleClickOpenDeleteDialog(goal)}>
                 <DeleteIcon />
               </IconButton>
             </Grid>
             <Grid item justifySelf="end">
-              <IconButton onClick={() => handleClickOpenEditDialog(idGoal)}>
+              <IconButton onClick={() => handleClickOpenEditDialog(goal)}>
                 <EditIcon />
               </IconButton>
             </Grid>
@@ -140,73 +202,94 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
 
   return (
     <>
-      <CustomCardHeader
-        title={'Metas'}
-        initial={'M'}
-        onClickMethod={setCreateOpenDialog}
-        avatarColor={'warning.main'}
-      />
-      <CardContent>
-        {goals
-          ? goals.map((eachGoal, index) => {
-              const { authorData, id: idGoal } = eachGoal;
-              return (
-                <Card key={index} sx={{ margin: 0.5 }}>
-                  {eachGoal.categoryData ? (
-                    <CardHeader subheader={eachGoal.categoryData.name} />
-                  ) : (
-                    ''
-                  )}
-                  <CardContent>
-                    <Stack
-                      direction="column"
-                      spacing={1}
-                      divider={<Divider orientation="horizontal" flexItem />}
-                    >
-                      <Typography variant="body1" key={index}>
-                        {eachGoal.description}
-                      </Typography>
-                    </Stack>
-                  </CardContent>
-                  <Grid
-                    container
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    {editableGoal(authorData, idGoal)}
-                  </Grid>
-                </Card>
-              );
-            })
-          : 'No existen metas creadas'}
-      </CardContent>
+      <Grid container>
+        <Card>
+          <CardHeader
+            sx={{ bgcolor: 'info.main', color: 'info.contrastText' }}
+            avatar={
+              <Avatar sx={{ bgcolor: 'warning.main' }} aria-label="Goals">
+                M
+              </Avatar>
+            }
+            title={'Metas'}
+            action={
+              <IconButton aria-label="settings" onClick={handleClickOpenCreateDialog}>
+                <AddIcon />
+              </IconButton>
+            }
+          />
+          <CardContent>
+            {goals
+              ? goals.map((eachGoal, index) => {
+                  return (
+                    <Card key={index} sx={{ margin: 0.5 }}>
+                      {eachGoal.categoryData ? (
+                        <CardHeader
+                          subheader={
+                            <Typography variant="body1" key={index}>
+                              {eachGoal.categoryData.name}
+                            </Typography>
+                          }
+                        />
+                      ) : (
+                        ''
+                      )}
+                      <CardContent>
+                        <Stack
+                          direction="column"
+                          spacing={1}
+                          divider={<Divider orientation="horizontal" flexItem />}
+                        >
+                          <Typography variant="body1" key={index}>
+                            {eachGoal.description}
+                          </Typography>
+                        </Stack>
+                      </CardContent>
+                      <Grid
+                        container
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        {editableGoal(eachGoal)}
+                      </Grid>
+                    </Card>
+                  );
+                })
+              : 'Actualmente no hay metas creadas'}
+          </CardContent>
+        </Card>
+      </Grid>
+
       <CustomDialog
+        nameMethod={'create'}
+        title={'Creación de nueva meta'}
         open={openCreateDialog}
-        title={'Meta'}
-        handleClose={setCreateOpenDialog}
+        handleClose={() => hanldeCloseDialog(setOpenCreateDialog)}
         displayDropdown={renderCategoryDropdown()}
         requestMethod={createGoal}
-        newObject={newObject}
-        setNewObject={setNewObject}
-        nameMethod={'create'}
+        newObject={selectedGoal}
+        setNewObject={setSelectedGoal}
       />
+
       <CustomDialog
-        open={openDeleteDialog}
-        title={'Meta'}
-        handleClose={setDeleteOpenDialog}
-        requestMethod={deleteGoal}
         nameMethod={'delete'}
+        title={'Eliminación de meta'}
+        open={openDeleteDialog}
+        handleClose={() => hanldeCloseDialog(setOpenDeleteDialog)}
+        requestMethod={deleteGoal}
+        newObject={selectedGoal}
       />
+
       <CustomDialog
+        nameMethod={'edit'}
+        title={'Edición de meta seleccionada'}
         open={openEditDialog}
-        title={'Meta'}
-        handleClose={setEditOpenDialog}
+        handleClose={() => hanldeCloseDialog(setOpenEditDialog)}
         displayDropdown={renderCategoryDropdown()}
         requestMethod={editGoal}
-        newObject={newObject}
-        setNewObject={setNewObject}
-        nameMethod={'edit'}
+        newObject={selectedGoal}
+        setNewObject={setSelectedGoal}
       />
     </>
   );
