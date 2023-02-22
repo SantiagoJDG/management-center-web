@@ -93,7 +93,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
           <Card sx={{ minHeight: '100%' }}>
             <CustomCardHeader
               title={'Estrategias'}
-              initial={'E'}
+              initialLetter={'E'}
               onClickMethod={setOpenDialog}
               avatarColor={'success.main'}
             />

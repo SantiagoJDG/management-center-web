@@ -75,7 +75,7 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
     <>
       <Grid container>
         <Card sx={{ width: '100%' }}>
-          <CustomCardHeader title={'Metricas'} initial={'M'} avatarColor={'secondary.main'} />
+          <CustomCardHeader title={'Metricas'} initialLetter={'M'} avatarColor={'secondary.main'} />
           <CardContent>
             <Grid container direction={'row'} spacing={1}>
               <Grid item lg={4} xl={4}>

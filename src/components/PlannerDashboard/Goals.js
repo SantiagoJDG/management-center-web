@@ -205,7 +205,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         <Card>
           <CustomCardHeader
             title={'Metas'}
-            initial={'M'}
+            initialLetter={'M'}
             onClickMethod={handleClickOpenCreateDialog}
             avatarColor={'warning.main'}
           />
