@@ -2,7 +2,6 @@ import {
   Card,
   Grid,
   CardHeader,
-  Avatar,
   CardContent,
   Stack,
   Typography,
@@ -17,25 +16,37 @@ import Actions from './Actions';
 import CustomDialog from './CustomDialog';
 import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
+import CustomCardHeader from './CustomCardHeader';
+import useMessage from 'hooks/useMessage';
 
 const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
   const [openDialog, setOpenDialog] = useOnOffSwitch(false);
-  const [newObject, setNewObject] = useState({
+  const [newMeasure, setNewMeasure] = useState({
     description: '',
-    business_strategy: null,
+    businessStrategy: null,
     author: userId
   });
-  const [create] = useCreate('/api/business-plan/kpi', newObject);
+  const [create] = useCreate('/api/business-plan/kpi', newMeasure);
+  const { handleNewMessage } = useMessage();
 
   async function handleCategory(event, value) {
     const strategyId = strategies.find((goal) => goal.description === value);
-    setNewObject({ ...newObject, business_strategy: strategyId.id });
+    setNewMeasure({ ...newMeasure, businessStrategy: strategyId.id });
   }
 
-  const createGoal = async () => {
-    create();
+  const createMeasure = async () => {
+    if (newMeasure.description == '' || newMeasure.businessStrategy < 1) {
+      handleNewMessage({
+        text: 'Por favor ingrese una métrica valida antes de continuar.',
+        severity: 'error'
+      });
+      return;
+    }
+    const error = await create();
+    if (error) return;
+    await getBusinessObjective();
     setOpenDialog(false);
-    getBusinessObjective();
+    setNewMeasure({ ...newMeasure, description: '', category: null, id: null });
   };
 
   const renderStrategiesDropdown = () => {
@@ -49,7 +60,7 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Metas"
+            label="Strategias"
             InputProps={{
               ...params.InputProps,
               type: 'search'
@@ -64,15 +75,7 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
     <>
       <Grid container>
         <Card sx={{ width: '100%' }}>
-          <CardHeader
-            avatar={
-              <Avatar sx={{ bgcolor: 'secondary.main' }} aria-label="recipe">
-                M
-              </Avatar>
-            }
-            sx={{ bgcolor: 'primary.main' }}
-            title={'Metricas'}
-          />
+          <CustomCardHeader title={'Metricas'} initialLetter={'M'} avatarColor={'secondary.main'} />
           <CardContent>
             <Grid container direction={'row'} spacing={1}>
               <Grid item lg={4} xl={4}>
@@ -85,28 +88,31 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
                       </IconButton>
                     }
                   />
-
-                  {strategies.business_kpis?.map((eachMeasurable, index) => {
-                    return (
-                      <Card key={index} sx={{ margin: 0.5 }}>
-                        <CardContent>
-                          <Stack
-                            direction="column"
-                            spacing={1}
-                            divider={<Divider orientation="horizontal" flexItem />}
-                          >
-                            {eachMeasurable.description.map((eachMeasurableDescription, index) => {
-                              return (
-                                <Typography variant="body1" key={index}>
-                                  {eachMeasurableDescription}
-                                </Typography>
-                              );
-                            })}
-                          </Stack>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                  {strategies
+                    ? strategies.map((eachStrategy, index) => {
+                        return (
+                          <Card key={index} sx={{ margin: 0.5 }}>
+                            <CardContent>
+                              <Stack
+                                direction="column"
+                                spacing={1}
+                                divider={<Divider orientation="horizontal" flexItem />}
+                              >
+                                {eachStrategy.kpisData
+                                  ? eachStrategy.kpisData.map((kpi, index) => {
+                                      return (
+                                        <Typography variant="body1" key={index}>
+                                          {kpi.description}
+                                        </Typography>
+                                      );
+                                    })
+                                  : 'Actualmente no hay kpis creadas'}
+                              </Stack>
+                            </CardContent>
+                          </Card>
+                        );
+                      })
+                    : 'Actualmente no hay estrtegias creadas'}
                 </Card>
               </Grid>
               <Grid item lg={8} xl={8}>
@@ -120,10 +126,10 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
         open={openDialog}
         title={'Indicador de gestión'}
         handleClose={setOpenDialog}
-        requestMethod={createGoal}
+        requestMethod={createMeasure}
         displayDropdown={renderStrategiesDropdown()}
-        newObject={newObject}
-        setNewObject={setNewObject}
+        newObject={newMeasure}
+        setNewObject={setNewMeasure}
         nameMethod={'create'}
       />
     </>

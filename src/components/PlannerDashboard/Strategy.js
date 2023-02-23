@@ -2,19 +2,17 @@ import {
   Card,
   Grid,
   CardHeader,
-  Avatar,
   CardContent,
   Stack,
   Typography,
   Divider,
-  IconButton,
   Autocomplete,
   TextField
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import Measures from './Measures';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+import CustomCardHeader from './CustomCardHeader';
 import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
 
@@ -25,19 +23,11 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       strategy_id: 1,
       measurable_objectives: {
         id: 1,
-        dashboard: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        dashboard: []
       },
       actions: {
         id: 1,
-        description: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        description: []
       }
     },
     {
@@ -45,19 +35,11 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       strategy_id: 1,
       measurable_objectives: {
         id: 1,
-        dashboard: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        dashboard: []
       },
       actions: {
         id: 1,
-        description: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        description: []
       }
     }
   ];
@@ -109,19 +91,11 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       <Grid container spacing={0.5} direction="row">
         <Grid item lg={4} xl={4}>
           <Card sx={{ minHeight: '100%' }}>
-            <CardHeader
-              sx={{ bgcolor: 'primary.main' }}
-              avatar={
-                <Avatar sx={{ bgcolor: 'success.main' }} aria-label="recipe">
-                  S
-                </Avatar>
-              }
-              title={'Strategias'}
-              action={
-                <IconButton aria-label="settings" onClick={setOpenDialog}>
-                  <AddIcon />
-                </IconButton>
-              }
+            <CustomCardHeader
+              title={'Estrategias'}
+              initialLetter={'E'}
+              onClickMethod={setOpenDialog}
+              avatarColor={'success.main'}
             />
             <CardContent>
               {strategies
