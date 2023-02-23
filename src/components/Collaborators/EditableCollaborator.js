@@ -3,7 +3,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Alert,
   Button,
   Divider,
   Grid,
@@ -20,13 +19,12 @@ import 'moment/locale/es';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import Joi, { number, string } from 'joi';
+import Joi from 'joi';
 
 import { getAxiosInstance } from 'utils/axiosClient';
 import useMessage from 'hooks/useMessage';
 
 import CustomAutoComplete from 'components/CustomAutoComplete';
-
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
@@ -53,7 +51,7 @@ const CollaboratorSchema = Joi.object({
   admissionDate: Joi.any()
 });
 
-const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
+const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
   const { handleNewMessage } = useMessage();
 
   const [formErrors, setFormErrors] = useState({});
@@ -79,9 +77,8 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
     internalRoles: null,
     admissionDate: moment().format('YYYY-MM-DD')
   });
- 
   const [initialDataCollaborator, setInitialDataCollaborator] = useState({});
-   
+
   const [admissionDate, setAdmissionDate] = useState(moment().format());
   const [relativeDateFromAdmission, setRelativeDateFromAdmission] = useState(moment().fromNow());
 
@@ -104,20 +101,6 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
   const [seniorities, setSeniorities] = useState([]);
   const [readinessList, setReadinessList] = useState([]);
   const [internalRoles, setInternalRoles] = useState([]);
-  const [names, setNames] = useState('')
-  const [nameError, setNameError] = useState(false)
-  const [Emails, setEmails] = useState('')
-  const [EmailError, setEmailError] = useState(false)
-  const [Firma, setFirma] = useState('')
-  const [FirmaError, setFirmaError] = useState(false)
-  const [Tarifa, setTarifa] = useState('')
-  const [TarifaError, setTarifaError] = useState(false)
-  
-  
-   
-
-  
-
 
   const router = useRouter();
 
@@ -218,11 +201,6 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
   }
 
   async function handleCompany(company) {
-    handleNewMessage({
-      text: 'Campos incompletos, favor revisar nuevamente el formulario',
-      severity: 'error'
-    });
-
     if (!company) return;
     if (!company.id) {
       let idReturned = await saveNewItem('/api/hiring/companies', company);
@@ -449,15 +427,14 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
 
   function handleTextChange(event) {
     if (!event.target.value) {
-      setFormErrors({ ...formErrors, [event.target.name]: true });
+      setFormErrors({ ...formErrors, [event.target.name]: {error: true, description: 'Ingrese un valor valido' }});
     } else {
-      setFormErrors({ ...formErrors, [event.target.name]: false });
-    } 
+      setFormErrors({ ...formErrors, [event.target.name]: {error: false, description: ''} });
+    }
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
-       
+  }
 
-    }
   function handleAdmissionDateChange(newValue) {
     setAdmissionDate(newValue.format('YYYY-MM-DD'));
     setNewCollaborator({ ...newCollaborator, admissionDate: newValue.format('YYYY-MM-DD') });
@@ -470,49 +447,16 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
   async function handleSaveCollaborator() {
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
-      console.log(error);
+      console.error(error);
       let newErrors = {};
       error.details.map((detail) => {
-        newErrors[detail.path] = true;
+        newErrors[detail.path] = { error: true, description: 'Este campo no debe estar vacío'}
       });
-
 
       handleNewMessage({
         text: 'Campos incompletos, favor revisar nuevamente el formulario',
         severity: 'error'
-
       });
-
-      if(Tarifa != string){
-        setTarifaError(true);
-        setTarifa('Esto no es un string')
-       } else {
-        setTarifaError(false);
-        setTarifa('')
-       }     
-       
-      if(Firma != string){
-        setFirmaError(true);
-        setFirma('Esto no es un string')
-       } else {
-        setFirmaError(false);
-        setFirma('')
-       }     
-
-       if(Emails != string){
-        setEmailError(false);
-        setEmails('Esto no es un string')
-       } else {
-        setEmailError(true);
-        setEmails('')
-       }  
-      
-       if(names != string){
-        setNameError(true);
-        setNames('Esto no es un string')
-       } else {
-        setNames('')
-       }    
 
       setFormErrors(newErrors);
 
@@ -525,8 +469,6 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
       });
     }
   }
-
-
 
   const showInformation = () => {
     return (
@@ -546,7 +488,6 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                 <Grid container spacing={2}>
                   <Grid item xs={6} lg={2}>
                     <TextField
-                      error={formErrors.internalCode}
                       size="small"
                       id="internalCode"
                       name="internalCode"
@@ -554,59 +495,38 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       value={newCollaborator.internalCode}
                       onChange={handleTextChange}
                       required
-                      type={number}
-                      isError = {true}
+                      error={formErrors.internalCode && formErrors.internalCode.error}
+                      helperText={formErrors.internalCode && formErrors.internalCode.description}
                     />
                   </Grid>
-                
+
                   <Grid item xs={12} lg={5}>
                     <TextField
                       id="name"
                       name="name"
                       label="Nombres y Apellidos"
-                      type=''
-                      onChange={(e) => {setNames(e.target.value);
-                       if(names != string){
-                        setNameError(true);
-                        setNames('Esto no es un string')
-                       } else {
-                        setNames('correcto')
-                       }     
-                      
-                      } }
-                      error={nameError}
+                      value={newCollaborator.name}
+                      onChange={handleTextChange}
                       size="small"
                       fullWidth
                       required
-                      helperText={names}
+                      error={formErrors.name && formErrors.name.error}
+                      helperText={formErrors.name && formErrors.name.description}
                     />
                   </Grid>
-                  
+
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      
                       id="email"
                       name="email"
                       label="Email corporativo"
                       value={newCollaborator.email}
-                      onChange={ (e) => {setEmails(e.target.value);
-                        if(names != string){
-                          setEmailError(false);
-                          setEmails('Esto no es un string')
-                         } else {
-                          setEmailError(true);
-                          setEmails('Esto no es un string')
-                         }  
-                        } }
-                       
+                      onChange={handleTextChange}
                       size="small"
-                      fullWidth 
+                      fullWidth
                       required
-                      type="email"
-                      error={EmailError}
-                      helperText={Emails}
-                    
-                      
+                      error={formErrors.email && formErrors.email.error}
+                      helperText={formErrors.email && formErrors.email.description}
                     />
                   </Grid>
                 </Grid>
@@ -667,6 +587,8 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       elmentCallback={handleState}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.state}
+                      error={formErrors.state && formErrors.state.error}
+                      helperText={formErrors.state && formErrors.state.description}
                     />
                   </Grid>
                 </Grid>
@@ -690,25 +612,27 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.company}
                       name="company"
                       label="Empresa contratante"
                       optionList={companies}
                       elmentCallback={handleCompany}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.company}
+                      error={formErrors.company && formErrors.company.error}
+                      helperText={formErrors.company && formErrors.company.description}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.office}
                       name="office"
                       label="Oficina de contrato"
                       optionList={offices}
                       elmentCallback={handleOffice}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.office}
+                      error={formErrors.office && formErrors.office.error}
+                      helperText={formErrors.office && formErrors.office.description}
                     />
                   </Grid>
 
@@ -742,12 +666,13 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       elmentCallback={handleContractTypes}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.contractType}
+                      error={formErrors.contractType && formErrors.contractType.contractType}
+                      helperText={formErrors.contractType && formErrors.contractType.contractType}
                     />
                   </Grid>
 
                   <Grid item xs={10} lg={4}>
                     <TextField
-                      error={formErrors.email}
                       id="salaryAmount"
                       name="salaryAmount"
                       label="Tarifa mensual bruta"
@@ -756,8 +681,8 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       size="small"
                       fullWidth
                       required
-                      helperText={Tarifa}
-                      
+                      error={formErrors.salaryAmount && formErrors.salaryAmount.error}
+                      helperText={formErrors.salaryAmount && formErrors.salaryAmount.description}
                     />
                   </Grid>
                 </Grid>
@@ -789,18 +714,21 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       elmentCallback={handleManagement}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.management}
+                      error={formErrors.management && formErrors.management.error}
+                      helperText={formErrors.management && formErrors.management.description}
                     />
                   </Grid>
 
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.supervisor}
                       name="supervisor"
                       label="Supervisor"
                       optionList={supervisors}
                       elmentCallback={handleSupervisor}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.supervisor}
+                      error={formErrors.supervisor && formErrors.supervisor.error}
+                      helperText={formErrors.supervisor && formErrors.supervisor.description}
                     />
                   </Grid>
 
@@ -813,6 +741,8 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       elmentCallback={handleClient}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.client}
+                      error={formErrors.client && formErrors.client.error}
+                      helperText={formErrors.client && formErrors.client.description}
                     />
                   </Grid>
                 </Grid>
@@ -823,7 +753,6 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      showError={formErrors.profiles}
                       name="n1Profile"
                       label="N1-Perfil"
                       optionList={profiles}
@@ -831,6 +760,8 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       multiple={true}
                       requiredField={true}
                       prechargedValue={initialDataCollaborator.profiles}
+                      error={formErrors.n1Profile && formErrors.n1Profile.error}
+                      helperText={formErrors.n1Profile && formErrors.n1Profile.description}
                     />
                   </Grid>
                 </Grid>
@@ -932,23 +863,12 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       name="emailSignature"
                       label="Firma de correo"
                       value={newCollaborator.emailSignature}
-                      onChange={(e) => {setFirma(e.target.value);
-                        if(Firma != string){
-                         setFirmaError(true);
-                         setFirma('Esto no es un string')
-                        } else {
-                         setFirmaError(false);
-                         setFirma('Esto no es un string')
-                        }     
-                       
-                       } }
+                      onChange={handleTextChange}
                       size="small"
                       required
                       fullWidth
-                      
-                      helperText={Firma}
-                     
-                      
+                      error={formErrors.emailSignature && formErrors.emailSignature.error}
+                      helperText={formErrors.emailSignature && formErrors.emailSignature.description}
                     />
                   </Grid>
 
@@ -962,6 +882,8 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
                       requiredField={true}
                       multiple={true}
                       prechargedValue={initialDataCollaborator.internalRoles}
+                      error={formErrors.internalRole && formErrors.internalRole.error}
+                      helperText={formErrors.internalRole && formErrors.internalRole.description}
                     />
                   </Grid>
                 </Grid>
@@ -971,7 +893,7 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
           </AccordionDetails>
         </Accordion>
 
-        <Button variant="contained" onClick={handleSaveCollaborator}  onChange={handleTextChange}>
+        <Button variant="contained" onClick={handleSaveCollaborator}>
           Guardar
         </Button>
       </Box>
@@ -1047,4 +969,4 @@ const EditableCollaborator = ({collaboratorData, setPrincipalInformation }) => {
   return showInformation();
 };
 
-export default EditableCollaborator;                               
+export default EditableCollaborator;
