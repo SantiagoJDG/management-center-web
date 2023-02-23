@@ -37,7 +37,7 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
   const createMeasure = async () => {
     if (newMeasure.description == '' || newMeasure.businessStrategy < 1) {
       handleNewMessage({
-        text: 'Por favor ingrese una meta valida antes de continuar.',
+        text: 'Por favor ingrese una métrica valida antes de continuar.',
         severity: 'error'
       });
       return;
