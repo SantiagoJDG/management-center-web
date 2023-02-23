@@ -11,13 +11,12 @@ import {
   Autocomplete,
   TextField
 } from '@mui/material';
-import { getAxiosInstance } from 'utils/axiosClient';
-import Measures from './Measures';
-
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-
+import Measures from './Measures';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+import useOnOffSwitch from 'hooks/useOnOffSwitch';
+import useCreate from 'hooks/useCreate';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
@@ -62,26 +61,25 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       }
     }
   ];
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useOnOffSwitch();
   const [newObject, setNewObject] = useState({
     description: '',
     goal: null,
     author: userId,
     businessObjective: businessPlanObjective
   });
-
-  const handleClickOpenDialog = () => {
-    setOpenDialog(true);
-  };
-
-  const handleClickCloseDialog = () => {
-    setOpenDialog(false);
-  };
+  const [create] = useCreate('/api/business-plan/strategy', newObject);
 
   async function handleCategory(event, value) {
     const goalId = goals.find((goal) => goal.description === value);
     setNewObject({ ...newObject, goal: goalId.id });
   }
+
+  const createGoal = async () => {
+    create();
+    setOpenDialog(false);
+    getBusinessObjective();
+  };
 
   const renderGoalsDropdown = () => {
     const goalsDescription = goals.map((goal) => goal.description);
@@ -106,20 +104,6 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     );
   };
 
-  const saveNew = async () => {
-    try {
-      let objetiveObjectPath = '/api/business-plan/strategy';
-      await getAxiosInstance()
-        .post(objetiveObjectPath, newObject)
-        .then(() => {
-          handleClickCloseDialog();
-          getBusinessObjective();
-        });
-    } catch (error) {
-      console.log('error');
-    }
-  };
-
   return (
     <>
       <Grid container spacing={0.5} direction="row">
@@ -132,9 +116,9 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                   S
                 </Avatar>
               }
-              title={'Strategy'}
+              title={'Strategias'}
               action={
-                <IconButton aria-label="settings" onClick={() => handleClickOpenDialog()}>
+                <IconButton aria-label="settings" onClick={setOpenDialog}>
                   <AddIcon />
                 </IconButton>
               }
@@ -166,15 +150,20 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
           </Card>
         </Grid>
         <Grid item lg={8} xl={8}>
-          <Measures measures={measures} />
+          <Measures
+            measures={measures}
+            strategies={strategies}
+            userId={userId}
+            getBusinessObjective={getBusinessObjective}
+          />
         </Grid>
       </Grid>
       <CustomDialog
         open={openDialog}
         title={'Estrategias'}
-        handleClose={handleClickCloseDialog}
+        handleClose={setOpenDialog}
         displayDropdown={renderGoalsDropdown()}
-        requestMethod={saveNew}
+        requestMethod={createGoal}
         newObject={newObject}
         setNewObject={setNewObject}
         nameMethod={'create'}
