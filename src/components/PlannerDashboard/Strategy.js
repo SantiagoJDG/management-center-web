@@ -21,7 +21,7 @@ import useCreate from 'hooks/useCreate';
 import useEdit from 'hooks/useEdit';
 import useDelete from 'hooks/useDelete';
 import useMessage from 'hooks/useMessage';
-// import useAuth from 'hooks/useAuth';
+import useAuth from 'hooks/useAuth';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
@@ -50,7 +50,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       }
     }
   ];
-  // const { userData } = useAuth();
+  const { userData } = useAuth();
   const { handleNewMessage } = useMessage();
 
   const [openCreateDialog, setOpenCreateDialog] = useOnOffSwitch();
@@ -152,7 +152,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
   };
 
   const editableStrategy = (eachStrategy) => {
-    if (eachStrategy) {
+    if (eachStrategy.authorData.id === userData.id) {
       return (
         <>
           <Grid container direction="row" justifyContent="space-between" alignItems="center">
