@@ -59,18 +59,21 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
 
   const [selectedStrategy, setSelectedStrategy] = useState({
     description: '',
-    id: null,
+    businessGoal: null,
     author: userId,
-    businessObjective: businessPlanObjective
+    businessObjectiveId: businessPlanObjective
   });
 
   const [create] = useCreate('/api/business-plan/strategy', selectedStrategy);
-  const [edit] = useEdit(`/api/business-plan/strategy/${selectedStrategy.id}`, selectedStrategy);
-  const [deletion] = useDelete(`/api/business-plan/strategy/${selectedStrategy.id}`);
+  const [edit] = useEdit(
+    `/api/business-plan/strategy/${selectedStrategy.businessGoal}`,
+    selectedStrategy
+  );
+  const [deletion] = useDelete(`/api/business-plan/strategy/${selectedStrategy.businessGoal}`);
 
   async function handleGoalSelected(event, value) {
     const goalId = goals.find((goal) => goal.description === value);
-    setSelectedStrategy({ ...selectedStrategy, id: goalId.id });
+    setSelectedStrategy({ ...selectedStrategy, businessGoal: goalId.id });
   }
 
   const createGoal = async () => {
@@ -81,7 +84,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
 
   const handleClickOpenEditDialog = (strategy) => {
     setSelectedStrategy({
-      id: strategy.id,
+      businessGoalId: strategy.id,
       description: strategy.description,
       author: userId,
       businessObjective: businessPlanObjective
@@ -102,21 +105,26 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     if (error) return;
     await getBusinessObjective();
     setOpenEditDialog(false);
-    setSelectedStrategy({ ...selectedStrategy, description: '', category: null, id: null });
+    setSelectedStrategy({
+      ...selectedStrategy,
+      description: '',
+      category: null,
+      businessGoal: null
+    });
   };
 
   const handleClickOpenDeleteDialog = (eachStrategy) => {
     setSelectedStrategy({
-      id: eachStrategy.id,
+      businessGoal: eachStrategy.id,
       description: eachStrategy.description,
       author: userId,
-      businessObjective: businessPlanObjective
+      businessObjectiveId: businessPlanObjective
     });
     setOpenDeleteDialog(true);
   };
 
   function hanldeCloseDialog(methodToClose) {
-    setSelectedStrategy({ ...selectedStrategy, description: '', id: null });
+    setSelectedStrategy({ ...selectedStrategy, description: '', businessGoal: null });
     methodToClose(false);
   }
 
@@ -125,7 +133,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     if (error) return;
     await getBusinessObjective();
     setOpenDeleteDialog(false);
-    setSelectedStrategy({ ...selectedStrategy, description: '', id: null });
+    setSelectedStrategy({ ...selectedStrategy, description: '', businessGoal: null });
   };
 
   const renderGoalsDropdown = () => {
