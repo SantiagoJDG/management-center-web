@@ -9,6 +9,7 @@ const CustomAutoComplete = ({
   multiple,
   requiredField,
   showError,
+  formError,
   prechargedValue
 }) => {
   const [value, setValue] = useState(multiple ? [] : '');
@@ -91,7 +92,8 @@ const CustomAutoComplete = ({
           </li>
         )}
         renderInput={(params) => (
-          <TextField {...params} label={label} required={requiredField} error={showError} />
+          <TextField {...params} label={label} required={requiredField} error={formError && formError.error}
+          helperText={formError && formError.description} />
         )}
       />
     );
