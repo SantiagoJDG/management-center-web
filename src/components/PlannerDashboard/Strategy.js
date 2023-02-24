@@ -1,3 +1,5 @@
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Card,
   Grid,
@@ -5,6 +7,7 @@ import {
   CardContent,
   Stack,
   Typography,
+  IconButton,
   Divider,
   Autocomplete,
   TextField
@@ -15,6 +18,10 @@ import CustomDialog from 'components/PlannerDashboard/CustomDialog';
 import CustomCardHeader from './CustomCardHeader';
 import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
+import useEdit from 'hooks/useEdit';
+import useDelete from 'hooks/useDelete';
+import useMessage from 'hooks/useMessage';
+// import useAuth from 'hooks/useAuth';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
@@ -43,24 +50,82 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       }
     }
   ];
-  const [openDialog, setOpenDialog] = useOnOffSwitch();
-  const [newObject, setNewObject] = useState({
+  // const { userData } = useAuth();
+  const { handleNewMessage } = useMessage();
+
+  const [openCreateDialog, setOpenCreateDialog] = useOnOffSwitch();
+  const [openEditDialog, setOpenEditDialog] = useOnOffSwitch();
+  const [openDeleteDialog, setOpenDeleteDialog] = useOnOffSwitch();
+
+  const [selectedStrategy, setSelectedStrategy] = useState({
     description: '',
-    goal: null,
+    id: null,
     author: userId,
     businessObjective: businessPlanObjective
   });
-  const [create] = useCreate('/api/business-plan/strategy', newObject);
 
-  async function handleCategory(event, value) {
+  const [create] = useCreate('/api/business-plan/strategy', selectedStrategy);
+  const [edit] = useEdit(`/api/business-plan/strategy/${selectedStrategy.id}`, selectedStrategy);
+  const [deletion] = useDelete(`/api/business-plan/strategy/${selectedStrategy.id}`);
+
+  async function handleGoalSelected(event, value) {
     const goalId = goals.find((goal) => goal.description === value);
-    setNewObject({ ...newObject, goal: goalId.id });
+    setSelectedStrategy({ ...selectedStrategy, id: goalId.id });
   }
 
   const createGoal = async () => {
     create();
-    setOpenDialog(false);
+    setOpenCreateDialog(false);
     getBusinessObjective();
+  };
+
+  const handleClickOpenEditDialog = (strategy) => {
+    setSelectedStrategy({
+      id: strategy.id,
+      description: strategy.description,
+      author: userId,
+      businessObjective: businessPlanObjective
+    });
+
+    setOpenEditDialog(true);
+  };
+
+  const editStrategy = async () => {
+    if (selectedStrategy.description == '' || selectedStrategy.category < 1) {
+      handleNewMessage({
+        text: 'Por favor ingrese una meta valida antes de continuar.',
+        severity: 'error'
+      });
+      return;
+    }
+    const error = await edit();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenEditDialog(false);
+    setSelectedStrategy({ ...selectedStrategy, description: '', category: null, id: null });
+  };
+
+  const handleClickOpenDeleteDialog = (eachStrategy) => {
+    setSelectedStrategy({
+      id: eachStrategy.id,
+      description: eachStrategy.description,
+      author: userId,
+      businessObjective: businessPlanObjective
+    });
+    setOpenDeleteDialog(true);
+  };
+
+  function hanldeCloseDialog(methodToClose) {
+    setSelectedStrategy({ ...selectedStrategy, description: '', id: null });
+    methodToClose(false);
+  }
+
+  const deleteStrategy = async () => {
+    const error = await deletion();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenDeleteDialog(false);
+    setSelectedStrategy({ ...selectedStrategy, description: '', id: null });
   };
 
   const renderGoalsDropdown = () => {
@@ -71,7 +136,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         id="free-solo-2-demo"
         disableClearable
         options={goalsDescription}
-        onChange={handleCategory}
+        onChange={handleGoalSelected}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -86,6 +151,29 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     );
   };
 
+  const editableStrategy = (eachStrategy) => {
+    if (eachStrategy) {
+      return (
+        <>
+          <Grid container direction="row" justifyContent="space-between" alignItems="center">
+            <Grid item>
+              <IconButton onClick={() => handleClickOpenDeleteDialog(eachStrategy)}>
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+            <Grid item justifySelf="end">
+              <IconButton onClick={() => handleClickOpenEditDialog(eachStrategy)}>
+                <EditIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </>
+      );
+    } else {
+      return;
+    }
+  };
+
   return (
     <>
       <Grid container spacing={0.5} direction="row">
@@ -94,7 +182,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
             <CustomCardHeader
               title={'Estrategias'}
               initialLetter={'E'}
-              onClickMethod={setOpenDialog}
+              onClickMethod={setOpenCreateDialog}
               avatarColor={'success.main'}
             />
             <CardContent>
@@ -116,6 +204,14 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                             <Typography variant="body1">{eachStrategy.description}</Typography>
                           </Stack>
                         </CardContent>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          {editableStrategy(eachStrategy)}
+                        </Grid>
                       </Card>
                     );
                   })
@@ -132,15 +228,36 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
           />
         </Grid>
       </Grid>
+
       <CustomDialog
-        open={openDialog}
+        open={openCreateDialog}
         title={'Estrategias'}
-        handleClose={setOpenDialog}
+        handleClose={setOpenCreateDialog}
         displayDropdown={renderGoalsDropdown()}
         requestMethod={createGoal}
-        newObject={newObject}
-        setNewObject={setNewObject}
+        newObject={selectedStrategy}
+        setNewObject={setSelectedStrategy}
         nameMethod={'create'}
+      />
+
+      <CustomDialog
+        nameMethod={'delete'}
+        title={'Eliminación de estrategia'}
+        open={openDeleteDialog}
+        handleClose={() => hanldeCloseDialog(setOpenDeleteDialog)}
+        requestMethod={deleteStrategy}
+        newObject={selectedStrategy}
+      />
+
+      <CustomDialog
+        nameMethod={'edit'}
+        title={'Edición de estrategia seleccionada'}
+        open={openEditDialog}
+        handleClose={() => hanldeCloseDialog(setOpenEditDialog)}
+        displayDropdown={renderGoalsDropdown()}
+        requestMethod={editStrategy}
+        newObject={selectedStrategy}
+        setNewObject={setSelectedStrategy}
       />
     </>
   );
