@@ -96,7 +96,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
   const editStrategy = async () => {
     if (selectedStrategy.description == '' || selectedStrategy.category < 1) {
       handleNewMessage({
-        text: 'Por favor ingrese una meta valida antes de continuar.',
+        text: 'Por favor ingrese una strategia valida antes de continuar.',
         severity: 'error'
       });
       return;
