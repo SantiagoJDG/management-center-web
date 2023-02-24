@@ -34,7 +34,7 @@ const CustomDialog = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={requestMethod}>Eliminar {title}</Button>
+          <Button onClick={requestMethod}>Aceptar</Button>
         </DialogActions>
       </Dialog>
     );
