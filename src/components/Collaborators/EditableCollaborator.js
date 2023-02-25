@@ -50,7 +50,6 @@ const CollaboratorSchema = Joi.object({
   internalRoles: Joi.array().required(),
   admissionDate: Joi.any(),
   n1Profile: Joi.array().required(),
-  n2Knowledge: Joi.array().required(),
   seniority: Joi.array().required(),
   readiness: Joi.array().required()
 });
@@ -194,7 +193,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     }
     
 
-    
     setNewCollaborator({ ...newCollaborator, country: country.id });
     
   }
@@ -225,11 +223,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       let idReturned = await saveNewItem('/api/hiring/offices', office);
       office.id = idReturned;
       setOffices([...offices, office]);
-    } else if (!office.target.value) {
-      setFormErrors({ ...formErrors, [office.target.name]: {error: true, description: 'Ingrese un valor valido' }});
-    }else {
-      setFormErrors({ ...formErrors, [office.target.name]: {error: false, description: ''} });
-    }
+    } 
     setNewCollaborator({ ...newCollaborator, office: office.id });
   }
 
@@ -736,7 +730,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={12} lg={4}>
                     <CustomAutoComplete
-                      formError={formErrors.supervisor}
+                      formError={formErrors.client}
                       name="client"
                       label="Cliente"
                       optionList={clients}
@@ -771,7 +765,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      formError={formErrors.n2Knowledge}
+                      formError={formErrors.knowledges}
                       name="n2Knowledge"
                       label="N2-Especialidad"
                       optionList={knowledges}
@@ -789,7 +783,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      formError={formErrors.profiles}
+                      formError={formErrors.technologies}
                       name="n3Technology"
                       label="N3-tecnologías predominantes"
                       optionList={technologies}
