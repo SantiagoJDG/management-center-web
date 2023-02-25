@@ -189,7 +189,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       setCountries([...countries, country]);
     }
     
-
     setNewCollaborator({ ...newCollaborator, country: country.id });
     
   }
