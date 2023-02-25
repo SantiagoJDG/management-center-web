@@ -49,9 +49,6 @@ const CollaboratorSchema = Joi.object({
   emailSignature: Joi.string().required(),
   internalRoles: Joi.array().required(),
   admissionDate: Joi.any(),
-  n1Profile: Joi.array().required(),
-  seniority: Joi.array().required(),
-  readiness: Joi.array().required()
 });
 
 const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
@@ -747,7 +744,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      formError={formErrors.n1Profile}
+                      formError={formErrors.profiles}
                       name="n1Profile"
                       label="N1-Perfil"
                       optionList={profiles}
