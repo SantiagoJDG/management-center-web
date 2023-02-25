@@ -36,14 +36,14 @@ const UserInfo = ({ userDataLogged }) => {
 
         <ListItem disablePadding>
           <ListItemIcon>
-            <CalendarMonthIcon color="info" fontSize="large"/>
+            <CalendarMonthIcon color="info" fontSize="large" />
           </ListItemIcon>
           <ListItemText primary="Fecha de ingreso" secondary={admissionDateFormated} />
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemIcon>
-            <AccountCircleIcon color="info" fontSize="large"/>
+            <AccountCircleIcon color="info" fontSize="large" />
           </ListItemIcon>
           <ListItemText primary="Supervisor" secondary={userDataLogged.supervisorData.name} />
         </ListItem>
@@ -55,7 +55,7 @@ const UserInfo = ({ userDataLogged }) => {
 
         <ListItem disablePadding>
           <ListItemIcon>
-            <ConstructionIcon color="info" fontSize="large"/>
+            <ConstructionIcon color="info" fontSize="large" />
           </ListItemIcon>
           <ListItemText
             primary=" N-1 Perfil:"
