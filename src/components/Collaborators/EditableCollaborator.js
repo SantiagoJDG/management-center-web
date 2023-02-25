@@ -181,16 +181,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   async function handleCountry(country) {
-    
     if (!country) return;
     if (!country.id) {
       let idReturned = await saveNewItem('/api/residence/countries', country);
       country.id = idReturned;
       setCountries([...countries, country]);
     }
-    
     setNewCollaborator({ ...newCollaborator, country: country.id });
-    
   }
 
   async function handleState(state) {
