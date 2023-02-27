@@ -24,10 +24,9 @@ const Actions = ({ measures, userId, getBusinessObjective }) => {
     measuresIds: [],
     author: userId
   });
-  const [create] = useCreate('/api/business-plan/kpi', newAction);
+  const [create] = useCreate('/api/business-plan/action', newAction);
 
   const createAction = async () => {
-    console.log(newAction);
     if (newAction.description == '' || newAction.measuresIds < 1) {
       handleNewMessage({
         text: 'Por favor ingrese una métrica valida antes de continuar.',
