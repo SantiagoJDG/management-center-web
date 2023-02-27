@@ -428,8 +428,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   function handleTextChange(event) {
     if (!event.target.value) {
       setFormErrors({ ...formErrors, [event.target.name]: {error: true, description: 'Ingrese un valor valido' }});
-    } else if (event != string ) {
-      setFormErrors({ ...formErrors, [event.target.name]: {error: true, description: 'Esto no es un string'} });
+    } else {
+      setFormErrors({ ...formErrors, [event.target.name]:{error: false, description: '' } });
     }
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
