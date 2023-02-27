@@ -19,7 +19,7 @@ import useCreate from 'hooks/useCreate';
 import CustomCardHeader from './CustomCardHeader';
 import useMessage from 'hooks/useMessage';
 
-const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
+const Measures = ({ strategies, userId, getBusinessObjective }) => {
   const [openDialog, setOpenDialog] = useOnOffSwitch(false);
   const [newMeasure, setNewMeasure] = useState({
     description: '',
@@ -116,7 +116,11 @@ const Measures = ({ measures, strategies, userId, getBusinessObjective }) => {
                 </Card>
               </Grid>
               <Grid item lg={8} xl={8}>
-                <Actions measures={measures} />
+                <Actions
+                  measures={strategies.map((strategy) => {
+                    return strategy.kpisData;
+                  })}
+                />
               </Grid>
             </Grid>
           </CardContent>

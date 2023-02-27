@@ -24,34 +24,9 @@ import useMessage from 'hooks/useMessage';
 import useAuth from 'hooks/useAuth';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
-  const measures = [
-    {
-      id: 1,
-      strategy_id: 1,
-      measurable_objectives: {
-        id: 1,
-        dashboard: []
-      },
-      actions: {
-        id: 1,
-        description: []
-      }
-    },
-    {
-      id: 1,
-      strategy_id: 1,
-      measurable_objectives: {
-        id: 1,
-        dashboard: []
-      },
-      actions: {
-        id: 1,
-        description: []
-      }
-    }
-  ];
   const { userData } = useAuth();
   const { handleNewMessage } = useMessage();
+  const [strategyToEdited, setStrategyToEdited] = useState();
 
   const [openCreateDialog, setOpenCreateDialog] = useOnOffSwitch();
   const [openEditDialog, setOpenEditDialog] = useOnOffSwitch();
@@ -61,7 +36,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     description: '',
     businessGoal: null,
     author: userId,
-    businessObjectiveId: businessPlanObjective
+    businessObjective: businessPlanObjective
   });
 
   const [create] = useCreate('/api/business-plan/strategy', selectedStrategy);
@@ -83,8 +58,9 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
   };
 
   const handleClickOpenEditDialog = (strategy) => {
+    setStrategyToEdited(strategy.businessGoalData.description);
     setSelectedStrategy({
-      businessGoalId: strategy.id,
+      businessGoal: strategy.id,
       description: strategy.description,
       author: userId,
       businessObjective: businessPlanObjective
@@ -118,7 +94,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       businessGoal: eachStrategy.id,
       description: eachStrategy.description,
       author: userId,
-      businessObjectiveId: businessPlanObjective
+      businessObjective: businessPlanObjective
     });
     setOpenDeleteDialog(true);
   };
@@ -143,6 +119,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         freeSolo
         id="free-solo-2-demo"
         disableClearable
+        defaultValue={strategyToEdited}
         options={goalsDescription}
         onChange={handleGoalSelected}
         renderInput={(params) => (
@@ -229,7 +206,6 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         </Grid>
         <Grid item lg={8} xl={8}>
           <Measures
-            measures={measures}
             strategies={strategies}
             userId={userId}
             getBusinessObjective={getBusinessObjective}

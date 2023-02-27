@@ -26,6 +26,7 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
     const {
       target: { value }
     } = event;
+    console.log(value);
     const ternary = typeof value === 'string' ? value.split(',') : value;
     setItem(ternary);
     let id = ternary.map((selected) => {
@@ -47,20 +48,22 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value, index) => (
-                <Chip key={index} label={value.name} />
+                <Chip key={index} label={value.name ? value.name : value.description} />
               ))}
             </Box>
           )}
         >
-          {dropdownData.map((parameters, index) => (
-            <MenuItem
-              key={index}
-              value={parameters}
-              style={getStyles(parameters.name, item, theme)}
-            >
-              {parameters.name}
-            </MenuItem>
-          ))}
+          {dropdownData.map((parameters, index) => {
+            return (
+              <MenuItem
+                key={index}
+                value={parameters}
+                style={getStyles(parameters.name ? parameters.name : parameters, item, theme)}
+              >
+                {parameters.name ? parameters.name : parameters.description}
+              </MenuItem>
+            );
+          })}
         </Select>
       </FormControl>
     )
