@@ -26,7 +26,6 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
     const {
       target: { value }
     } = event;
-    console.log(value);
     const ternary = typeof value === 'string' ? value.split(',') : value;
     setItem(ternary);
     let id = ternary.map((selected) => {
