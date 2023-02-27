@@ -48,7 +48,7 @@ const CollaboratorSchema = Joi.object({
   readiness: Joi.any(),
   emailSignature: Joi.string().required(),
   internalRoles: Joi.array().required(),
-  admissionDate: Joi.any(),
+  admissionDate: Joi.any()
 });
 
 const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => {
@@ -216,7 +216,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       let idReturned = await saveNewItem('/api/hiring/offices', office);
       office.id = idReturned;
       setOffices([...offices, office]);
-    } 
+    }
     setNewCollaborator({ ...newCollaborator, office: office.id });
   }
 
@@ -427,9 +427,15 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
   function handleTextChange(event) {
     if (!event.target.value) {
-      setFormErrors({ ...formErrors, [event.target.name]: {error: true, description: 'Ingrese un valor valido' }});
-    } else if (event != string ) {
-      setFormErrors({ ...formErrors, [event.target.name]: {error: true, description: 'Esto no es un string'} });
+      setFormErrors({
+        ...formErrors,
+        [event.target.name]: { error: true, description: 'Ingrese un valor valido' }
+      });
+    } else if (event != string) {
+      setFormErrors({
+        ...formErrors,
+        [event.target.name]: { error: true, description: 'Esto no es un string' }
+      });
     }
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
