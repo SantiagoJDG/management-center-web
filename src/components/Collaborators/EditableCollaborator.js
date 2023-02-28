@@ -19,7 +19,7 @@ import 'moment/locale/es';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import Joi, { string } from 'joi';
+import Joi from 'joi';
 
 import { getAxiosInstance } from 'utils/axiosClient';
 import useMessage from 'hooks/useMessage';
@@ -427,9 +427,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
   function handleTextChange(event) {
     if (!event.target.value) {
-      setFormErrors({ ...formErrors, [event.target.name]: {error: true, description: 'Ingrese un valor valido' }});
+      setFormErrors({
+        ...formErrors,
+        [event.target.name]: { error: true, description: 'Ingrese un valor valido' }
+      });
     } else {
-      setFormErrors({ ...formErrors, [event.target.name]:{error: false, description: '' } });
+      setFormErrors({ ...formErrors, [event.target.name]: { error: false, description: '' } });
     }
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
@@ -450,7 +453,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       console.error(error);
       let newErrors = {};
       error.details.map((detail) => {
-        newErrors[detail.path] = { error: true, description: detail.message}
+        newErrors[detail.path] = { error: true, description: detail.message };
       });
 
       handleNewMessage({
@@ -468,7 +471,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
         pathname: '/collaborators'
       });
     }
-  }  const showInformation = () => {
+  }
+  const showInformation = () => {
     return (
       <Box>
         <Accordion>
@@ -856,7 +860,9 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       required
                       fullWidth
                       error={formErrors.emailSignature && formErrors.emailSignature.error}
-                      helperText={formErrors.emailSignature && formErrors.emailSignature.description}
+                      helperText={
+                        formErrors.emailSignature && formErrors.emailSignature.description
+                      }
                     />
                   </Grid>
 

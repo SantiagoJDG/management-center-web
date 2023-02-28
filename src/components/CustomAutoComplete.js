@@ -8,7 +8,6 @@ const CustomAutoComplete = ({
   elmentCallback,
   multiple,
   requiredField,
-  showError,
   formError,
   prechargedValue
 }) => {
@@ -92,9 +91,14 @@ const CustomAutoComplete = ({
           </li>
         )}
         renderInput={(params) => (
-          <TextField {...params} label={label} required={requiredField} error={formError && formError.error}
-          helperText={formError && formError.description} />
-        )}
+          <TextField
+            {...params}
+            label={label}
+            required={requiredField} 
+            error={formError && formError.error}
+            helperText={formError && formError.description}
+          />
+    )}
       />
     );
   };
