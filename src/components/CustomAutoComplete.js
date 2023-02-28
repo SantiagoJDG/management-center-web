@@ -94,11 +94,11 @@ const CustomAutoComplete = ({
           <TextField
             {...params}
             label={label}
-            required={requiredField} 
+            required={requiredField}
             error={formError && formError.error}
             helperText={formError && formError.description}
           />
-    )}
+        )}
       />
     );
   };
