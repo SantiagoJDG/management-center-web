@@ -429,7 +429,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     if (!event.target.value) {
       setFormErrors({
         ...formErrors,
-        [event.target.name]: { error: true, description: 'Ingrese un valor valido' }
+        [event.target.name]: { error: true, description: 'El campo no puede estar vacío' }
       });
     } else {
       setFormErrors({ ...formErrors, [event.target.name]: { error: false, description: '' } });
