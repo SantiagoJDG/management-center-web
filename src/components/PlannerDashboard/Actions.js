@@ -5,10 +5,10 @@ import {
   Stack,
   Typography,
   Divider,
-  IconButton
+  IconButton,
+  TextField
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import CustomDialog from './CustomDialog';
 import { useState } from 'react';
 import useCreate from 'hooks/useCreate';
@@ -16,12 +16,13 @@ import useMessage from 'hooks/useMessage';
 import CollaboratorFilter from 'components/Collaborators/CollaboratorFilter';
 
 const Actions = ({ measures, userId, getBusinessObjective }) => {
-  const [createOpenDialog, setCreateOpenDialog] = useOnOffSwitch(false);
+  const [createOpenDialog, setCreateOpenDialog] = useState(false);
   const { handleNewMessage } = useMessage();
 
   const [newAction, setNewAction] = useState({
     description: '',
-    measuresIds: [],
+    measuresIds: undefined,
+    time: '',
     author: userId
   });
   const [create] = useCreate('/api/business-plan/action', newAction);
@@ -38,7 +39,7 @@ const Actions = ({ measures, userId, getBusinessObjective }) => {
     if (error) return;
     await getBusinessObjective();
     createOpenDialog(false);
-    setNewAction({ ...newAction, description: '', category: null, id: null });
+    setNewAction({ ...newAction, description: '', measuresIds: null, time: null });
   };
 
   const executeFilter = (value) => {
@@ -52,27 +53,45 @@ const Actions = ({ measures, userId, getBusinessObjective }) => {
   };
 
   const getDescriptions = (measuresArray) => {
-    const measuresObj = [];
-    measuresArray.forEach((Kpis) => {
-      Kpis.forEach((eachKpis) => {
-        measuresObj.push(eachKpis);
+    const kpisObject = [];
+    measuresArray.forEach((measures) => {
+      measures.forEach((kpis) => {
+        kpisObject.push(kpis);
       });
     });
-    return measuresObj;
+    return kpisObject;
   };
 
   const renderMeasuresDialogFields = () => {
     return (
-      <CollaboratorFilter
-        title={'Indiadores de Gestion'}
-        dropdownData={getDescriptions(measures)}
-        filterData={executeFilter}
+      <>
+        <CollaboratorFilter
+          title={'Indicadores de Gestion'}
+          dropdownData={getDescriptions(measures)}
+          filterData={executeFilter}
+        />
+        {renderTimeTextField()}
+      </>
+    );
+  };
+
+  const renderTimeTextField = () => {
+    return (
+      <TextField
+        margin="dense"
+        label="Tiempo máximo de ejecución"
+        type="text"
+        fullWidth
+        size="small"
+        variant="outlined"
+        value={newAction.time}
+        onChange={handleDescription}
       />
     );
   };
 
-  const renderStrategy = (strategy) => {
-    return <Typography> Estrategia: {strategy} </Typography>;
+  const handleDescription = (event) => {
+    setNewAction({ ...newAction, time: event.target.value });
   };
 
   return (
@@ -81,7 +100,7 @@ const Actions = ({ measures, userId, getBusinessObjective }) => {
         <CardHeader
           subheader={'Planes de acción'}
           action={
-            <IconButton aria-label="settings" onClick={setCreateOpenDialog}>
+            <IconButton aria-label="settings" onClick={() => setCreateOpenDialog(true)}>
               <AddIcon />
             </IconButton>
           }
@@ -104,18 +123,18 @@ const Actions = ({ measures, userId, getBusinessObjective }) => {
                               </Typography>
                             );
                           })
-                        : ' NO'}
+                        : 'Todavia no hay acciones'}
                     </Stack>
                   </CardContent>
                 </Card>
               );
             })
-          : '  nO'}
+          : 'Todavia no hay indicadores de accion'}
       </Card>
       <CustomDialog
         open={createOpenDialog}
         title={'Plan de acción'}
-        handleClose={setCreateOpenDialog}
+        handleClose={() => setCreateOpenDialog(false)}
         requestMethod={createAction}
         displayDropdown={renderMeasuresDialogFields()}
         newObject={newAction}

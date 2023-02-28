@@ -34,6 +34,7 @@ const Dashboard = () => {
   const getBusinessPlan = async () => {
     try {
       let response = await getAxiosInstance().get('/api/business-plan/1');
+      console.log(response.data);
       setBusinessPlan(response.data);
     } catch {
       console.error('ERROR');

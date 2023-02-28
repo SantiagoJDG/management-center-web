@@ -36,7 +36,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     description: '',
     businessGoal: null,
     author: userId,
-    businessObjective: businessPlanObjective
+    businessObjectiveId: businessPlanObjective
   });
 
   const [create] = useCreate('/api/business-plan/strategy', selectedStrategy);
@@ -63,7 +63,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       businessGoal: strategy.id,
       description: strategy.description,
       author: userId,
-      businessObjective: businessPlanObjective
+      businessObjectiveId: businessPlanObjective
     });
 
     setOpenEditDialog(true);
