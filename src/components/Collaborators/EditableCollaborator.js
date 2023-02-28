@@ -427,9 +427,12 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
   function handleTextChange(event) {
     if (!event.target.value) {
-      setFormErrors({ ...formErrors, [event.target.name]: true });
+      setFormErrors({
+        ...formErrors,
+        [event.target.name]: { error: true, description: 'Ingrese un valor valido' }
+      });
     } else {
-      setFormErrors({ ...formErrors, [event.target.name]: false });
+      setFormErrors({ ...formErrors, [event.target.name]: { error: false, description: '' } });
     }
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
@@ -447,10 +450,10 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   async function handleSaveCollaborator() {
     const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
     if (error) {
-      console.log(error);
+      console.error(error);
       let newErrors = {};
       error.details.map((detail) => {
-        newErrors[detail.path] = true;
+        newErrors[detail.path] = { error: true, description: detail.message };
       });
 
       handleNewMessage({
@@ -469,7 +472,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       });
     }
   }
-
   const showInformation = () => {
     return (
       <Box>
@@ -488,7 +490,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={6} lg={2}>
                     <TextField
-                      error={formErrors.internalCode}
                       size="small"
                       id="internalCode"
                       name="internalCode"
@@ -496,12 +497,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       value={newCollaborator.internalCode}
                       onChange={handleTextChange}
                       required
+                      error={formErrors.internalCode && formErrors.internalCode.error}
+                      helperText={formErrors.internalCode && formErrors.internalCode.description}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      error={formErrors.name}
                       id="name"
                       name="name"
                       label="Nombres y Apellidos"
@@ -510,12 +512,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      error={formErrors.name && formErrors.name.error}
+                      helperText={formErrors.name && formErrors.name.description}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      error={formErrors.email}
                       id="email"
                       name="email"
                       label="Email corporativo"
@@ -524,6 +527,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      error={formErrors.email && formErrors.email.error}
+                      helperText={formErrors.email && formErrors.email.description}
                     />
                   </Grid>
                 </Grid>
@@ -565,7 +570,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.country}
+                      formError={formErrors.country}
                       name="country"
                       label="País de residencia"
                       optionList={countries}
@@ -577,7 +582,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.state}
+                      formError={formErrors.state}
                       name="state"
                       label="Ciudad de residencia"
                       optionList={states}
@@ -607,7 +612,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.company}
+                      formError={formErrors.company}
                       name="company"
                       label="Empresa contratante"
                       optionList={companies}
@@ -619,7 +624,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.office}
+                      formError={formErrors.office}
                       name="office"
                       label="Oficina de contrato"
                       optionList={offices}
@@ -631,7 +636,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.status}
+                      formError={formErrors.status}
                       name="status"
                       label="Estado"
                       optionList={statusList}
@@ -652,7 +657,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.contractType}
+                      formError={formErrors.contractType}
                       name="contractType"
                       label="Tipo de contrato"
                       optionList={contractTypes}
@@ -664,7 +669,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={10} lg={4}>
                     <TextField
-                      error={formErrors.salaryAmount}
                       id="salaryAmount"
                       name="salaryAmount"
                       label="Tarifa mensual bruta"
@@ -673,6 +677,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      error={formErrors.salaryAmount && formErrors.salaryAmount.error}
+                      helperText={formErrors.salaryAmount && formErrors.salaryAmount.description}
                     />
                   </Grid>
                 </Grid>
@@ -697,7 +703,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.management}
+                      formError={formErrors.management}
                       name="management"
                       label="Dirección"
                       optionList={managements}
@@ -709,7 +715,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.supervisor}
+                      formError={formErrors.supervisor}
                       name="supervisor"
                       label="Supervisor"
                       optionList={supervisors}
@@ -721,7 +727,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.client}
+                      formError={formErrors.client}
                       name="client"
                       label="Cliente"
                       optionList={clients}
@@ -738,7 +744,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      showError={formErrors.profiles}
+                      formError={formErrors.profiles}
                       name="n1Profile"
                       label="N1-Perfil"
                       optionList={profiles}
@@ -756,7 +762,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      showError={formErrors.knowledges}
+                      formError={formErrors.knowledges}
                       name="n2Knowledge"
                       label="N2-Especialidad"
                       optionList={knowledges}
@@ -774,7 +780,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      showError={formErrors.technologies}
+                      formError={formErrors.technologies}
                       name="n3Technology"
                       label="N3-tecnologías predominantes"
                       optionList={technologies}
@@ -806,7 +812,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.role}
+                      formError={formErrors.role}
                       name="role"
                       label="Rol"
                       optionList={roles}
@@ -818,6 +824,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
+                      formError={formErrors.seniority}
                       name="seniority"
                       label="Seniority"
                       optionList={seniorities}
@@ -828,6 +835,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={12} lg={4}>
                     <CustomAutoComplete
+                      formError={formErrors.readiness}
                       name="readiness"
                       label="Readiness"
                       optionList={readinessList}
@@ -843,7 +851,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <TextField
-                      error={formErrors.emailSignature}
                       id="emailSignature"
                       name="emailSignature"
                       label="Firma de correo"
@@ -852,12 +859,16 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       required
                       fullWidth
+                      error={formErrors.emailSignature && formErrors.emailSignature.error}
+                      helperText={
+                        formErrors.emailSignature && formErrors.emailSignature.description
+                      }
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.internalRole}
+                      formError={formErrors.internalRoles}
                       name="internalRole"
                       label="Rol dentro del sistema"
                       optionList={internalRoles}
