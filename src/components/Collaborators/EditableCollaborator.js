@@ -397,7 +397,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   async function handleSaveCollaborator() {
-    console.log(newCollaborator);
     const { error } = CollaboratorSchema.validate(newCollaborator, {
       messages: customMessages,
       errors: {
@@ -408,11 +407,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     });
 
     if (error) {
-      console.error(error);
       let newErrors = {};
       error.details.map((detail) => {
-        console.error(detail.path);
-        console.error(detail.message);
         newErrors[detail.path] = { error: true, description: detail.message };
       });
 
