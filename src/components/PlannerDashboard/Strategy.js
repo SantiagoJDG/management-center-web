@@ -1,22 +1,27 @@
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Card,
   Grid,
   CardHeader,
-  Avatar,
   CardContent,
   Stack,
   Typography,
-  Divider,
   IconButton,
+  Divider,
   Autocomplete,
   TextField
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import Measures from './Measures';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
+import CustomCardHeader from './CustomCardHeader';
 import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
+import useEdit from 'hooks/useEdit';
+import useDelete from 'hooks/useDelete';
+import useMessage from 'hooks/useMessage';
+import useAuth from 'hooks/useAuth';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const measures = [
@@ -25,19 +30,11 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       strategy_id: 1,
       measurable_objectives: {
         id: 1,
-        dashboard: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        dashboard: []
       },
       actions: {
         id: 1,
-        description: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        description: []
       }
     },
     {
@@ -45,40 +42,98 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       strategy_id: 1,
       measurable_objectives: {
         id: 1,
-        dashboard: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        dashboard: []
       },
       actions: {
         id: 1,
-        description: [
-          'ahora estamos lograndolo',
-          'giran como astros solares',
-          'lava en mi aerde como volcanes'
-        ]
+        description: []
       }
     }
   ];
-  const [openDialog, setOpenDialog] = useOnOffSwitch();
-  const [newObject, setNewObject] = useState({
-    description: '',
-    goal: null,
-    author: userId,
-    businessObjective: businessPlanObjective
-  });
-  const [create] = useCreate('/api/business-plan/strategy', newObject);
+  const { userData } = useAuth();
+  const { handleNewMessage } = useMessage();
 
-  async function handleCategory(event, value) {
+  const [openCreateDialog, setOpenCreateDialog] = useOnOffSwitch();
+  const [openEditDialog, setOpenEditDialog] = useOnOffSwitch();
+  const [openDeleteDialog, setOpenDeleteDialog] = useOnOffSwitch();
+
+  const [selectedStrategy, setSelectedStrategy] = useState({
+    description: '',
+    businessGoal: null,
+    author: userId,
+    businessObjectiveId: businessPlanObjective
+  });
+
+  const [create] = useCreate('/api/business-plan/strategy', selectedStrategy);
+  const [edit] = useEdit(
+    `/api/business-plan/strategy/${selectedStrategy.businessGoal}`,
+    selectedStrategy
+  );
+  const [deletion] = useDelete(`/api/business-plan/strategy/${selectedStrategy.businessGoal}`);
+
+  async function handleGoalSelected(event, value) {
     const goalId = goals.find((goal) => goal.description === value);
-    setNewObject({ ...newObject, goal: goalId.id });
+    setSelectedStrategy({ ...selectedStrategy, businessGoal: goalId.id });
   }
 
   const createGoal = async () => {
     create();
-    setOpenDialog(false);
+    setOpenCreateDialog(false);
     getBusinessObjective();
+  };
+
+  const handleClickOpenEditDialog = (strategy) => {
+    setSelectedStrategy({
+      businessGoalId: strategy.id,
+      description: strategy.description,
+      author: userId,
+      businessObjective: businessPlanObjective
+    });
+
+    setOpenEditDialog(true);
+  };
+
+  const editStrategy = async () => {
+    if (selectedStrategy.description == '' || selectedStrategy.category < 1) {
+      handleNewMessage({
+        text: 'Por favor ingrese una strategia valida antes de continuar.',
+        severity: 'error'
+      });
+      return;
+    }
+    const error = await edit();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenEditDialog(false);
+    setSelectedStrategy({
+      ...selectedStrategy,
+      description: '',
+      category: null,
+      businessGoal: null
+    });
+  };
+
+  const handleClickOpenDeleteDialog = (eachStrategy) => {
+    setSelectedStrategy({
+      businessGoal: eachStrategy.id,
+      description: eachStrategy.description,
+      author: userId,
+      businessObjectiveId: businessPlanObjective
+    });
+    setOpenDeleteDialog(true);
+  };
+
+  function hanldeCloseDialog(methodToClose) {
+    setSelectedStrategy({ ...selectedStrategy, description: '', businessGoal: null });
+    methodToClose(false);
+  }
+
+  const deleteStrategy = async () => {
+    const error = await deletion();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenDeleteDialog(false);
+    setSelectedStrategy({ ...selectedStrategy, description: '', businessGoal: null });
   };
 
   const renderGoalsDropdown = () => {
@@ -89,7 +144,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         id="free-solo-2-demo"
         disableClearable
         options={goalsDescription}
-        onChange={handleCategory}
+        onChange={handleGoalSelected}
         renderInput={(params) => (
           <TextField
             {...params}
@@ -104,24 +159,39 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     );
   };
 
+  const editableStrategy = (eachStrategy) => {
+    if (eachStrategy.authorData.id === userData.id) {
+      return (
+        <>
+          <Grid container direction="row" justifyContent="space-between" alignItems="center">
+            <Grid item>
+              <IconButton onClick={() => handleClickOpenDeleteDialog(eachStrategy)}>
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+            <Grid item justifySelf="end">
+              <IconButton onClick={() => handleClickOpenEditDialog(eachStrategy)}>
+                <EditIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </>
+      );
+    } else {
+      return;
+    }
+  };
+
   return (
     <>
       <Grid container spacing={0.5} direction="row">
         <Grid item lg={4} xl={4}>
           <Card sx={{ minHeight: '100%' }}>
-            <CardHeader
-              sx={{ bgcolor: 'primary.main' }}
-              avatar={
-                <Avatar sx={{ bgcolor: 'success.main' }} aria-label="recipe">
-                  S
-                </Avatar>
-              }
-              title={'Strategias'}
-              action={
-                <IconButton aria-label="settings" onClick={setOpenDialog}>
-                  <AddIcon />
-                </IconButton>
-              }
+            <CustomCardHeader
+              title={'Estrategias'}
+              initialLetter={'E'}
+              onClickMethod={setOpenCreateDialog}
+              avatarColor={'success.main'}
             />
             <CardContent>
               {strategies
@@ -142,6 +212,14 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                             <Typography variant="body1">{eachStrategy.description}</Typography>
                           </Stack>
                         </CardContent>
+                        <Grid
+                          container
+                          direction="row"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          {editableStrategy(eachStrategy)}
+                        </Grid>
                       </Card>
                     );
                   })
@@ -158,15 +236,36 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
           />
         </Grid>
       </Grid>
+
       <CustomDialog
-        open={openDialog}
+        open={openCreateDialog}
         title={'Estrategias'}
-        handleClose={setOpenDialog}
+        handleClose={setOpenCreateDialog}
         displayDropdown={renderGoalsDropdown()}
         requestMethod={createGoal}
-        newObject={newObject}
-        setNewObject={setNewObject}
+        newObject={selectedStrategy}
+        setNewObject={setSelectedStrategy}
         nameMethod={'create'}
+      />
+
+      <CustomDialog
+        nameMethod={'delete'}
+        title={'Eliminación de estrategia'}
+        open={openDeleteDialog}
+        handleClose={() => hanldeCloseDialog(setOpenDeleteDialog)}
+        requestMethod={deleteStrategy}
+        newObject={selectedStrategy}
+      />
+
+      <CustomDialog
+        nameMethod={'edit'}
+        title={'Edición de estrategia seleccionada'}
+        open={openEditDialog}
+        handleClose={() => hanldeCloseDialog(setOpenEditDialog)}
+        displayDropdown={renderGoalsDropdown()}
+        requestMethod={editStrategy}
+        newObject={selectedStrategy}
+        setNewObject={setSelectedStrategy}
       />
     </>
   );
