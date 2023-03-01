@@ -204,13 +204,9 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     if (!selectedValue) return;
     if (!selectedValue.id) {
       let idReturned = await saveNewItem(pathToSaveNew, selectedValue);
-      console.log(idReturned);
       selectedValue.id = idReturned;
-      console.log(idReturned);
       callbackAfetedSaved([...previousElements, selectedValue]);
     }
-    console.log(elementName);
-    console.log(selectedValue);
     setNewCollaborator({ ...newCollaborator, [elementName]: selectedValue.id });
 
     setFormErrors({ ...formErrors, [elementName]: { error: false, description: '' } });
@@ -226,23 +222,23 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     );
   }
 
-  async function handleState(state) {
+  function handleState(state) {
     handleAutoCompleteValue(state, 'state', '/api/residence/states', setStates, states);
   }
 
-  async function handleCompany(company) {
+  function handleCompany(company) {
     handleAutoCompleteValue(company, 'company', '/api/hiring/companies', setCompanies, companies);
   }
 
-  async function handleOffice(office) {
+  function handleOffice(office) {
     handleAutoCompleteValue(office, 'office', '/api/hiring/offices', setOffices, offices);
   }
 
-  async function handleStatus(status) {
+  function handleStatus(status) {
     handleAutoCompleteValue(status, 'status', '/api/hiring/status', setStatusList, statusList);
   }
 
-  async function handleContractTypes(contractType) {
+  function handleContractTypes(contractType) {
     handleAutoCompleteValue(
       contractType,
       'contractType',
@@ -252,7 +248,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     );
   }
 
-  async function handleManagement(management) {
+  function handleManagement(management) {
     handleAutoCompleteValue(
       management,
       'management',
@@ -262,13 +258,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     );
   }
 
-  async function handleSupervisor(supervisor) {
+  function handleSupervisor(supervisor) {
     if (!supervisor) return;
     setNewCollaborator({ ...newCollaborator, supervisor: supervisor.id });
     setFormErrors({ ...formErrors, supervisor: { error: false, description: '' } });
   }
 
-  async function handleClient(client) {
+  function handleClient(client) {
     handleAutoCompleteValue(client, 'client', '/api/operation/clients', setClients, clients);
   }
 
