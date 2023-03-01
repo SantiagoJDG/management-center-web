@@ -5,6 +5,7 @@ import useAuth from 'hooks/useAuth';
 import useMessage from 'hooks/useMessage';
 
 import Sidebar from 'components/Layout/Sidebar';
+
 import { useState } from 'react';
 
 const drawerWidth = 240;
@@ -47,7 +48,11 @@ const MainLayout = (props) => {
               sx={{
                 flexGrow: 1,
                 p: 3,
-                width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' }
+                width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
+                backgroundImage: "url('/background.png')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                height: '100vh'
               }}
             >
               {props.children}
