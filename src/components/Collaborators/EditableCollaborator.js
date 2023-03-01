@@ -21,29 +21,43 @@ import { useEffect, useState } from 'react';
 
 import Joi from 'joi';
 
-import { getAxiosInstance } from 'utils/axiosClient';
 import useMessage from 'hooks/useMessage';
+import { getAxiosInstance } from 'utils/axiosClient';
 
 import CustomAutoComplete from 'components/CustomAutoComplete';
+
+const customMessages = {
+  spanish: {
+    'any.required': 'El campo es requerido',
+    'array.required': 'El campo es requerido',
+    'any.invalid': 'El campo tiene un valor no valido',
+    'any.empty': 'El campo es requerido',
+    'array.empty': 'El campo es requerido',
+    'string.empty': 'El campo es requerido',
+    'number.base': 'Debe ser un número',
+    'email.invalid': 'Email no valido',
+    'string.email': 'El campo debe ser un correo electrónico válido'
+  }
+};
 
 const CollaboratorSchema = Joi.object({
   internalCode: Joi.string().required(),
   name: Joi.string().required(),
   email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
-  country: Joi.number().required(),
-  state: Joi.number().required(),
-  company: Joi.number().required(),
-  office: Joi.number().required(),
-  status: Joi.number().required(),
-  contractType: Joi.number().required(),
+  country: Joi.any().required(),
+  state: Joi.any().required(),
+  company: Joi.any().required(),
+  office: Joi.any().required(),
+  status: Joi.any().required(),
+  contractType: Joi.any().required(),
   salaryAmount: Joi.number().required().precision(4),
-  management: Joi.number().required(),
-  supervisor: Joi.number().required(),
-  client: Joi.number().required(),
+  management: Joi.any().required(),
+  supervisor: Joi.any().required(),
+  client: Joi.any().required(),
   profiles: Joi.array().required(),
   knowledges: Joi.array().required(),
   technologies: Joi.array().required(),
-  role: Joi.number().required(),
+  role: Joi.any().required(),
   seniority: Joi.any(),
   readiness: Joi.any(),
   emailSignature: Joi.string().required(),
@@ -59,22 +73,22 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     internalCode: '',
     name: '',
     email: '',
-    country: null,
-    state: null,
-    company: null,
-    status: null,
-    contractType: null,
-    salaryAmount: '',
-    management: null,
-    client: null,
-    profiles: null,
-    knowledges: null,
-    technologies: null,
-    role: null,
-    seniority: null,
-    readiness: null,
+    country: undefined,
+    state: undefined,
+    company: undefined,
+    status: undefined,
+    contractType: undefined,
+    salaryAmount: undefined,
+    management: undefined,
+    client: undefined,
+    profiles: undefined,
+    knowledges: undefined,
+    technologies: undefined,
+    role: undefined,
+    seniority: undefined,
+    readiness: undefined,
     emailSignature: '',
-    internalRoles: null,
+    internalRoles: undefined,
     admissionDate: moment().format('YYYY-MM-DD')
   });
   const [initialDataCollaborator, setInitialDataCollaborator] = useState({});
@@ -153,7 +167,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   async function saveNewItem(paths, newItem) {
     try {
       let createdItem = await getAxiosInstance().post(paths, newItem);
-      return createdItem.data.id;
+      return createdItem.data;
     } catch (error) {
       console.error('Error while save new item...', error);
     }
@@ -180,256 +194,190 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
     }
   }
 
-  async function handleCountry(country) {
-    if (!country) return;
-    if (!country.id) {
-      let idReturned = await saveNewItem('/api/residence/countries', country);
-      country.id = idReturned;
-      setCountries([...countries, country]);
+  async function handleAutoCompleteValue(
+    selectedValue,
+    elementName,
+    pathToSaveNew,
+    callbackAfetedSaved,
+    previousElements
+  ) {
+    if (!selectedValue) return;
+    if (!selectedValue.id) {
+      let idReturned = await saveNewItem(pathToSaveNew, selectedValue);
+      selectedValue.id = idReturned;
+      callbackAfetedSaved([...previousElements, selectedValue]);
     }
-    setNewCollaborator({ ...newCollaborator, country: country.id });
+    setNewCollaborator({ ...newCollaborator, [elementName]: selectedValue.id });
+
+    setFormErrors({ ...formErrors, [elementName]: { error: false, description: '' } });
   }
 
-  async function handleState(state) {
-    if (!state) return;
-    if (!state.id) {
-      let idReturned = await saveNewItem('/api/residence/states', state);
-      state.id = idReturned;
-      setStates([...states, state]);
-    }
-    setNewCollaborator({ ...newCollaborator, state: state.id });
+  function handleCountry(country) {
+    handleAutoCompleteValue(
+      country,
+      'country',
+      '/api/residence/countries',
+      setCountries,
+      countries
+    );
   }
 
-  async function handleCompany(company) {
-    if (!company) return;
-    if (!company.id) {
-      let idReturned = await saveNewItem('/api/hiring/companies', company);
-      company.id = idReturned;
-      setCompanies([...companies, company]);
-    }
-    setNewCollaborator({ ...newCollaborator, company: company.id });
+  function handleState(state) {
+    handleAutoCompleteValue(state, 'state', '/api/residence/states', setStates, states);
   }
 
-  async function handleOffice(office) {
-    if (!office) return;
-    if (!office.id) {
-      let idReturned = await saveNewItem('/api/hiring/offices', office);
-      office.id = idReturned;
-      setOffices([...offices, office]);
-    }
-    setNewCollaborator({ ...newCollaborator, office: office.id });
+  function handleCompany(company) {
+    handleAutoCompleteValue(company, 'company', '/api/hiring/companies', setCompanies, companies);
   }
 
-  async function handleStatus(status) {
-    if (!status) return;
-    if (!status.id) {
-      let idReturned = await saveNewItem('/api/hiring/status', status);
-      status.id = idReturned;
-      setStatusList([...statusList, status]);
-    }
-    setNewCollaborator({ ...newCollaborator, status: status.id });
+  function handleOffice(office) {
+    handleAutoCompleteValue(office, 'office', '/api/hiring/offices', setOffices, offices);
   }
 
-  async function handleContractTypes(contractType) {
-    if (!contractType) return;
-    if (!contractType.id) {
-      let idReturned = await saveNewItem('/api/hiring/types', contractTypes);
-      contractType.id = idReturned;
-      setContractTypes([...contractTypes, contractType]);
-    }
-    setNewCollaborator({ ...newCollaborator, contractType: contractType.id });
+  function handleStatus(status) {
+    handleAutoCompleteValue(status, 'status', '/api/hiring/status', setStatusList, statusList);
   }
 
-  async function handleManagement(management) {
-    if (!management) return;
-    if (!management.id) {
-      let idReturned = await saveNewItem('/api/operation/managements', management);
-      management.id = idReturned;
-      setManagements([...managements, management]);
-    }
-    setNewCollaborator({ ...newCollaborator, management: management.id });
+  function handleContractTypes(contractType) {
+    handleAutoCompleteValue(
+      contractType,
+      'contractType',
+      '/api/hiring/types',
+      setContractTypes,
+      contractTypes
+    );
   }
 
-  async function handleSupervisor(supervisor) {
+  function handleManagement(management) {
+    handleAutoCompleteValue(
+      management,
+      'management',
+      '/api/operation/managements',
+      setManagements,
+      managements
+    );
+  }
+
+  function handleSupervisor(supervisor) {
     if (!supervisor) return;
     setNewCollaborator({ ...newCollaborator, supervisor: supervisor.id });
+    setFormErrors({ ...formErrors, supervisor: { error: false, description: '' } });
   }
 
-  async function handleClient(client) {
-    if (!client) return;
-    if (!client.id) {
-      let idReturned = await saveNewItem('/api/operation/clients', client);
-      client.id = idReturned;
-      setClients([...clients, client]);
-    }
-    setNewCollaborator({ ...newCollaborator, client: client.id });
+  function handleClient(client) {
+    handleAutoCompleteValue(client, 'client', '/api/operation/clients', setClients, clients);
   }
 
-  async function handleRole(role) {
-    if (!role) return;
-    if (!role.id) {
-      let idReturned = await saveNewItem('/api/consultec-identity/roles', role);
-      role.id = idReturned;
-      setRoles([...roles, role]);
-    }
-    setNewCollaborator({ ...newCollaborator, role: role.id });
+  async function handleAutoCompleteMultipleValues(
+    _values,
+    elementName,
+    pathToSaveNew,
+    callbackAfetedSaved,
+    previousElements
+  ) {
+    if (!_values) return;
+
+    let actualValues = newCollaborator[elementName] ? [...newCollaborator[elementName]] : [];
+
+    const newValues = _values.map((value, index) => {
+      if (value.inputValue) {
+        const valueCreatedBefore = actualValues.find((item) => item.name === value.inputValue);
+        if (!valueCreatedBefore) {
+          saveNewItem(pathToSaveNew, { name: value.inputValue }).then((idReturned) => {
+            newValues[index] = {
+              id: idReturned,
+              name: value.inputValue
+            };
+            callbackAfetedSaved([...previousElements, newValues[index]]);
+
+            setNewCollaborator({ ...newCollaborator, [elementName]: newValues });
+          });
+          return {
+            name: value.inputValue
+          };
+        }
+        return valueCreatedBefore;
+      }
+      return value;
+    });
+
+    setNewCollaborator({ ...newCollaborator, [elementName]: [...newValues] });
+
+    setFormErrors({ ...formErrors, [elementName]: { error: false, description: '' } });
   }
 
-  async function handleSeniority(seniority) {
-    if (!seniority) return;
-    if (!seniority.id) {
-      let idReturned = await saveNewItem('/api/consultec-identity/seniorities', seniority);
-      seniority.id = idReturned;
-      setSeniorities([...seniorities, seniority]);
-    }
-    setNewCollaborator({ ...newCollaborator, seniority: seniority.id });
+  function handleProfiles(_profiles) {
+    handleAutoCompleteMultipleValues(
+      _profiles,
+      'profiles',
+      '/api/operation/profiles',
+      setProfiles,
+      profiles
+    );
+  }
+
+  function handleKnowledges(_knowledges) {
+    handleAutoCompleteMultipleValues(
+      _knowledges,
+      'knowledges',
+      '/api/operation/knowledges',
+      setKnowledges,
+      knowledges
+    );
+  }
+
+  function handleTechnologies(_technologies) {
+    handleAutoCompleteMultipleValues(
+      _technologies,
+      'technologies',
+      '/api/operation/technologies',
+      setTechnologies,
+      technologies
+    );
+  }
+
+  function handleRole(role) {
+    handleAutoCompleteValue(role, 'role', '/api/consultec-identity/roles', setRoles, roles);
+  }
+
+  function handleSeniority(seniority) {
+    handleAutoCompleteValue(
+      seniority,
+      'seniority',
+      '/api/consultec-identity/seniorities',
+      setSeniorities,
+      seniorities
+    );
   }
 
   async function handleReadiness(readiness) {
-    if (!readiness) return;
-    if (!readiness.id) {
-      let idReturned = await saveNewItem('/api/consultec-identity/readiness', readiness);
-      readiness.id = idReturned;
-      setReadinessList([...readinessList, readiness]);
-    }
-    setNewCollaborator({ ...newCollaborator, readiness: readiness.id });
+    handleAutoCompleteValue(
+      readiness,
+      'readiness',
+      '/api/consultec-identity/readiness',
+      setReadinessList,
+      readinessList
+    );
   }
 
   async function handleInternalRoles(_internalRoles) {
-    if (!_internalRoles) return;
-
-    let actualInternalRoles = newCollaborator.internalRoles
-      ? [...newCollaborator.internalRoles]
-      : [];
-
-    const newInternalRoles = _internalRoles.map((internalRole, index) => {
-      if (internalRole.inputValue) {
-        const internalRoleCreatedBefore = actualInternalRoles.find(
-          (item) => item.name === internalRole.inputValue
-        );
-        if (!internalRoleCreatedBefore) {
-          saveNewItem('/api/operation/profiles', internalRole).then((idReturned) => {
-            newInternalRoles[index] = {
-              id: idReturned,
-              name: internalRole.inputValue
-            };
-
-            setNewCollaborator({ ...newCollaborator, internalRoles: newInternalRoles });
-            setInternalRoles([...profiles, newInternalRoles[index]]);
-          });
-          return {
-            name: internalRole.inputValue
-          };
-        }
-        return internalRoleCreatedBefore;
-      }
-      return internalRole;
-    });
-
-    setNewCollaborator({ ...newCollaborator, internalRoles: [...newInternalRoles] });
-  }
-
-  async function handleProfiles(_profiles) {
-    if (!_profiles) return;
-
-    let actualProfiles = newCollaborator.profiles ? [...newCollaborator.profiles] : [];
-
-    const newProfiles = _profiles.map((profile, index) => {
-      if (profile.inputValue) {
-        const profileCreatedBefore = actualProfiles.find(
-          (item) => item.name === profile.inputValue
-        );
-        if (!profileCreatedBefore) {
-          saveNewItem('/api/operation/profiles', profile).then((idReturned) => {
-            newProfiles[index] = {
-              id: idReturned,
-              name: profile.inputValue
-            };
-
-            setNewCollaborator({ ...newCollaborator, profiles: newProfiles });
-            setProfiles([...profiles, newProfiles[index]]);
-          });
-          return {
-            name: profile.inputValue
-          };
-        }
-        return profileCreatedBefore;
-      }
-      return profile;
-    });
-
-    setNewCollaborator({ ...newCollaborator, profiles: [...newProfiles] });
-  }
-
-  async function handleKnowledges(_knowledges) {
-    if (!_knowledges) return;
-
-    let actualKnowledges = newCollaborator.knowledges ? [...newCollaborator.knowledges] : [];
-
-    const newKnowledges = _knowledges.map((knowledge, index) => {
-      if (knowledge.inputValue) {
-        const knowledgeCreatedBefore = actualKnowledges.find(
-          (item) => item.name === knowledge.inputValue
-        );
-        if (!knowledgeCreatedBefore) {
-          saveNewItem('/api/operation/knowledges', knowledge).then((idReturned) => {
-            newKnowledges[index] = {
-              id: idReturned,
-              name: knowledge.inputValue
-            };
-
-            setNewCollaborator({ ...newCollaborator, knowledges: newKnowledges });
-            setKnowledges([...knowledges, newKnowledges[index]]);
-          });
-          return {
-            name: knowledge.inputValue
-          };
-        }
-        return knowledgeCreatedBefore;
-      }
-      return knowledge;
-    });
-
-    setNewCollaborator({ ...newCollaborator, knowledges: [...newKnowledges] });
-  }
-
-  async function handleTechnologies(_technologies) {
-    if (!_technologies) return;
-
-    let actualTechnologies = newCollaborator.technologies ? [...newCollaborator.technologies] : [];
-
-    const newTechnologies = _technologies.map((technology, index) => {
-      if (technology.inputValue) {
-        const technologyCreatedBefore = actualTechnologies.find(
-          (item) => item.name === technology.inputValue
-        );
-        if (!technologyCreatedBefore) {
-          saveNewItem('/api/operation/technologies', technology).then((idReturned) => {
-            newTechnologies[index] = {
-              id: idReturned,
-              name: technology.inputValue
-            };
-
-            setNewCollaborator({ ...newCollaborator, technologies: newTechnologies });
-            setKnowledges([...technologies, newTechnologies[index]]);
-          });
-          return {
-            name: technology.inputValue
-          };
-        }
-        return technologyCreatedBefore;
-      }
-      return technology;
-    });
-
-    setNewCollaborator({ ...newCollaborator, technologies: [...newTechnologies] });
+    handleAutoCompleteMultipleValues(
+      _internalRoles,
+      'internalRoles',
+      '/api/operation/profiles',
+      setInternalRoles,
+      internalRoles
+    );
   }
 
   function handleTextChange(event) {
     if (!event.target.value) {
-      setFormErrors({ ...formErrors, [event.target.name]: true });
+      setFormErrors({
+        ...formErrors,
+        [event.target.name]: { error: true, description: 'El campo no puede estar vacío' }
+      });
     } else {
-      setFormErrors({ ...formErrors, [event.target.name]: false });
+      setFormErrors({ ...formErrors, [event.target.name]: { error: false, description: '' } });
     }
     setNewCollaborator({ ...newCollaborator, [event.target.name]: event.target.value });
     setPrincipalInformation({ ...newCollaborator, [event.target.name]: event.target.value });
@@ -445,12 +393,19 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
   }
 
   async function handleSaveCollaborator() {
-    const { error } = CollaboratorSchema.validate(newCollaborator, { abortEarly: false });
+    const { error } = CollaboratorSchema.validate(newCollaborator, {
+      messages: customMessages,
+      errors: {
+        label: false,
+        language: 'spanish'
+      },
+      abortEarly: false
+    });
+
     if (error) {
-      console.log(error);
       let newErrors = {};
       error.details.map((detail) => {
-        newErrors[detail.path] = true;
+        newErrors[detail.path] = { error: true, description: detail.message };
       });
 
       handleNewMessage({
@@ -488,7 +443,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={6} lg={2}>
                     <TextField
-                      error={formErrors.internalCode}
                       size="small"
                       id="internalCode"
                       name="internalCode"
@@ -496,12 +450,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       value={newCollaborator.internalCode}
                       onChange={handleTextChange}
                       required
+                      error={formErrors.internalCode && formErrors.internalCode.error}
+                      helperText={formErrors.internalCode && formErrors.internalCode.description}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      error={formErrors.name}
                       id="name"
                       name="name"
                       label="Nombres y Apellidos"
@@ -510,12 +465,13 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      error={formErrors.name && formErrors.name.error}
+                      helperText={formErrors.name && formErrors.name.description}
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={5}>
                     <TextField
-                      error={formErrors.email}
                       id="email"
                       name="email"
                       label="Email corporativo"
@@ -524,6 +480,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      error={formErrors.email && formErrors.email.error}
+                      helperText={formErrors.email && formErrors.email.description}
                     />
                   </Grid>
                 </Grid>
@@ -565,7 +523,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.country}
+                      formError={formErrors.country}
                       name="country"
                       label="País de residencia"
                       optionList={countries}
@@ -577,7 +535,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.state}
+                      formError={formErrors.state}
                       name="state"
                       label="Ciudad de residencia"
                       optionList={states}
@@ -607,7 +565,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.company}
+                      formError={formErrors.company}
                       name="company"
                       label="Empresa contratante"
                       optionList={companies}
@@ -619,7 +577,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.office}
+                      formError={formErrors.office}
                       name="office"
                       label="Oficina de contrato"
                       optionList={offices}
@@ -631,7 +589,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.status}
+                      formError={formErrors.status}
                       name="status"
                       label="Estado"
                       optionList={statusList}
@@ -652,7 +610,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.contractType}
+                      formError={formErrors.contractType}
                       name="contractType"
                       label="Tipo de contrato"
                       optionList={contractTypes}
@@ -664,7 +622,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={10} lg={4}>
                     <TextField
-                      error={formErrors.salaryAmount}
                       id="salaryAmount"
                       name="salaryAmount"
                       label="Tarifa mensual bruta"
@@ -673,6 +630,8 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       fullWidth
                       required
+                      error={formErrors.salaryAmount && formErrors.salaryAmount.error}
+                      helperText={formErrors.salaryAmount && formErrors.salaryAmount.description}
                     />
                   </Grid>
                 </Grid>
@@ -697,7 +656,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.management}
+                      formError={formErrors.management}
                       name="management"
                       label="Dirección"
                       optionList={managements}
@@ -709,7 +668,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.supervisor}
+                      formError={formErrors.supervisor}
                       name="supervisor"
                       label="Supervisor"
                       optionList={supervisors}
@@ -721,7 +680,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={12} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.client}
+                      formError={formErrors.client}
                       name="client"
                       label="Cliente"
                       optionList={clients}
@@ -738,7 +697,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      showError={formErrors.profiles}
+                      formError={formErrors.profiles}
                       name="n1Profile"
                       label="N1-Perfil"
                       optionList={profiles}
@@ -756,7 +715,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      showError={formErrors.knowledges}
+                      formError={formErrors.knowledges}
                       name="n2Knowledge"
                       label="N2-Especialidad"
                       optionList={knowledges}
@@ -774,7 +733,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <CustomAutoComplete
-                      showError={formErrors.technologies}
+                      formError={formErrors.technologies}
                       name="n3Technology"
                       label="N3-tecnologías predominantes"
                       optionList={technologies}
@@ -806,7 +765,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
-                      showError={formErrors.role}
+                      formError={formErrors.role}
                       name="role"
                       label="Rol"
                       optionList={roles}
@@ -818,6 +777,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={6} lg={4}>
                     <CustomAutoComplete
+                      formError={formErrors.seniority}
                       name="seniority"
                       label="Seniority"
                       optionList={seniorities}
@@ -828,6 +788,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
 
                   <Grid item xs={12} md={12} lg={4}>
                     <CustomAutoComplete
+                      formError={formErrors.readiness}
                       name="readiness"
                       label="Readiness"
                       optionList={readinessList}
@@ -843,7 +804,6 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                 <Grid container spacing={2}>
                   <Grid item xs={12} lg={6}>
                     <TextField
-                      error={formErrors.emailSignature}
                       id="emailSignature"
                       name="emailSignature"
                       label="Firma de correo"
@@ -852,12 +812,16 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       size="small"
                       required
                       fullWidth
+                      error={formErrors.emailSignature && formErrors.emailSignature.error}
+                      helperText={
+                        formErrors.emailSignature && formErrors.emailSignature.description
+                      }
                     />
                   </Grid>
 
                   <Grid item xs={12} lg={6}>
                     <CustomAutoComplete
-                      showError={formErrors.internalRole}
+                      formError={formErrors.internalRoles}
                       name="internalRole"
                       label="Rol dentro del sistema"
                       optionList={internalRoles}

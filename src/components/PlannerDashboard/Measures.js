@@ -46,7 +46,7 @@ const Measures = ({ strategies, userId, getBusinessObjective }) => {
     if (error) return;
     await getBusinessObjective();
     setOpenDialog(false);
-    setNewMeasure({ ...newMeasure, description: '', category: null, id: null });
+    setNewMeasure({ ...newMeasure, description: '' });
   };
 
   const renderStrategiesDropdown = () => {
