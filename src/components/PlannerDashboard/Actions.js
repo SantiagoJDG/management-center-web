@@ -1,21 +1,11 @@
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  Stack,
-  Typography,
-  Divider,
-  IconButton,
-  TextField
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Card, CardContent, Stack, Typography, Divider, TextField } from '@mui/material';
 import CustomDialog from './CustomDialog';
 import { useState } from 'react';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
 import CollaboratorFilter from 'components/Collaborators/CollaboratorFilter';
 
-const Actions = ({ measures, userId, getBusinessObjective }) => {
+const Actions = ({ actions, userId, getBusinessObjective }) => {
   const [createOpenDialog, setCreateOpenDialog] = useState(false);
   const { handleNewMessage } = useMessage();
 
@@ -52,22 +42,22 @@ const Actions = ({ measures, userId, getBusinessObjective }) => {
     });
   };
 
-  const getDescriptions = (measuresArray) => {
-    const kpisObject = [];
-    measuresArray.forEach((measures) => {
-      measures.forEach((kpis) => {
-        kpisObject.push(kpis);
-      });
-    });
-    return kpisObject;
-  };
+  // const getDescriptions = (measuresArray) => {
+  //   const kpisObject = [];
+  //   measuresArray.forEach((measures) => {
+  //     measures.forEach((kpis) => {
+  //       kpisObject.push(kpis);
+  //     });
+  //   });
+  //   return kpisObject;
+  // };
 
   const renderMeasuresDialogFields = () => {
     return (
       <>
         <CollaboratorFilter
           title={'Indicadores de Gestion'}
-          dropdownData={getDescriptions(measures)}
+          dropdownData={actions}
           filterData={executeFilter}
         />
         {renderTimeTextField()}
@@ -97,39 +87,23 @@ const Actions = ({ measures, userId, getBusinessObjective }) => {
   return (
     <>
       <Card>
-        <CardHeader
-          subheader={'Planes de acción'}
-          action={
-            <IconButton aria-label="settings" onClick={() => setCreateOpenDialog(true)}>
-              <AddIcon />
-            </IconButton>
-          }
-        />
-        {measures
-          ? measures.map((eachMeasurable, index) => {
-              return (
-                <Card key={index} sx={{ margin: 0.5 }}>
-                  <CardContent>
-                    <Stack
-                      direction="column"
-                      spacing={1}
-                      divider={<Divider orientation="horizontal" flexItem />}
-                    >
-                      {eachMeasurable.actions
-                        ? eachMeasurable.actions.description.map((actionsDescription, index) => {
-                            return (
-                              <Typography variant="body1" key={index}>
-                                {actionsDescription}
-                              </Typography>
-                            );
-                          })
-                        : 'Todavia no hay acciones'}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              );
-            })
-          : 'Todavia no hay indicadores de accion'}
+        <CardContent>
+          <Stack
+            direction="column"
+            spacing={1}
+            divider={<Divider orientation="horizontal" flexItem />}
+          >
+            {Object.keys(actions).length > 0
+              ? actions.map((eachMeasurable, index) => {
+                  return (
+                    <Typography variant="body1" key={index}>
+                      {eachMeasurable.description}
+                    </Typography>
+                  );
+                })
+              : 'Todavia no hay planes de accion'}
+          </Stack>
+        </CardContent>
       </Card>
       <CustomDialog
         open={createOpenDialog}

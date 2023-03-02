@@ -1,17 +1,4 @@
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import {
-  Card,
-  Grid,
-  CardHeader,
-  CardContent,
-  Stack,
-  Typography,
-  IconButton,
-  Divider,
-  Autocomplete,
-  TextField
-} from '@mui/material';
+import { Grid, Autocomplete, TextField } from '@mui/material';
 import { useState } from 'react';
 import Measures from './Measures';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
@@ -22,6 +9,8 @@ import useEdit from 'hooks/useEdit';
 import useDelete from 'hooks/useDelete';
 import useMessage from 'hooks/useMessage';
 import useAuth from 'hooks/useAuth';
+
+import CustomCardContent from './CustomCardContent';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const { userData } = useAuth();
@@ -136,80 +125,50 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     );
   };
 
-  const editableStrategy = (eachStrategy) => {
-    if (eachStrategy.authorData.id === userData.id) {
-      return (
-        <>
-          <Grid container direction="row" justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <IconButton onClick={() => handleClickOpenDeleteDialog(eachStrategy)}>
-                <DeleteIcon />
-              </IconButton>
-            </Grid>
-            <Grid item justifySelf="end">
-              <IconButton onClick={() => handleClickOpenEditDialog(eachStrategy)}>
-                <EditIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-        </>
-      );
-    } else {
-      return;
-    }
-  };
-
   return (
     <>
-      <Grid container spacing={0.5} direction="row">
-        <Grid item lg={4} xl={4}>
-          <Card sx={{ minHeight: '100%' }}>
+      <Grid container direction={'row'} spacing={0.5}>
+        <Grid container sm={12} sx={{ display: 'flex' }} spacing={0.5}>
+          <Grid item sm={4}>
             <CustomCardHeader
               title={'Estrategias'}
               initialLetter={'E'}
               onClickMethod={setOpenCreateDialog}
               avatarColor={'success.main'}
             />
-            <CardContent>
-              {strategies
-                ? strategies.map((eachStrategy, index) => {
-                    return (
-                      <Card key={index} sx={{ margin: 0.5 }}>
-                        {eachStrategy.strategyCategoryData ? (
-                          <CardHeader subheader={eachStrategy.strategyCategoryData.name} />
-                        ) : (
-                          ''
-                        )}
-                        <CardContent>
-                          <Stack
-                            direction="column"
-                            spacing={1}
-                            divider={<Divider orientation="horizontal" flexItem />}
-                          >
-                            <Typography variant="body1">{eachStrategy.description}</Typography>
-                          </Stack>
-                        </CardContent>
-                        <Grid
-                          container
-                          direction="row"
-                          justifyContent="space-between"
-                          alignItems="center"
-                        >
-                          {editableStrategy(eachStrategy)}
-                        </Grid>
-                      </Card>
-                    );
-                  })
-                : 'No strategies'}
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item lg={8} xl={8}>
-          <Measures
-            strategies={strategies}
-            userId={userId}
-            getBusinessObjective={getBusinessObjective}
-          />
+          </Grid>
+          <Grid item sm={8}>
+            <CustomCardHeader
+              title={'Metricas'}
+              initialLetter={'M'}
+              avatarColor={'secondary.main'}
+            />
+          </Grid>
+          {strategies
+            ? strategies.map((eachStrategy, index) => {
+                return (
+                  <Grid container direction={'row'} key={index}>
+                    <Grid item sm={4}>
+                      <CustomCardContent
+                        category={eachStrategy.strategyCategoryData}
+                        eachObject={eachStrategy}
+                        userData={userData}
+                        handleClickOpenDeleteDialog={handleClickOpenDeleteDialog}
+                        handleClickOpenEditDialog={handleClickOpenEditDialog}
+                      />
+                    </Grid>
+                    <Grid item sm={8}>
+                      <Measures
+                        strategy={eachStrategy}
+                        strategies={strategies}
+                        userId={userId}
+                        getBusinessObjective={getBusinessObjective}
+                      />
+                    </Grid>
+                  </Grid>
+                );
+              })
+            : 'No strategies'}
         </Grid>
       </Grid>
 
