@@ -8,12 +8,10 @@ import useCreate from 'hooks/useCreate';
 import useEdit from 'hooks/useEdit';
 import useDelete from 'hooks/useDelete';
 import useMessage from 'hooks/useMessage';
-import useAuth from 'hooks/useAuth';
 
 import CustomCardContent from './CustomCardContent';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
-  const { userData } = useAuth();
   const { handleNewMessage } = useMessage();
   const [strategyToEdited, setStrategyToEdited] = useState();
 
@@ -127,7 +125,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
 
   return (
     <>
-      <Grid container direction={'row'} spacing={0.5}>
+      <Grid direction={'row'} spacing={0.5}>
         <Grid container sm={12} sx={{ display: 'flex' }} spacing={0.5}>
           <Grid item sm={4}>
             <CustomCardHeader
@@ -151,8 +149,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                     <Grid item sm={4}>
                       <CustomCardContent
                         category={eachStrategy.strategyCategoryData}
-                        eachObject={eachStrategy}
-                        userData={userData}
+                        selectedObject={eachStrategy}
                         handleClickOpenDeleteDialog={handleClickOpenDeleteDialog}
                         handleClickOpenEditDialog={handleClickOpenEditDialog}
                       />

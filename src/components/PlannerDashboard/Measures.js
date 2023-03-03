@@ -20,6 +20,7 @@ import useMessage from 'hooks/useMessage';
 
 const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
   const [openDialog, setOpenDialog] = useOnOffSwitch(false);
+  const [open, setOpen] = useState(false);
   const [newMeasure, setNewMeasure] = useState({
     description: '',
     businessStrategy: null,
@@ -70,6 +71,10 @@ const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
     );
   };
 
+  // const openActionsDialog = () => {
+  //   return setOpen;
+  // };
+
   return (
     <>
       <CardContent>
@@ -88,7 +93,7 @@ const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
             <CardHeader
               subheader={'Planes de accion'}
               action={
-                <IconButton aria-label="settings" onClick={setOpenDialog}>
+                <IconButton aria-label="settings" onClick={() => setOpen(true)}>
                   <AddIcon />
                 </IconButton>
               }
@@ -121,8 +126,11 @@ const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
                             ? kpi.actionData.map((actionData) => {
                                 return actionData;
                               })
-                            : console.log(kpi.actionData)
+                            : ''
                         }
+                        strategy={strategy}
+                        openDialog={setOpen}
+                        dialogState={open}
                       />
                     </Grid>
                   </Grid>

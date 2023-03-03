@@ -19,7 +19,7 @@ function getStyles(name, item, theme) {
   };
 }
 
-const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }) => {
+const CustomFilterDropdown = ({ title, dropdownData, filterData, collaboratorKey }) => {
   const [item, setItem] = useState([]);
   const theme = useTheme();
   const handleChange = (event) => {
@@ -69,4 +69,4 @@ const CollaboratorFilter = ({ title, dropdownData, filterData, collaboratorKey }
   );
 };
 
-export default CollaboratorFilter;
+export default CustomFilterDropdown;

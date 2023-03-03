@@ -3,10 +3,11 @@ import CustomDialog from './CustomDialog';
 import { useState } from 'react';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
-import CollaboratorFilter from 'components/Collaborators/CollaboratorFilter';
+import CustomFilterDropdown from 'components/CustomFilterDropdown';
 
-const Actions = ({ actions, userId, getBusinessObjective }) => {
-  const [createOpenDialog, setCreateOpenDialog] = useState(false);
+const Actions = ({ actions, userId, getBusinessObjective, strategy, openDialog, dialogState }) => {
+  console.log(strategy);
+  // const [createOpenDialog, setCreateOpenDialog] = useState(false);
   const { handleNewMessage } = useMessage();
 
   const [newAction, setNewAction] = useState({
@@ -28,7 +29,7 @@ const Actions = ({ actions, userId, getBusinessObjective }) => {
     const error = await create();
     if (error) return;
     await getBusinessObjective();
-    createOpenDialog(false);
+    openDialog(false);
     setNewAction({ ...newAction, description: '', measuresIds: null, time: null });
   };
 
@@ -42,20 +43,11 @@ const Actions = ({ actions, userId, getBusinessObjective }) => {
     });
   };
 
-  // const getDescriptions = (measuresArray) => {
-  //   const kpisObject = [];
-  //   measuresArray.forEach((measures) => {
-  //     measures.forEach((kpis) => {
-  //       kpisObject.push(kpis);
-  //     });
-  //   });
-  //   return kpisObject;
-  // };
-
   const renderMeasuresDialogFields = () => {
     return (
       <>
-        <CollaboratorFilter
+        <Typography>Estrategia: {strategy.description}</Typography>
+        <CustomFilterDropdown
           title={'Indicadores de Gestion'}
           dropdownData={actions}
           filterData={executeFilter}
@@ -106,9 +98,9 @@ const Actions = ({ actions, userId, getBusinessObjective }) => {
         </CardContent>
       </Card>
       <CustomDialog
-        open={createOpenDialog}
+        open={dialogState}
         title={'Plan de acción'}
-        handleClose={() => setCreateOpenDialog(false)}
+        handleClose={() => openDialog(false)}
         requestMethod={createAction}
         displayDropdown={renderMeasuresDialogFields()}
         newObject={newAction}
