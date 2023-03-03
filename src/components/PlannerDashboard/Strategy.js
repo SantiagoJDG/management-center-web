@@ -1,4 +1,6 @@
-import { Grid, Autocomplete, TextField } from '@mui/material';
+import { Grid, Autocomplete, TextField, CardHeader, IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+
 import { useState } from 'react';
 import Measures from './Measures';
 import CustomDialog from 'components/PlannerDashboard/CustomDialog';
@@ -13,7 +15,9 @@ import CustomCardContent from './CustomCardContent';
 
 const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const { handleNewMessage } = useMessage();
-  const [strategyToEdited, setStrategyToEdited] = useState();
+  const [strategyDescriptionToEdit, setStrategyDescriptionToEdit] = useState();
+  const [openActionsDialog, setOpenActionsDialog] = useState(false);
+  const [openMeasureDialog, setOpenMeasureDialog] = useState(false);
 
   const [openCreateDialog, setOpenCreateDialog] = useOnOffSwitch();
   const [openEditDialog, setOpenEditDialog] = useOnOffSwitch();
@@ -45,7 +49,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
   };
 
   const handleClickOpenEditDialog = (strategy) => {
-    setStrategyToEdited(strategy.businessGoalData.description);
+    setStrategyDescriptionToEdit(strategy.businessGoalData.description);
     setSelectedStrategy({
       businessGoal: strategy.id,
       description: strategy.description,
@@ -81,7 +85,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       businessGoal: eachStrategy.id,
       description: eachStrategy.description,
       author: userId,
-      businessObjective: businessPlanObjective
+      businessObjectiveId: businessPlanObjective
     });
     setOpenDeleteDialog(true);
   };
@@ -106,7 +110,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         freeSolo
         id="free-solo-2-demo"
         disableClearable
-        defaultValue={strategyToEdited}
+        defaultValue={strategyDescriptionToEdit}
         options={goalsDescription}
         onChange={handleGoalSelected}
         renderInput={(params) => (
@@ -127,20 +131,44 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     <>
       <Grid direction={'row'} spacing={0.5}>
         <Grid container sm={12} sx={{ display: 'flex' }} spacing={0.5}>
-          <Grid item sm={4}>
-            <CustomCardHeader
-              title={'Estrategias'}
-              initialLetter={'E'}
-              onClickMethod={setOpenCreateDialog}
-              avatarColor={'success.main'}
-            />
-          </Grid>
-          <Grid item sm={8}>
-            <CustomCardHeader
-              title={'Metricas'}
-              initialLetter={'M'}
-              avatarColor={'secondary.main'}
-            />
+          <Grid container spacing={0.5}>
+            <Grid item sm={4}>
+              <CustomCardHeader
+                title={'Estrategias'}
+                initialLetter={'E'}
+                onClickMethod={setOpenCreateDialog}
+                avatarColor={'success.main'}
+              />
+            </Grid>
+            <Grid item sm={8}>
+              <CustomCardHeader
+                title={'Metricas'}
+                initialLetter={'M'}
+                avatarColor={'secondary.main'}
+              />
+              <Grid container direction={'row'} spacing={0.5}>
+                <Grid item sm={6}>
+                  <CardHeader
+                    subheader={'Indicador de gestión'}
+                    action={
+                      <IconButton aria-label="settings" onClick={() => setOpenMeasureDialog(true)}>
+                        <AddIcon />
+                      </IconButton>
+                    }
+                  />
+                </Grid>
+                <Grid item sm={6}>
+                  <CardHeader
+                    subheader={'Planes de accion'}
+                    action={
+                      <IconButton aria-label="settings" onClick={() => setOpenActionsDialog(true)}>
+                        <AddIcon />
+                      </IconButton>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
           {strategies
             ? strategies.map((eachStrategy, index) => {
@@ -160,6 +188,10 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                         strategies={strategies}
                         userId={userId}
                         getBusinessObjective={getBusinessObjective}
+                        openActionsDialog={openActionsDialog}
+                        setOpenActionsDialog={setOpenActionsDialog}
+                        setOpenMeasureDialog={setOpenMeasureDialog}
+                        openMeasureDialog={openMeasureDialog}
                       />
                     </Grid>
                   </Grid>

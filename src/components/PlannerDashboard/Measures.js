@@ -1,26 +1,29 @@
 import {
   Card,
   Grid,
-  CardHeader,
   CardContent,
   Stack,
   Typography,
   Divider,
-  IconButton,
   Autocomplete,
   TextField
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import Actions from './Actions';
 import CustomDialog from './CustomDialog';
-import useOnOffSwitch from 'hooks/useOnOffSwitch';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
 
-const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
-  const [openDialog, setOpenDialog] = useOnOffSwitch(false);
-  const [openActionsDialog, setOpenActionsDialog] = useState(false);
+const Measures = ({
+  strategy,
+  strategies,
+  userId,
+  getBusinessObjective,
+  openActionsDialog,
+  setOpenActionsDialog,
+  setOpenMeasureDialog,
+  openMeasureDialog
+}) => {
   const [newMeasure, setNewMeasure] = useState({
     description: '',
     businessStrategy: null,
@@ -45,7 +48,7 @@ const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
     const error = await create();
     if (error) return;
     await getBusinessObjective();
-    setOpenDialog(false);
+    setOpenMeasureDialog(false);
     setNewMeasure({ ...newMeasure, description: '', businessStrategy: null });
   };
 
@@ -75,27 +78,6 @@ const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
     <>
       <CardContent>
         <Grid container direction={'row'} spacing={0.5}>
-          <Grid item sm={6}>
-            <CardHeader
-              subheader={'Indicador de gestión'}
-              action={
-                <IconButton aria-label="settings" onClick={setOpenDialog}>
-                  <AddIcon />
-                </IconButton>
-              }
-            />
-          </Grid>
-          <Grid item sm={6}>
-            <CardHeader
-              subheader={'Planes de accion'}
-              action={
-                <IconButton aria-label="settings" onClick={() => setOpenActionsDialog(true)}>
-                  <AddIcon />
-                </IconButton>
-              }
-            />
-          </Grid>
-
           {strategy.kpisData
             ? strategy.kpisData.map((kpi, index) => {
                 return (
@@ -117,18 +99,12 @@ const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
                     </Grid>
                     <Grid item sm={6}>
                       <Actions
-                        actions={
-                          kpi.actionData
-                            ? kpi.actionData.map((actionData) => {
-                                return actionData;
-                              })
-                            : ''
-                        }
+                        actions={kpi.actionData}
                         userId={userId}
                         getBusinessObjective={getBusinessObjective}
                         strategy={strategy}
-                        openDialog={setOpenActionsDialog}
-                        dialogState={openActionsDialog}
+                        setOpenActionsDialog={setOpenActionsDialog}
+                        openActionsDialog={openActionsDialog}
                       />
                     </Grid>
                   </Grid>
@@ -138,9 +114,9 @@ const Measures = ({ strategy, strategies, userId, getBusinessObjective }) => {
         </Grid>
       </CardContent>
       <CustomDialog
-        open={openDialog}
+        open={openMeasureDialog}
         title={'Indicador de gestión'}
-        handleClose={setOpenDialog}
+        handleClose={() => setOpenMeasureDialog(false)}
         requestMethod={createMeasure}
         displayDropdown={renderStrategiesDropdown()}
         newObject={newMeasure}

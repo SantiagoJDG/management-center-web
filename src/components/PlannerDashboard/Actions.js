@@ -5,7 +5,14 @@ import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
 import CustomFilterDropdown from 'components/CustomFilterDropdown';
 
-const Actions = ({ actions, userId, getBusinessObjective, strategy, openDialog, dialogState }) => {
+const Actions = ({
+  actions,
+  userId,
+  getBusinessObjective,
+  strategy,
+  setOpenActionsDialog,
+  openActionsDialog
+}) => {
   const { kpisData } = strategy;
   const { handleNewMessage } = useMessage();
   const [newAction, setNewAction] = useState({
@@ -27,7 +34,7 @@ const Actions = ({ actions, userId, getBusinessObjective, strategy, openDialog, 
     const error = await create();
     if (error) return;
     await getBusinessObjective();
-    openDialog(false);
+    setOpenActionsDialog(false);
     setNewAction({ ...newAction, description: '', measuresIds: null, time: null });
   };
 
@@ -99,9 +106,9 @@ const Actions = ({ actions, userId, getBusinessObjective, strategy, openDialog, 
         </CardContent>
       </Card>
       <CustomDialog
-        open={dialogState}
+        open={openActionsDialog}
         title={'Plan de acción'}
-        handleClose={() => openDialog(false)}
+        handleClose={() => setOpenActionsDialog(false)}
         requestMethod={createAction}
         displayDropdown={renderMeasuresDialogFields()}
         newObject={newAction}
