@@ -1,4 +1,4 @@
-import { Card, CardContent, Stack, Typography, Divider, TextField } from '@mui/material';
+import { Card, CardContent, Stack, Typography, Divider, TextField, Chip, Box } from '@mui/material';
 import CustomDialog from './CustomDialog';
 import { useState } from 'react';
 import useCreate from 'hooks/useCreate';
@@ -6,10 +6,8 @@ import useMessage from 'hooks/useMessage';
 import CustomFilterDropdown from 'components/CustomFilterDropdown';
 
 const Actions = ({ actions, userId, getBusinessObjective, strategy, openDialog, dialogState }) => {
-  console.log(strategy);
-  // const [createOpenDialog, setCreateOpenDialog] = useState(false);
+  const { kpisData } = strategy;
   const { handleNewMessage } = useMessage();
-
   const [newAction, setNewAction] = useState({
     description: '',
     measuresIds: undefined,
@@ -46,10 +44,13 @@ const Actions = ({ actions, userId, getBusinessObjective, strategy, openDialog, 
   const renderMeasuresDialogFields = () => {
     return (
       <>
-        <Typography>Estrategia: {strategy.description}</Typography>
+        <Box sx={{ display: 'flex' }} gap={0.5}>
+          <Chip color="primary" label={'Estrategia: '} />
+          <Typography>{strategy.description}</Typography>
+        </Box>
         <CustomFilterDropdown
           title={'Indicadores de Gestion'}
-          dropdownData={actions}
+          dropdownData={kpisData}
           filterData={executeFilter}
         />
         {renderTimeTextField()}
