@@ -17,14 +17,14 @@ const Actions = ({
   const { handleNewMessage } = useMessage();
   const [newAction, setNewAction] = useState({
     description: '',
-    measuresIds: undefined,
+    kpis: undefined,
     time: '',
     author: userId
   });
-  const [create] = useCreate('/api/business-plan/action', newAction);
+  const [create] = useCreate('/api/business-plan/action-plan', newAction);
 
   const createAction = async () => {
-    if (newAction.description == '' || newAction.measuresIds < 1) {
+    if (newAction.description == '' || newAction.kpis < 1) {
       handleNewMessage({
         text: 'Por favor ingrese una métrica valida antes de continuar.',
         severity: 'error'
@@ -35,7 +35,7 @@ const Actions = ({
     if (error) return;
     await getBusinessObjective();
     setOpenActionsDialog(false);
-    setNewAction({ ...newAction, description: '', measuresIds: null, time: null });
+    setNewAction({ ...newAction, description: '', kpis: null, time: null });
   };
 
   const executeFilter = (value) => {
@@ -43,7 +43,7 @@ const Actions = ({
       if (!Object.keys(previousState).length) return value;
       return {
         ...previousState,
-        measuresIds: [value]
+        kpis: [{ id: value }]
       };
     });
   };
