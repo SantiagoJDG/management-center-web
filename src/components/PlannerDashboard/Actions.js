@@ -24,7 +24,8 @@ const Actions = ({
   const [create] = useCreate('/api/business-plan/action-plan', newAction);
 
   const createAction = async () => {
-    if (newAction.description == '' || newAction.businessKpis < 1) {
+    console.log(newAction);
+    if (newAction.description == '' || newAction.kpis < 1) {
       handleNewMessage({
         text: 'Por favor ingrese una métrica valida antes de continuar.',
         severity: 'error'
@@ -35,7 +36,7 @@ const Actions = ({
     if (error) return;
     await getBusinessObjective();
     setOpenActionsDialog(false);
-    setNewAction({ ...newAction, description: '', businessKpis: null, execution_time: null });
+    setNewAction({ ...newAction, description: '', kpis: null, time: null });
   };
 
   const executeFilter = (value) => {
@@ -43,7 +44,7 @@ const Actions = ({
       if (!Object.keys(previousState).length) return value;
       return {
         ...previousState,
-        businessKpis: [value]
+        kpis: [{ id: value }]
       };
     });
   };
@@ -74,14 +75,14 @@ const Actions = ({
         fullWidth
         size="small"
         variant="outlined"
-        value={newAction.execution_time}
+        value={newAction.time}
         onChange={handleDescription}
       />
     );
   };
 
   const handleDescription = (event) => {
-    setNewAction({ ...newAction, execution_time: event.target.value });
+    setNewAction({ ...newAction, time: event.target.value });
   };
 
   return (
