@@ -24,15 +24,17 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth }
         }}
       >
-        <Box sx={{ p: 1 }}>
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
           <CardMedia
             sx={{
-              height: 60
+              width: 150,
+              height: 40,
+              margin: 1
             }}
             image="consultec_logo_name.png"
           />
-          <Divider />
         </Box>
+        <Divider sx={{ width: '90%', alignSelf: 'center' }} />
         <Box
           sx={{
             p: 0.5,
