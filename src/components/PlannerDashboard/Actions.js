@@ -24,7 +24,6 @@ const Actions = ({
   const [create] = useCreate('/api/business-plan/action-plan', newAction);
 
   const createAction = async () => {
-    console.log(newAction);
     if (newAction.description == '' || newAction.kpis < 1) {
       handleNewMessage({
         text: 'Por favor ingrese una métrica valida antes de continuar.',
