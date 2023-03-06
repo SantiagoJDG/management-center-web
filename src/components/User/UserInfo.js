@@ -60,7 +60,7 @@ const UserInfo = ({ userDataLogged }) => {
           <ListItemText
             primary=" N-1 Perfil:"
             secondary={userDataLogged.profiles.slice(0, 8).map((value, index) => (
-              <Chip color="info" size="small" key={index} label={value.name} />
+              <Chip sx={{ margin: 0.2 }} color="info" size="small" key={index} label={value.name} />
             ))}
           />
         </ListItem>
@@ -70,7 +70,7 @@ const UserInfo = ({ userDataLogged }) => {
           <ListItemText
             primary=" N-2 Conocimientos:"
             secondary={userDataLogged.knowledges.slice(0, 8).map((value, index) => (
-              <Chip color="info" size="small" key={index} label={value.name} />
+              <Chip sx={{ margin: 0.2 }} color="info" size="small" key={index} label={value.name} />
             ))}
           />
         </ListItem>
@@ -80,7 +80,7 @@ const UserInfo = ({ userDataLogged }) => {
           <ListItemText
             primary="  N-3 Tecnologias:"
             secondary={userDataLogged.technologies?.slice(0, 8).map((value, index) => (
-              <Chip color="info" size="small" key={index} label={value.name} />
+              <Chip sx={{ margin: 0.2 }} color="info" size="small" key={index} label={value.name} />
             ))}
           />
         </ListItem>

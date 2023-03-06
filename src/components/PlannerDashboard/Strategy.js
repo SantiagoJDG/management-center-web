@@ -131,42 +131,40 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     <>
       <Grid direction={'row'} spacing={0.5}>
         <Grid container sm={12} sx={{ display: 'flex' }} spacing={0.5}>
-          <Grid container spacing={0.5}>
-            <Grid item sm={4}>
-              <CustomCardHeader
-                title={'Estrategias'}
-                initialLetter={'E'}
-                onClickMethod={setOpenCreateDialog}
-                avatarColor={'success.main'}
-              />
-            </Grid>
-            <Grid item sm={8}>
-              <CustomCardHeader
-                title={'Metricas'}
-                initialLetter={'M'}
-                avatarColor={'secondary.main'}
-              />
-              <Grid container direction={'row'} spacing={0.5}>
-                <Grid item sm={6}>
-                  <CardHeader
-                    subheader={'Indicador de gestión'}
-                    action={
-                      <IconButton aria-label="settings" onClick={() => setOpenMeasureDialog(true)}>
-                        <AddIcon />
-                      </IconButton>
-                    }
-                  />
-                </Grid>
-                <Grid item sm={6}>
-                  <CardHeader
-                    subheader={'Planes de accion'}
-                    action={
-                      <IconButton aria-label="settings" onClick={() => setOpenActionsDialog(true)}>
-                        <AddIcon />
-                      </IconButton>
-                    }
-                  />
-                </Grid>
+          <Grid item sm={4}>
+            <CustomCardHeader
+              title={'Estrategias'}
+              initialLetter={'E'}
+              onClickMethod={setOpenCreateDialog}
+              avatarColor={'success.main'}
+            />
+          </Grid>
+          <Grid item sm={8}>
+            <CustomCardHeader
+              title={'Metricas'}
+              initialLetter={'M'}
+              avatarColor={'secondary.main'}
+            />
+            <Grid container direction={'row'} spacing={0.5}>
+              <Grid item sm={6}>
+                <CardHeader
+                  subheader={'Indicador de gestión'}
+                  action={
+                    <IconButton aria-label="settings" onClick={() => setOpenMeasureDialog(true)}>
+                      <AddIcon />
+                    </IconButton>
+                  }
+                />
+              </Grid>
+              <Grid item sm={6}>
+                <CardHeader
+                  subheader={'Planes de accion'}
+                  action={
+                    <IconButton aria-label="settings" onClick={() => setOpenActionsDialog(true)}>
+                      <AddIcon />
+                    </IconButton>
+                  }
+                />
               </Grid>
             </Grid>
           </Grid>
