@@ -17,8 +17,8 @@ const Actions = ({
   const { handleNewMessage } = useMessage();
   const [newAction, setNewAction] = useState({
     description: '',
-    businessKpis: undefined,
-    execution_time: '',
+    kpis: undefined,
+    time: '',
     author: userId
   });
   const [create] = useCreate('/api/business-plan/action-plan', newAction);
