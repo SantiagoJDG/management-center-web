@@ -200,7 +200,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
   return (
     <>
       <Grid container>
-        <Card>
+        <Card sx={{ width: '100%' }}>
           <CustomCardHeader
             title={'Metas'}
             initialLetter={'M'}
