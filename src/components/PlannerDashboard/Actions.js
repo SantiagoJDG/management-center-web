@@ -39,11 +39,14 @@ const Actions = ({
   };
 
   const executeFilter = (value) => {
+    const idKpi = value.map((eachId) => {
+      return { id: eachId };
+    });
     setNewAction((previousState) => {
       if (!Object.keys(previousState).length) return value;
       return {
         ...previousState,
-        kpis: [{ id: value }]
+        kpis: idKpi
       };
     });
   };
