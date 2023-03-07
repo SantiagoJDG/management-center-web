@@ -3,7 +3,7 @@ import useAuth from 'hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { getAxiosInstance } from 'utils/axiosClient';
 
-import CollaboratorFilter from './CollaboratorFilter';
+import CustomFilterDropdown from '../CustomFilterDropdown';
 
 export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
   const { userToken, waitingUser } = useAuth();
@@ -122,7 +122,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
       <Grid container spacing={1}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'Paises'}
               dropdownData={residencies}
               filterData={executeFilter}
@@ -131,7 +131,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'Ciudad'}
               dropdownData={cities}
               filterData={executeFilter}
@@ -140,7 +140,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'Oficina'}
               dropdownData={office}
               filterData={executeFilter}
@@ -149,7 +149,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'Supervisor'}
               dropdownData={supervisors}
               filterData={executeFilter}
@@ -158,7 +158,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'Cliente'}
               dropdownData={clients}
               filterData={executeFilter}
@@ -167,7 +167,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'N1'}
               dropdownData={profile}
               filterData={executeFilter}
@@ -176,7 +176,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'N2'}
               dropdownData={knowledge}
               filterData={executeFilter}
@@ -185,7 +185,7 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <CollaboratorFilter
+            <CustomFilterDropdown
               title={'N3'}
               dropdownData={technologies}
               filterData={executeFilter}

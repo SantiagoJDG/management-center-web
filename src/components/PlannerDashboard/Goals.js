@@ -175,20 +175,18 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
   const editableGoal = (goal) => {
     if (goal.authorData.id === userData.id) {
       return (
-        <>
-          <Grid container direction="row" justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <IconButton onClick={() => handleClickOpenDeleteDialog(goal)}>
-                <DeleteIcon />
-              </IconButton>
-            </Grid>
-            <Grid item justifySelf="end">
-              <IconButton onClick={() => handleClickOpenEditDialog(goal)}>
-                <EditIcon />
-              </IconButton>
-            </Grid>
+        <Grid container direction="row" justifyContent="space-between" alignItems="center">
+          <Grid item>
+            <IconButton onClick={() => handleClickOpenDeleteDialog(goal)}>
+              <DeleteIcon />
+            </IconButton>
           </Grid>
-        </>
+          <Grid item justifySelf="end">
+            <IconButton onClick={() => handleClickOpenEditDialog(goal)}>
+              <EditIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
       );
     } else {
       return;
