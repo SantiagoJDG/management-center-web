@@ -39,11 +39,14 @@ const Actions = ({
   };
 
   const executeFilter = (value) => {
+    const kpiIds = value.map((eachId) => {
+      return { id: eachId };
+    });
     setNewAction((previousState) => {
       if (!Object.keys(previousState).length) return value;
       return {
         ...previousState,
-        kpis: [{ id: value }]
+        kpis: kpiIds
       };
     });
   };
@@ -86,7 +89,7 @@ const Actions = ({
 
   return (
     <>
-      <Card>
+      <Card sx={{ margin: 0.5 }}>
         <CardContent>
           <Stack
             direction="column"
