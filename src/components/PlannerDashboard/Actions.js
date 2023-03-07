@@ -89,7 +89,7 @@ const Actions = ({
 
   return (
     <>
-      <Card>
+      <Card sx={{ margin: 0.5 }}>
         <CardContent>
           <Stack
             direction="column"
