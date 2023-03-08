@@ -1,49 +1,49 @@
-import * as React from 'react';
 import { Box, Slider, Typography } from '@mui/material';
 
+import { useState } from 'react';
+
 const CollaboratorSliderFilter = ({ setCollaborators, allCollaborators }) => {
-  const [value1, setValue1] = React.useState([0, 1000]);
+  const [salaryValues, setSalaryValues] = useState([0, 1000]);
   const minDistance = 1000;
 
-  const handleChange1 = (event, newValue, activeThumb) => {
+  const handleSalaryFilter = (event, newValue, activeThumb) => {
     if (!Array.isArray(newValue)) {
       return;
     }
     if (activeThumb === 0) {
-      setValue1([Math.min(newValue[0], value1[1] - minDistance), value1[1]]);
+      setSalaryValues([Math.min(newValue[0], salaryValues[1] - minDistance), salaryValues[1]]);
       filterBySalary() ? setCollaborators(filterBySalary()) : setCollaborators([]);
     } else {
-      setValue1([value1[0], Math.max(newValue[1], value1[0] + minDistance)]);
+      setSalaryValues([salaryValues[0], Math.max(newValue[1], salaryValues[0] + minDistance)]);
       filterBySalary() ? setCollaborators(filterBySalary()) : setCollaborators([]);
     }
   };
 
   const filterBySalary = () => {
     return allCollaborators.filter((collaborator) => {
-      if (
-        collaborator.salaries[0].amount > value1[0] &&
-        collaborator.salaries[0].amount < value1[1]
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return (
+        collaborator.salaries.length >= 1 &&
+        collaborator.salaries[0].amount > salaryValues[0] &&
+        collaborator.salaries[0].amount < salaryValues[1]
+      );
     });
   };
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Typography>Filter by salary: </Typography>
+      <Typography>Filtrar por salario: </Typography>
       <Slider
-        defaultValue={0}
-        step={1000}
+        id="salaryFilter"
+        name="salaryFilter"
+        defaultValue={1000}
+        step={100}
         marks
-        min={0}
-        max={10000}
+        min={100}
+        max={50000}
         valueLabelDisplay="auto"
         getAriaLabel={() => minDistance}
-        value={value1}
-        onChange={handleChange1}
+        value={salaryValues}
+        onChange={handleSalaryFilter}
         disableSwap
       />
     </Box>
