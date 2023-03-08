@@ -1,12 +1,13 @@
 import { Grid } from '@mui/material';
-import useAuth from 'hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { getAxiosInstance } from 'utils/axiosClient';
 
+import useMessage from 'hooks/useMessage';
 import CustomFilterDropdown from '../CustomFilterDropdown';
 
-export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
-  const { userToken, waitingUser } = useAuth();
+export const CollaboratorBarFilter = ({ setCollaborators }) => {
+  const { handleNewMessage } = useMessage();
+
   const [residencies, setResidencies] = useState([]);
   const [cities, setCities] = useState([]);
   const [office, setOffice] = useState([]);
@@ -17,184 +18,148 @@ export const CollaboratorBarFilter = ({ collaborators, setCollaborators, allColl
   const [profile, setProfile] = useState([]);
   const [filters, setFilters] = useState({});
 
-  const filteredCollaborator = async (collaborators, filters) => {
-    try {
-      let statePath = '/api/collaborator/filterBy';
-      return await getAxiosInstance()
-        .get(statePath, { params: filters })
-        .then((rows) => {
-          return rows.data;
+  const filteredCollaborator = async (filters) => {
+    getAxiosInstance()
+      .get('/api/collaborator/filterBy', { params: filters })
+      .then((response) => {
+        setCollaborators(response.data);
+      })
+      .catch((error) => {
+        console.error('Error while get data of filtered collaborators', error);
+
+        handleNewMessage({
+          text: 'Error de comunicación, por favor vuelva a intentar en unos segundos.',
+          severity: 'error'
         });
-    } catch {
-      console.log('error catched');
-    }
+      });
   };
 
   const executeFilter = (value, collaboratorKey) => {
     const filtersAdd = {
       [collaboratorKey]: value
     };
-    setFilters((previousState) => {
-      if (!Object.keys(previousState).length) return filtersAdd;
-      return {
-        ...previousState,
+
+    let filtersToUse = filtersAdd;
+
+    if (Object.keys(filters).length) {
+      filtersToUse = {
+        ...filters,
         ...filtersAdd
       };
-    });
-  };
-
-  const getResidencies = async () => {
-    try {
-      let statePath = '/api/residence/states';
-      await getAxiosInstance()
-        .get(statePath)
-        .then((statesResponse) => {
-          setCities(statesResponse.data);
-        });
-
-      let countriesPath = '/api/residence/countries';
-      await getAxiosInstance()
-        .get(countriesPath)
-        .then((countriesResponse) => {
-          setResidencies(countriesResponse.data);
-        });
-
-      let officePath = '/api/hiring/offices';
-      await getAxiosInstance()
-        .get(officePath)
-        .then((officeResponse) => {
-          setOffice(officeResponse.data);
-        });
-
-      let knowledgePath = '/api/operation/knowledges';
-      await getAxiosInstance()
-        .get(knowledgePath)
-        .then((knowledge) => {
-          setKnowledge(knowledge.data);
-        });
-
-      let technologiesPath = '/api/operation/technologies';
-      await getAxiosInstance()
-        .get(technologiesPath)
-        .then((tech) => {
-          setTechnologies(tech.data);
-        });
-
-      let clientsPath = '/api/operation/clients';
-      await getAxiosInstance()
-        .get(clientsPath)
-        .then((client) => {
-          setClients(client.data);
-        });
-
-      let supervisorsPath = '/api/operation/supervisors';
-      await getAxiosInstance()
-        .get(supervisorsPath)
-        .then((supervisor) => {
-          setSupervisors(supervisor.data);
-        });
-
-      let profilePath = '/api/operation/profiles';
-      await getAxiosInstance()
-        .get(profilePath)
-        .then((profile) => {
-          setProfile(profile.data);
-        });
-    } catch (error) {
-      console.error('Error while get Collaborators..', error);
     }
+
+    setFilters(filtersToUse);
+
+    filteredCollaborator(filtersToUse);
+  };
+
+  const getDataInformation = (path, callbackMethod) => {
+    getAxiosInstance()
+      .get(path)
+      .then((response) => {
+        callbackMethod(response.data);
+      })
+      .catch((error) => {
+        console.error(`Error while get data from ${path}`, error);
+      });
+  };
+
+  const getDataToFilters = () => {
+    getDataInformation('/api/residence/states', setCities);
+
+    getDataInformation('/api/residence/countries', setResidencies);
+
+    getDataInformation('/api/hiring/offices', setOffice);
+
+    getDataInformation('/api/operation/knowledges', setKnowledge);
+
+    getDataInformation('/api/operation/technologies', setTechnologies);
+
+    getDataInformation('/api/operation/clients', setClients);
+
+    getDataInformation('/api/operation/supervisors', setSupervisors);
+
+    getDataInformation('/api/operation/profiles', setProfile);
   };
 
   useEffect(() => {
-    if (!userToken) return;
-
-    getResidencies();
-  }, [userToken, waitingUser]);
-
-  useEffect(() => {
-    filteredCollaborator(allCollaborators, filters).then((response) => {
-      return setCollaborators(response);
-    });
-  }, [filters, setCollaborators, allCollaborators]);
+    getDataToFilters();
+  }, []);
 
   return (
-    !!collaborators && (
-      <Grid container spacing={1}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <CustomFilterDropdown
-              title={'Paises'}
-              dropdownData={residencies}
-              filterData={executeFilter}
-              collaboratorKey={'countryData'}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <CustomFilterDropdown
-              title={'Ciudad'}
-              dropdownData={cities}
-              filterData={executeFilter}
-              collaboratorKey={'stateData'}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <CustomFilterDropdown
-              title={'Oficina'}
-              dropdownData={office}
-              filterData={executeFilter}
-              collaboratorKey={'office'}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <CustomFilterDropdown
-              title={'Supervisor'}
-              dropdownData={supervisors}
-              filterData={executeFilter}
-              collaboratorKey={'supervisor'}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <CustomFilterDropdown
-              title={'Cliente'}
-              dropdownData={clients}
-              filterData={executeFilter}
-              collaboratorKey={'client'}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <CustomFilterDropdown
-              title={'N1'}
-              dropdownData={profile}
-              filterData={executeFilter}
-              collaboratorKey={'profiles'}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <CustomFilterDropdown
-              title={'N2'}
-              dropdownData={knowledge}
-              filterData={executeFilter}
-              collaboratorKey={'knowledges'}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <CustomFilterDropdown
-              title={'N3'}
-              dropdownData={technologies}
-              filterData={executeFilter}
-              collaboratorKey={'technologies'}
-            />
-          </Grid>
-        </Grid>
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={6}>
+        <CustomFilterDropdown
+          title={'Paises'}
+          dropdownData={residencies}
+          filterData={executeFilter}
+          collaboratorKey={'countryData'}
+        />
       </Grid>
-    )
+
+      <Grid item xs={12} md={6}>
+        <CustomFilterDropdown
+          title={'Ciudad'}
+          dropdownData={cities}
+          filterData={executeFilter}
+          collaboratorKey={'stateData'}
+        />
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <CustomFilterDropdown
+          title={'Oficina'}
+          dropdownData={office}
+          filterData={executeFilter}
+          collaboratorKey={'office'}
+        />
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <CustomFilterDropdown
+          title={'Supervisor'}
+          dropdownData={supervisors}
+          filterData={executeFilter}
+          collaboratorKey={'supervisor'}
+        />
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <CustomFilterDropdown
+          title={'Cliente'}
+          dropdownData={clients}
+          filterData={executeFilter}
+          collaboratorKey={'client'}
+        />
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <CustomFilterDropdown
+          title={'N1'}
+          dropdownData={profile}
+          filterData={executeFilter}
+          collaboratorKey={'profiles'}
+        />
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <CustomFilterDropdown
+          title={'N2'}
+          dropdownData={knowledge}
+          filterData={executeFilter}
+          collaboratorKey={'knowledges'}
+        />
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <CustomFilterDropdown
+          title={'N3'}
+          dropdownData={technologies}
+          filterData={executeFilter}
+          collaboratorKey={'technologies'}
+        />
+      </Grid>
+    </Grid>
   );
 };
 
