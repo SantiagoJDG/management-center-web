@@ -24,10 +24,8 @@ const Collaborators = () => {
       await getAxiosInstance()
         .get(collaboratorPath)
         .then((collaboratorsResponse) => {
-          setTimeout(() => {
-            setCollaborators(collaboratorsResponse.data);
-            setAllCollaborators(collaboratorsResponse.data);
-          }, 5000);
+          setCollaborators(collaboratorsResponse.data);
+          setAllCollaborators(collaboratorsResponse.data);
         });
     } catch (error) {
       console.error('Error while get Collaborators..', error);
