@@ -21,7 +21,7 @@ const CustomCardContent = ({
   const { userData } = useAuth();
 
   const editableStrategy = (eachObject) => {
-    if (eachObject.authorData.id === userData.id) {
+    if (eachObject.authorData && eachObject.authorData.id === userData.id) {
       return (
         <>
           <Grid container direction="row" justifyContent="space-between" alignItems="center">
