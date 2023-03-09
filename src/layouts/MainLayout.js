@@ -48,7 +48,6 @@ const MainLayout = (props) => {
             <Box
               sx={{
                 flexGrow: 1,
-                p: 3,
                 width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
                 backgroundImage: "url('/background.png')",
                 backgroundSize: 'cover',
@@ -57,7 +56,14 @@ const MainLayout = (props) => {
               }}
             >
               <BreadCrumb />
-              {props.children}
+
+              <Box
+                sx={{
+                  p: 3
+                }}
+              >
+                {props.children}
+              </Box>
             </Box>
           </>
         ) : (
