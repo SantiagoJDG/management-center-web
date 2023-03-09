@@ -27,9 +27,9 @@ const BreadCrumb = () => {
     };
 
     return (
-      <Link key={path} href={path} underline="none" color={active ? '#9e9e9e' : 'primary'}>
-        <Typography variant="h6">{changeTitle(segment)}</Typography>
-      </Link>
+      <Typography key={path} variant="h6" color={active ? '#9e9e9e' : 'primary'}>
+        {changeTitle(segment)}
+      </Typography>
     );
   });
 
