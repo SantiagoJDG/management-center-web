@@ -9,7 +9,8 @@ import { useState } from 'react';
 export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborators }) => {
   const [initialDate, setInitialDate] = useState(moment().format());
   const [endDate, setEndDate] = useState(moment().format());
-  const [error, setError] = useState(null);
+  const [initialDateError, setInitialDateError] = useState(null);
+  const [endDateError, setEndDateError] = useState(null);
 
   const onChangeInitialDate = (newValue) => {
     if (newValue.isValid()) {
@@ -32,22 +33,31 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
     });
   };
 
-  function setDateError(error) {
+  function handleInitialDateError(reason) {
+    setInitialDateError(getErrorData(reason));
+  }
+
+  function handleEndDateError(reason) {
+    setEndDateError(getErrorData(reason));
+  }
+
+  function getErrorData(reason) {
+    console.log(reason);
     let newError = { error: true, message: '' };
 
-    switch (error) {
+    switch (reason) {
       case 'maxDate': {
-        newError.message = 'Fecha maxima no valida';
+        newError.message = 'No puede ser mayor a Fecha de cierre';
         break;
       }
 
       case 'minDate': {
-        newError.message = 'Fecha minima no valida';
+        newError.message = 'No puede ser menor a Fecha de inicio';
         break;
       }
 
       case 'invalidDate': {
-        newError.message = 'Fecha no valida';
+        newError.message = 'Fecha no válida';
         break;
       }
 
@@ -55,7 +65,7 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
         newError.message = '';
       }
     }
-    setError(newError);
+    return newError;
   }
 
   return (
@@ -63,19 +73,20 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
       <Grid item xs={12} sm={6}>
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DesktopDatePicker
-            onError={setDateError}
-            slotProps={{
-              textField: {
-                helperText: error && error.message
-              }
-            }}
             fullWidth
             maxDate={endDate}
-            label="Fecha de Inicio"
+            label="Fecha de inicio"
             inputFormat="MM/DD/YYYY"
             value={initialDate}
             onChange={onChangeInitialDate}
-            renderInput={(params) => <TextField size="small" {...params} />}
+            onError={handleInitialDateError}
+            renderInput={(params) => (
+              <TextField
+                size="small"
+                {...params}
+                helperText={initialDateError && initialDateError.message}
+              />
+            )}
           />
         </LocalizationProvider>
       </Grid>
@@ -84,18 +95,19 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DesktopDatePicker
             fullWidth
-            onError={setDateError}
-            slotProps={{
-              textField: {
-                helperText: error && error.message
-              }
-            }}
             minDate={initialDate}
-            label="Fecha de Cierre"
+            label="Fecha de cierre"
             inputFormat="MM/DD/YYYY"
             value={endDate}
             onChange={onChangeEndDate}
-            renderInput={(params) => <TextField size="small" {...params} />}
+            onError={handleEndDateError}
+            renderInput={(params) => (
+              <TextField
+                size="small"
+                {...params}
+                helperText={endDateError && endDateError.message}
+              />
+            )}
           />
         </LocalizationProvider>
       </Grid>
