@@ -1,12 +1,12 @@
 import {
   Box,
-  OutlinedInput,
-  useTheme,
+  Chip,
+  FormControl,
   InputLabel,
   MenuItem,
-  FormControl,
+  OutlinedInput,
   Select,
-  Chip
+  useTheme
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -22,28 +22,32 @@ function getStyles(name, item, theme) {
 const CustomFilterDropdown = ({ title, dropdownData, filterData, collaboratorKey }) => {
   const [item, setItem] = useState([]);
   const theme = useTheme();
+
   const handleChange = (event) => {
     const {
       target: { value }
     } = event;
-    const ternary = typeof value === 'string' ? value.split(',') : value;
-    setItem(ternary);
-    let id = ternary.map((selected) => {
+
+    const newValue = typeof value === 'string' ? value.split(',') : value;
+    setItem(newValue);
+
+    let id = newValue.map((selected) => {
       return selected.id;
     });
+
     filterData(id, collaboratorKey);
   };
 
   return (
     !!dropdownData && (
       <FormControl sx={{ width: '100%' }} size="small">
-        <InputLabel id="multiple-chip-label-small">{title}</InputLabel>
+        <InputLabel id={collaboratorKey}>{title}</InputLabel>
         <Select
-          labelId="multiple-chip-label"
+          id={collaboratorKey}
           multiple
           value={item}
           onChange={handleChange}
-          input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+          input={<OutlinedInput id={`${collaboratorKey}-chip`} label="Chip" />}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value, index) => (
