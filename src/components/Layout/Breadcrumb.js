@@ -7,12 +7,15 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const BreadCrumb = () => {
   const [active, setActive] = useState(true);
+
   const router = useRouter();
   const { pathname } = router;
+
   const segments = pathname.split('/').filter((segment) => segment !== '');
 
   const breadcrumbLinks = segments.map((segment, index) => {
     const path = `/${segments.slice(0, index + 1).join('/')}`;
+
     const changeTitle = (segment) => {
       switch (segment) {
         case 'planner':
@@ -27,7 +30,7 @@ const BreadCrumb = () => {
     };
 
     return (
-      <Typography key={path} variant="h6" color={active ? '#9e9e9e' : 'primary'}>
+      <Typography key={path} variant="h6" color={active ? 'inherit' : 'primary'}>
         {changeTitle(segment)}
       </Typography>
     );
@@ -52,7 +55,7 @@ const BreadCrumb = () => {
         <Grid>
           <Breadcrumbs aria-label="breadcrumb">
             <Typography variant="h6">
-              <Link key={'/'} href={'/'} underline="none" color={active ? 'primary' : '#9e9e9e'}>
+              <Link key={'/'} href={'/'} underline="none" color={active ? 'primary' : 'inherit'}>
                 Menú principal
               </Link>
             </Typography>
