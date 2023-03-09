@@ -5,6 +5,7 @@ import useAuth from 'hooks/useAuth';
 import useMessage from 'hooks/useMessage';
 
 import Sidebar from 'components/Layout/Sidebar';
+import BreadCrumb from 'components/Layout/Breadcrumb';
 
 import { useState } from 'react';
 
@@ -55,6 +56,7 @@ const MainLayout = (props) => {
                 height: '100vh'
               }}
             >
+              <BreadCrumb />
               {props.children}
             </Box>
           </>
