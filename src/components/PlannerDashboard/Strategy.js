@@ -129,8 +129,8 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
 
   return (
     <>
-      <Grid direction={'row'} spacing={0.5}>
-        <Grid container sm={12} sx={{ display: 'flex' }} spacing={0.5}>
+      <Grid>
+        <Grid container sx={{ display: 'flex' }} spacing={0.5}>
           <Grid item sm={4}>
             <CustomCardHeader
               title={'Estrategias'}

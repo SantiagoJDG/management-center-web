@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Breadcrumbs, Link, Typography, AppBar, Grid, ListItemIcon } from '@mui/material';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -16,7 +16,7 @@ const BreadCrumb = () => {
     const changeTitle = (segment) => {
       switch (segment) {
         case 'planner':
-          return 'Planificacion Estrategica';
+          return 'Planificacion Estratégica';
         case 'collaborator':
           return 'Colaborador';
         case 'collaborators':
@@ -27,7 +27,7 @@ const BreadCrumb = () => {
     };
 
     return (
-      <Link key={path} href={path} underline="none" color={active ? 'primary' : 'secondary'}>
+      <Link key={path} href={path} underline="none" color={active ? '#9e9e9e' : 'primary'}>
         <Typography variant="h6">{changeTitle(segment)}</Typography>
       </Link>
     );
@@ -36,6 +36,10 @@ const BreadCrumb = () => {
   const displayIcon = (goBack) => {
     return goBack ? <ArrowForwardIosIcon /> : <ArrowBackIosIcon />;
   };
+
+  useEffect(() => {
+    segments.length == 0 ? setActive(true) : setActive(false);
+  }, [segments.length, active]);
 
   return (
     <AppBar position="static" color="transparent" sx={{ p: 2, marginBottom: 2 }}>
@@ -48,7 +52,7 @@ const BreadCrumb = () => {
         <Grid>
           <Breadcrumbs aria-label="breadcrumb">
             <Typography variant="h6">
-              <Link key={'/'} href={'/'} underline="none" color={active ? 'primary' : 'secondary'}>
+              <Link key={'/'} href={'/'} underline="none" color={active ? 'primary' : '#9e9e9e'}>
                 Menú principal
               </Link>
             </Typography>

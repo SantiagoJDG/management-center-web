@@ -27,7 +27,7 @@ export default function Home() {
       view: ['administrador']
     },
     {
-      name: 'Planificacion Estrategica',
+      name: 'Planificacion Estratégica',
       path: '/planner',
       view: ['administrador']
     },
