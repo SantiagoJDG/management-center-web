@@ -145,89 +145,82 @@ const CollaboratorTable = ({ collaborators }) => {
     return stabilizedThis.map((collaborator) => collaborator[0]);
   };
 
-  if (collaborators.length < 1) {
-    return 'There are not collaborator';
-  } else {
-    return (
-      <Box sx={{ width: '100%' }}>
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer>
-            <Table stickyHeader aria-label="sticky table" sx={{ maxHeight: 440 }}>
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={handleRequestSort}
-              />
-              <TableBody>
-                {stableSort(collaborators, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((collaborator, index) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={index}
-                        onClick={(event) => handleOpenMenuByCollaborator(event, collaborator.id)}
-                      >
-                        {columns.map((column) => {
-                          let value = Object.byString(collaborator, column.id);
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === 'number'
-                                ? column.format(value)
-                                : value}
-                            </TableCell>
-                          );
-                        })}
-                        <TableCell key={collaborator.id} align="center">
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                            {collaborator.profiles.map((value, index) => (
-                              <Chip key={index} label={value.name} />
-                            ))}
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
-            component="div"
-            count={collaborators.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <TableContainer>
+          <Table stickyHeader aria-label="sticky table" sx={{ maxHeight: 440 }}>
+            <EnhancedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
+            <TableBody>
+              {stableSort(collaborators, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((collaborator, index) => {
+                  return (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={index}
+                      onClick={(event) => handleOpenMenuByCollaborator(event, collaborator.id)}
+                    >
+                      {columns.map((column) => {
+                        let value = Object.byString(collaborator, column.id);
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format && typeof value === 'number'
+                              ? column.format(value)
+                              : value}
+                          </TableCell>
+                        );
+                      })}
+                      <TableCell key={collaborator.id} align="center">
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {collaborator.profiles.map((value, index) => (
+                            <Chip key={index} label={value.name} />
+                          ))}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={collaborators.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+      </Paper>
 
-        <Menu
-          id="optionsMenu"
-          anchorEl={menuAnchorElement}
-          open={openMenu}
-          onClose={handleCloseMenu}
-          MenuListProps={{
-            'aria-labelledby': 'fade-button'
-          }}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left'
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left'
-          }}
-        >
-          <MenuItem onClick={handleProfileRouting}>Ver Perfil</MenuItem>
-          <MenuItem onClick={() => handleProfileRouting(true)}>Editar</MenuItem>
-        </Menu>
-      </Box>
-    );
-  }
+      <Menu
+        id="optionsMenu"
+        anchorEl={menuAnchorElement}
+        open={openMenu}
+        onClose={handleCloseMenu}
+        MenuListProps={{
+          'aria-labelledby': 'fade-button'
+        }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left'
+        }}
+      >
+        <MenuItem onClick={handleProfileRouting}>Ver Perfil</MenuItem>
+        <MenuItem onClick={() => handleProfileRouting(true)}>Editar</MenuItem>
+      </Menu>
+    </Box>
+  );
 };
+
 const EnhancedTableHead = (props) => {
   const { order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {

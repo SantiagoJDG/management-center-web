@@ -5,6 +5,7 @@ import useAuth from 'hooks/useAuth';
 import useMessage from 'hooks/useMessage';
 
 import Sidebar from 'components/Layout/Sidebar';
+import BreadCrumb from 'components/Layout/Breadcrumb';
 
 import { useState } from 'react';
 
@@ -47,7 +48,6 @@ const MainLayout = (props) => {
             <Box
               sx={{
                 flexGrow: 1,
-                p: 3,
                 width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
                 backgroundImage: "url('/background.png')",
                 backgroundSize: 'cover',
@@ -55,7 +55,15 @@ const MainLayout = (props) => {
                 height: '100vh'
               }}
             >
-              {props.children}
+              <BreadCrumb />
+
+              <Box
+                sx={{
+                  p: 3
+                }}
+              >
+                {props.children}
+              </Box>
             </Box>
           </>
         ) : (
