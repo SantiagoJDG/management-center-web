@@ -1,5 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import BorderColorSharpIcon from '@mui/icons-material/BorderColorSharp';
+import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
+
 import {
   Card,
   CardContent,
@@ -207,9 +209,9 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         <Card sx={{ width: '100%' }}>
           <CustomCardHeader
             title={'Metas'}
-            initialLetter={'M'}
+            initialLetter={<SignalCellularAltIcon sx={{ fontSize: 35 }} />}
             onClickMethod={handleClickOpenCreateDialog}
-            avatarColor={''}
+            avatarColor={'#0288d1'}
           />
           <CardContent>
             {goals
