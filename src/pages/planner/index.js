@@ -85,10 +85,10 @@ const Dashboard = () => {
   const displayObjectives = () => {
     if (businessPlan) {
       return (
-        <Box>
+        <Box sx={{ padding: 0 }}>
           {businessPlan.objectivesData.map((objective, index) => {
             return (
-              <Accordion key={index}>
+              <Accordion key={index} sx={{ background: 'none' }} elevation="none">
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon sx={{ color: 'info.contrastText' }} />}
                   aria-controls={`businessObjective-${index}${objective.id}-content`}
@@ -97,7 +97,7 @@ const Dashboard = () => {
                 >
                   <Typography variant="h6">{objective.description} </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
+                <AccordionDetails sx={{ p: 0 }}>
                   <Objective
                     key={objective.id}
                     objective={objective}
