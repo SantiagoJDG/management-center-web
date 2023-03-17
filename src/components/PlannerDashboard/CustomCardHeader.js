@@ -1,6 +1,6 @@
 import { CardHeader, Avatar, IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { Typography } from '@mui/material';
 const CustomCardHeader = ({ title, initialLetter, onClickMethod, avatarColor }) => {
   return (
     <CardHeader
@@ -10,11 +10,15 @@ const CustomCardHeader = ({ title, initialLetter, onClickMethod, avatarColor }) 
           {initialLetter}
         </Avatar>
       }
-      title={title}
+      title={
+        <Typography variant="body1" component="h2">
+          {title}
+        </Typography>
+      }
       action={
         onClickMethod ? (
-          <IconButton aria-label="settings" onClick={onClickMethod}>
-            <AddIcon style={{ color: 'white' }} />
+          <IconButton size="large" aria-label="settings" onClick={onClickMethod}>
+            <AddCircleOutlineIcon style={{ color: 'white' }} />
           </IconButton>
         ) : (
           ''
