@@ -141,7 +141,6 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
               />
               {strategies
                 ? strategies.map((eachStrategy, index) => {
-                    console.log(eachStrategy);
                     return (
                       <Grid container direction={'row'} key={index}>
                         <CustomCardContent
