@@ -6,10 +6,12 @@ import {
   Stack,
   Typography,
   Divider,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import BorderColorSharpIcon from '@mui/icons-material/BorderColorSharp';
+
 import useAuth from 'hooks/useAuth';
 
 const CustomCardContent = ({
@@ -24,15 +26,15 @@ const CustomCardContent = ({
     if (eachObject.authorData && eachObject.authorData.id === userData.id) {
       return (
         <>
-          <Grid container direction="row" justifyContent="space-between" alignItems="center">
+          <Grid container direction="row" justifyContent="right" alignItems="center">
             <Grid item>
               <IconButton onClick={() => handleClickOpenDeleteDialog(eachObject)}>
-                <DeleteIcon />
+                <DeleteIcon style={{ color: '#03a9f4' }} />
               </IconButton>
             </Grid>
             <Grid item justifySelf="end">
               <IconButton onClick={() => handleClickOpenEditDialog(eachObject)}>
-                <EditIcon />
+                <BorderColorSharpIcon style={{ color: '#03a9f4' }} />
               </IconButton>
             </Grid>
           </Grid>
@@ -46,19 +48,27 @@ const CustomCardContent = ({
   return (
     <CardContent sx={{ width: '100%' }}>
       <Card sx={{ margin: 0.5 }}>
-        {category ? <CardHeader subheader={category.name} /> : ''}
+        {category ? (
+          <CardHeader
+            subheader={
+              <Chip variant="outlined" color="primary" label={`Estrategia: ${category}`} />
+            }
+            action={editableStrategy(selectedObject)}
+          />
+        ) : (
+          editableStrategy(selectedObject)
+        )}
         <CardContent>
           <Stack
             direction="column"
             spacing={1}
             divider={<Divider orientation="horizontal" flexItem />}
           >
-            <Typography variant="body1">{selectedObject.description}</Typography>
+            <Typography variant="body1" color={'#03a9f4'}>
+              <b>{selectedObject.description}</b>
+            </Typography>
           </Stack>
         </CardContent>
-        <Grid container direction="row" justifyContent="space-between" alignItems="center">
-          {editableStrategy(selectedObject)}
-        </Grid>
       </Card>
     </CardContent>
   );

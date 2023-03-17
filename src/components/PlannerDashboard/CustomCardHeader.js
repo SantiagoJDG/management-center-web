@@ -1,10 +1,10 @@
-import { CardHeader, Avatar, IconButton } from '@mui/material';
+import { CardHeader, Avatar, IconButton, Typography } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { Typography } from '@mui/material';
+
 const CustomCardHeader = ({ title, initialLetter, onClickMethod, avatarColor }) => {
   return (
     <CardHeader
-      sx={{ bgcolor: 'info.main', color: 'info.contrastText' }}
+      sx={{ bgcolor: '#03a9f4', color: 'info.contrastText' }}
       avatar={
         <Avatar sx={{ bgcolor: avatarColor }} aria-label="recipe">
           {initialLetter}
@@ -17,7 +17,7 @@ const CustomCardHeader = ({ title, initialLetter, onClickMethod, avatarColor }) 
       }
       action={
         onClickMethod ? (
-          <IconButton size="large" aria-label="settings" onClick={onClickMethod}>
+          <IconButton aria-label="settings" onClick={onClickMethod}>
             <AddCircleOutlineIcon style={{ color: 'white' }} />
           </IconButton>
         ) : (

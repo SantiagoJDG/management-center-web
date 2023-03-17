@@ -99,8 +99,8 @@ const Actions = ({
             {Object.keys(actions).length > 0
               ? actions.map((eachMeasurable, index) => {
                   return (
-                    <Typography variant="body1" key={index}>
-                      {eachMeasurable.description}
+                    <Typography variant="body1" key={index} color={'#03a9f4'}>
+                      <b>{eachMeasurable.description}</b>
                     </Typography>
                   );
                 })
