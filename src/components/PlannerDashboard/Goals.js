@@ -179,17 +179,13 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       return (
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item>
-            <IconButton color="primary" onClick={() => handleClickOpenDeleteDialog(goal)}>
-              <DeleteIcon />
+            <IconButton onClick={() => handleClickOpenDeleteDialog(goal)}>
+              <DeleteIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
           <Grid item justifySelf="end">
-            <IconButton
-              aria-label="edit"
-              color="primary"
-              onClick={() => handleClickOpenEditDialog(goal)}
-            >
-              <BorderColorSharpIcon />
+            <IconButton aria-label="edit" onClick={() => handleClickOpenEditDialog(goal)}>
+              <BorderColorSharpIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
         </Grid>
