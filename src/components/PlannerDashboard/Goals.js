@@ -209,9 +209,9 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         <Card sx={{ width: '100%' }}>
           <CustomCardHeader
             title={'Metas'}
-            initialLetter={<SignalCellularAltIcon sx={{ fontSize: 35 }} />}
+            initialLetter={<SignalCellularAltIcon color="primary" />}
             onClickMethod={handleClickOpenCreateDialog}
-            avatarColor={'#0288d1'}
+            avatarColor={'white'}
           />
           <CardContent>
             {goals

@@ -18,7 +18,7 @@ const CustomCardHeader = ({ title, initialLetter, onClickMethod, avatarColor }) 
       action={
         onClickMethod ? (
           <IconButton size="large" aria-label="settings" onClick={onClickMethod}>
-            <AddCircleOutlineIcon style={{ color: 'white' }}></AddCircleOutlineIcon>
+            <AddCircleOutlineIcon style={{ color: 'white' }} />
           </IconButton>
         ) : (
           ''
