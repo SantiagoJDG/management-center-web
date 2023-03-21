@@ -1,5 +1,5 @@
-import { Grid, Autocomplete, TextField, CardHeader, IconButton } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Grid, Autocomplete, TextField, Card } from '@mui/material';
+import ShareIcon from '@mui/icons-material/Share';
 
 import { useState } from 'react';
 import Measures from './Measures';
@@ -132,70 +132,40 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       <Grid>
         <Grid container sx={{ display: 'flex' }} spacing={0.5}>
           <Grid item sm={4}>
-            <CustomCardHeader
-              title={'Estrategias'}
-              initialLetter={'E'}
-              onClickMethod={setOpenCreateDialog}
-              avatarColor={'success.main'}
-            />
+            <Card>
+              <CustomCardHeader
+                title={'Estrategias'}
+                initialLetter={<ShareIcon color="primary" />}
+                onClickMethod={setOpenCreateDialog}
+                avatarColor={'white'}
+              />
+              {strategies
+                ? strategies.map((eachStrategy, index) => {
+                    return (
+                      <Grid container direction={'row'} key={index}>
+                        <CustomCardContent
+                          category={eachStrategy.id}
+                          selectedObject={eachStrategy}
+                          handleClickOpenDeleteDialog={handleClickOpenDeleteDialog}
+                          handleClickOpenEditDialog={handleClickOpenEditDialog}
+                        />
+                      </Grid>
+                    );
+                  })
+                : 'No strategies'}
+            </Card>
           </Grid>
           <Grid item sm={8}>
-            <CustomCardHeader
-              title={'Metricas'}
-              initialLetter={'M'}
-              avatarColor={'secondary.main'}
+            <Measures
+              strategies={strategies}
+              userId={userId}
+              getBusinessObjective={getBusinessObjective}
+              openActionsDialog={openActionsDialog}
+              setOpenActionsDialog={setOpenActionsDialog}
+              setOpenMeasureDialog={setOpenMeasureDialog}
+              openMeasureDialog={openMeasureDialog}
             />
-            <Grid container direction={'row'} spacing={0.5}>
-              <Grid item sm={6}>
-                <CardHeader
-                  subheader={'Indicador de gestión'}
-                  action={
-                    <IconButton aria-label="settings" onClick={() => setOpenMeasureDialog(true)}>
-                      <AddIcon />
-                    </IconButton>
-                  }
-                />
-              </Grid>
-              <Grid item sm={6}>
-                <CardHeader
-                  subheader={'Planes de accion'}
-                  action={
-                    <IconButton aria-label="settings" onClick={() => setOpenActionsDialog(true)}>
-                      <AddIcon />
-                    </IconButton>
-                  }
-                />
-              </Grid>
-            </Grid>
           </Grid>
-          {strategies
-            ? strategies.map((eachStrategy, index) => {
-                return (
-                  <Grid container direction={'row'} key={index}>
-                    <Grid item sm={4}>
-                      <CustomCardContent
-                        category={eachStrategy.strategyCategoryData}
-                        selectedObject={eachStrategy}
-                        handleClickOpenDeleteDialog={handleClickOpenDeleteDialog}
-                        handleClickOpenEditDialog={handleClickOpenEditDialog}
-                      />
-                    </Grid>
-                    <Grid item sm={8}>
-                      <Measures
-                        strategy={eachStrategy}
-                        strategies={strategies}
-                        userId={userId}
-                        getBusinessObjective={getBusinessObjective}
-                        openActionsDialog={openActionsDialog}
-                        setOpenActionsDialog={setOpenActionsDialog}
-                        setOpenMeasureDialog={setOpenMeasureDialog}
-                        openMeasureDialog={openMeasureDialog}
-                      />
-                    </Grid>
-                  </Grid>
-                );
-              })
-            : 'No strategies'}
         </Grid>
       </Grid>
 

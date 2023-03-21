@@ -1,5 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import BorderColorSharpIcon from '@mui/icons-material/BorderColorSharp';
+import SignalCellularAltIcon from '@mui/icons-material/SignalCellularAlt';
+
 import {
   Card,
   CardContent,
@@ -178,12 +180,12 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item>
             <IconButton onClick={() => handleClickOpenDeleteDialog(goal)}>
-              <DeleteIcon />
+              <DeleteIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
           <Grid item justifySelf="end">
-            <IconButton onClick={() => handleClickOpenEditDialog(goal)}>
-              <EditIcon />
+            <IconButton aria-label="edit" onClick={() => handleClickOpenEditDialog(goal)}>
+              <BorderColorSharpIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
         </Grid>
@@ -203,9 +205,9 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
         <Card sx={{ width: '100%' }}>
           <CustomCardHeader
             title={'Metas'}
-            initialLetter={'M'}
+            initialLetter={<SignalCellularAltIcon color="primary" />}
             onClickMethod={handleClickOpenCreateDialog}
-            avatarColor={'warning.main'}
+            avatarColor={'white'}
           />
           <CardContent>
             {goals
@@ -214,6 +216,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
                     <Card key={index} sx={{ margin: 0.5 }}>
                       {eachGoal.categoryData ? (
                         <CardHeader
+                          action={editableGoal(eachGoal)}
                           subheader={
                             <Typography variant="body1" key={index}>
                               {eachGoal.categoryData.name}
@@ -229,19 +232,11 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
                           spacing={1}
                           divider={<Divider orientation="horizontal" flexItem />}
                         >
-                          <Typography variant="body1" key={index}>
+                          <Typography color="primary" variant="body1" key={index}>
                             {eachGoal.description}
                           </Typography>
                         </Stack>
                       </CardContent>
-                      <Grid
-                        container
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        {editableGoal(eachGoal)}
-                      </Grid>
                     </Card>
                   );
                 })
