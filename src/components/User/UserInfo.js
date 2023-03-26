@@ -19,7 +19,7 @@ const UserInfo = ({ userDataLogged }) => {
     return 'There is no user Data';
   } else {
     return (
-      <List dense sx={{ padding: 1.5 }}>
+      <List data-testid="user-info-component" dense sx={{ padding: 1.5 }}>
         <ListItem disablePadding sx={{ mb: 3, padding: 0.5 }}>
           <ListItemIcon>
             <Avatar alt={userDataLogged.name} src={userDataLogged.picture} />
