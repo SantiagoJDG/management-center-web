@@ -11,7 +11,6 @@ const BreadCrumb = () => {
   const { pathname } = router;
 
   const segments = pathname.split('/').filter((segment) => segment !== '');
-
   const breadcrumbLinks = segments.map((segment, index) => {
     const path = `/${segments.slice(0, index + 1).join('/')}`;
 
@@ -29,7 +28,12 @@ const BreadCrumb = () => {
     };
 
     return (
-      <Typography key={path} variant="subtitle1" color={active ? 'inherit' : 'primary'}>
+      <Typography
+        key={path}
+        variant="subtitle1"
+        className="path"
+        color={active ? 'inherit' : 'primary'}
+      >
         {changeTitle(segment)}
       </Typography>
     );
@@ -47,7 +51,12 @@ const BreadCrumb = () => {
     <AppBar position="static" color="inherit" sx={{ p: 2, marginBottom: 1, paddingTop: 5 }}>
       <Grid container>
         <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
-          <ListItemIcon onClick={() => router.back()}>
+          <ListItemIcon
+            data-testid="goBack-button"
+            onClick={() => {
+              router.back();
+            }}
+          >
             {displayIcon(segments.length == 0 ? 'true' : null)}
           </ListItemIcon>
         </Grid>
