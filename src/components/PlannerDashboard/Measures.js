@@ -146,6 +146,7 @@ const Measures = ({
         freeSolo
         id="free-solo-2-demo"
         disableClearable
+        defaultValue={categoryToEdited}
         options={strategies.map((strategy) => strategy.description)}
         onChange={handleCategory}
         renderInput={(params) => (
@@ -171,11 +172,18 @@ const Measures = ({
   };
 
   const handleClickOpenEditDialog = (Measures) => {
-    setCategoryToEdited(Measures.categoryData);
+    const strategy = strategies.find((strategy) => {
+      return strategy.kpisData.find((kpi) => {
+        return kpi.id === Measures.id;
+      });
+    });
+    console.log(strategy);
+
+    setCategoryToEdited(strategy.description);
     setNewMeasure({
       id: Measures.id,
-      description: '',
-      businessStrategy: null,
+      description: Measures.description,
+      businessStrategy: strategy.id,
       author: userId
     });
 
