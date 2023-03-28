@@ -54,7 +54,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
       businessGoal: strategy.id,
       description: strategy.description,
       author: userId,
-      businessObjectiveId: null
+      businessObjectiveId: businessPlanObjective
     });
 
     setOpenEditDialog(true);
