@@ -163,26 +163,25 @@ const Measures = ({
     );
   };
 
-  const handleClickOpenDeleteDialog = (Measures) => {
+  const handleClickOpenDeleteDialog = (measures) => {
     setNewMeasure({
-      id: Measures.id,
-      description: Measures.description
+      id: measures.id,
+      description: measures.description
     });
     setOpenDeleteDialog(true);
   };
 
-  const handleClickOpenEditDialog = (Measures) => {
+  const handleClickOpenEditDialog = (measures) => {
     const strategy = strategies.find((strategy) => {
       return strategy.kpisData.find((kpi) => {
-        return kpi.id === Measures.id;
+        return kpi.id === measures.id;
       });
     });
-    console.log(strategy);
 
     setCategoryToEdited(strategy.description);
     setNewMeasure({
-      id: Measures.id,
-      description: Measures.description,
+      id: measures.id,
+      description: measures.description,
       businessStrategy: strategy.id,
       author: userId
     });
@@ -190,17 +189,17 @@ const Measures = ({
     setOpenEditDialog(true);
   };
 
-  const editableMeasures = (Measures) => {
-    if (Measures.authorData.id === userData.id) {
+  const editableMeasures = (measures) => {
+    if (measures.authorData.id === userData.id) {
       return (
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item>
-            <IconButton onClick={() => handleClickOpenDeleteDialog(Measures)}>
+            <IconButton onClick={() => handleClickOpenDeleteDialog(measures)}>
               <DeleteIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
           <Grid item justifySelf="end">
-            <IconButton aria-label="edit" onClick={() => handleClickOpenEditDialog(Measures)}>
+            <IconButton aria-label="edit" onClick={() => handleClickOpenEditDialog(measures)}>
               <BorderColorSharpIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
