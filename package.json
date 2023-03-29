@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "create-env": "printenv > .env",
-    "test": "jest ",
+    "test": "jest --silent",
     "lint": "next lint"
   },
   "dependencies": {
