@@ -5,13 +5,13 @@ import { render } from '@testing-library/react';
 
 describe('UserInfo component', () => {
   const userData = {
-    name: 'John Doe',
+    name: 'Santiago Davila',
     admissionDate: '2022-02-01T00:00:00.000Z',
     supervisorData: {
-      name: 'Jane Smith'
+      name: 'Edgar Guevara'
     },
     clientData: {
-      name: 'Acme Inc'
+      name: 'Consultec'
     },
     profiles: [
       { name: 'Profile 1' },
@@ -50,28 +50,28 @@ describe('UserInfo component', () => {
       { name: 'Technology 10' }
     ]
   };
-  it('should render component correctly', () => {
+  it('Should render component correctly', () => {
     const { getByTestId } = render(<UserInfo userDataLogged={userData} />);
     expect(getByTestId('user-info-component')).toBeInTheDocument();
   });
-  it('should render user data correctly', () => {
+  it('Should render user data correctly', () => {
     const { getByText } = render(<UserInfo userDataLogged={userData} />);
-    expect(getByText('John Doe')).toBeInTheDocument();
+    expect(getByText('Santiago Davila')).toBeInTheDocument();
     expect(getByText('Fecha de ingreso')).toBeInTheDocument();
     expect(getByText('Supervisor')).toBeInTheDocument();
     expect(getByText('Cliente')).toBeInTheDocument();
   });
-  it('should limit the N-1 Perfil to 8 items', () => {
+  it('Should limit the N-1 Perfil to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Profile \d/);
     expect(perfilItems.length).toBe(8);
   });
-  it('should limit the N-1 Conocimientos to 8 items', () => {
+  it('Should limit the N-2 Conocimientos to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Knowledge \d/);
     expect(perfilItems.length).toBe(8);
   });
-  it('should limit the N-1 Tecnologias to 8 items', () => {
+  it('Should limit the N-3 Tecnologias to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Technology \d/);
     expect(perfilItems.length).toBe(8);
