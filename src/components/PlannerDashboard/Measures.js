@@ -11,7 +11,8 @@ import {
   Avatar,
   SpeedDial,
   IconButton,
-  SpeedDialAction
+  SpeedDialAction,
+  Chip
 } from '@mui/material';
 import { useState } from 'react';
 import Actions from './Actions';
@@ -236,9 +237,11 @@ const Measures = ({
                                 <CardHeader
                                   action={editableMeasures(kpi)}
                                   subheader={
-                                    <Typography color={'#03a9f4'} variant="body1" key={index}>
-                                      <b> {kpi.description}</b>
-                                    </Typography>
+                                    <Chip
+                                      color="primary"
+                                      variant="outlined"
+                                      label={`Estrategia: ${strategy.id}`}
+                                    />
                                   }
                                 />
                               ) : (
@@ -249,7 +252,16 @@ const Measures = ({
                                   direction="column"
                                   spacing={1}
                                   divider={<Divider orientation="horizontal" flexItem />}
-                                ></Stack>
+                                >
+                                  <Typography
+                                    sx={{ fontWeight: 'bold' }}
+                                    color={'#03a9f4'}
+                                    variant="body1"
+                                    key={index}
+                                  >
+                                    {kpi.description}
+                                  </Typography>
+                                </Stack>
                               </CardContent>
                             </Card>
                           </Grid>
