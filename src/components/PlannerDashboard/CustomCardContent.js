@@ -64,8 +64,8 @@ const CustomCardContent = ({
             spacing={1}
             divider={<Divider orientation="horizontal" flexItem />}
           >
-            <Typography variant="body1" color={'#03a9f4'}>
-              <b>{selectedObject.description}</b>
+            <Typography sx={{ fontWeight: 'bold' }} variant="body1" color={'#03a9f4'}>
+              {selectedObject.description}
             </Typography>
           </Stack>
         </CardContent>
