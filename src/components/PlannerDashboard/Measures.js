@@ -233,34 +233,35 @@ const Measures = ({
                         <Grid container key={index} direction={'row'} spacing={0.5}>
                           <Grid item sm={6}>
                             <Card key={index} sx={{ margin: 0.5 }}>
-                              {kpi.description ? (
-                                <CardHeader
-                                  action={editableMeasures(kpi)}
-                                  subheader={
-                                    <Chip
-                                      color="primary"
-                                      variant="outlined"
-                                      label={`Estrategia: ${strategy.id}`}
-                                    />
-                                  }
-                                />
-                              ) : (
-                                ''
-                              )}
+                              <CardHeader
+                                action={editableMeasures(kpi)}
+                                subheader={
+                                  <Chip
+                                    color="primary"
+                                    variant="outlined"
+                                    label={`Estrategia: ${strategy.id}`}
+                                  />
+                                }
+                              />
+
                               <CardContent>
                                 <Stack
                                   direction="column"
                                   spacing={1}
                                   divider={<Divider orientation="horizontal" flexItem />}
                                 >
-                                  <Typography
-                                    sx={{ fontWeight: 'bold' }}
-                                    color={'#03a9f4'}
-                                    variant="body1"
-                                    key={index}
-                                  >
-                                    {kpi.description}
-                                  </Typography>
+                                  {kpi.description ? (
+                                    <Typography
+                                      sx={{ fontWeight: 'bold' }}
+                                      color={'#03a9f4'}
+                                      variant="body1"
+                                      key={index}
+                                    >
+                                      {kpi.description}
+                                    </Typography>
+                                  ) : (
+                                    ''
+                                  )}
                                 </Stack>
                               </CardContent>
                             </Card>
