@@ -76,7 +76,6 @@ describe('UserProfile component', () => {
     });
     render(<UserProfile userDataLogged={userDataLogged} />);
     const roleElements = screen.getAllByRole('button');
-    console.log(roleElements);
     fireEvent.click(roleElements[0]);
     expect(pushMock).toHaveBeenCalledWith('/');
   });
