@@ -46,7 +46,7 @@ const UserProfile = ({ userDataLogged }) => {
   } else {
     return (
       <Grid container direction="column" justifyContent="flex-start" gap={1}>
-        <Typography variant="h5" align="start" fontWeight="bold">
+        <Typography variant="h5" align="left" fontWeight="bold">
           Quiero ingresar como
         </Typography>
         {internalRoles.map((role, index) => {

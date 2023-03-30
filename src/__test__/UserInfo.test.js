@@ -50,10 +50,12 @@ describe('UserInfo component', () => {
       { name: 'Technology 10' }
     ]
   };
+
   it('Should render component correctly', () => {
     const { getByTestId } = render(<UserInfo userDataLogged={userData} />);
     expect(getByTestId('user-info-component')).toBeInTheDocument();
   });
+
   it('Should render user data correctly', () => {
     const { getByText } = render(<UserInfo userDataLogged={userData} />);
     expect(getByText('Santiago Davila')).toBeInTheDocument();
@@ -61,16 +63,19 @@ describe('UserInfo component', () => {
     expect(getByText('Supervisor')).toBeInTheDocument();
     expect(getByText('Cliente')).toBeInTheDocument();
   });
+
   it('Should limit the N-1 Perfil to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Profile \d/);
     expect(perfilItems.length).toBe(8);
   });
+
   it('Should limit the N-2 Conocimientos to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Knowledge \d/);
     expect(perfilItems.length).toBe(8);
   });
+
   it('Should limit the N-3 Tecnologias to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Technology \d/);
