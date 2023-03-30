@@ -232,7 +232,12 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
                           spacing={1}
                           divider={<Divider orientation="horizontal" flexItem />}
                         >
-                          <Typography color="primary" variant="body1" key={index}>
+                          <Typography
+                            sx={{ fontWeight: 'bold' }}
+                            color={'#03a9f4'}
+                            variant="body1"
+                            key={index}
+                          >
                             {eachGoal.description}
                           </Typography>
                         </Stack>
