@@ -26,10 +26,15 @@ const Dashboard = () => {
   const [newObjective, setNewObjective] = useState(false);
   const [newObjectiveDescription, setNewObjectiveDescription] = useState('');
   const { userToken, waitingUser, userData } = useAuth();
+  const [expanded, setExpanded] = useState(null);
 
   const { handleNewMessage } = useMessage();
 
   const router = useRouter();
+
+  const handleAccordionChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : null);
+  };
 
   const getBusinessPlan = async () => {
     try {
@@ -88,7 +93,13 @@ const Dashboard = () => {
         <Box sx={{ padding: 0 }}>
           {businessPlan.objectivesData.map((objective, index) => {
             return (
-              <Accordion key={index} sx={{ background: 'none' }} elevation="none">
+              <Accordion
+                key={index}
+                sx={{ background: 'none' }}
+                elevation="0"
+                expanded={expanded === index}
+                onChange={handleAccordionChange(index)}
+              >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon sx={{ color: 'info.contrastText' }} />}
                   aria-controls={`businessObjective-${index}${objective.id}-content`}
