@@ -26,7 +26,7 @@ const Actions = ({
   const createAction = async () => {
     if (newAction.description == '' || newAction.kpis < 1) {
       handleNewMessage({
-        text: 'Por favor ingrese una métrica valida antes de continuar.',
+        text: 'Por favor ingrese una acción valida antes de continuar.',
         severity: 'error'
       });
       return;
