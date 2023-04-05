@@ -5,7 +5,8 @@ import {
   ListItem,
   ListItemText,
   Typography,
-  ListItemIcon
+  ListItemIcon,
+  Box
 } from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -25,9 +26,9 @@ const UserInfo = ({ userDataLogged }) => {
             <Avatar alt={userDataLogged.name} src={userDataLogged.picture} />
           </ListItemIcon>
           <ListItemText
+            component="span"
             primary={
               <Typography variant="h6" align="center">
-                {' '}
                 {userDataLogged.name}
               </Typography>
             }
@@ -57,32 +58,59 @@ const UserInfo = ({ userDataLogged }) => {
           <ListItemIcon>
             <ConstructionIcon color="info" fontSize="large" />
           </ListItemIcon>
-          <ListItemText
-            primary=" N-1 Perfil:"
-            secondary={userDataLogged.profiles.slice(0, 8).map((value, index) => (
-              <Chip sx={{ margin: 0.2 }} color="info" size="small" key={index} label={value.name} />
-            ))}
-          />
+          <Box sx={{ display: 'block' }}>
+            <ListItemText primary="N-1 Perfil" />
+            <ListItemText
+              component="div"
+              primary={userDataLogged.profiles.slice(0, 8).map((value, index) => (
+                <Chip
+                  sx={{ margin: 0.2 }}
+                  color="info"
+                  size="small"
+                  key={index}
+                  label={value.name}
+                />
+              ))}
+            />
+          </Box>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemIcon></ListItemIcon>
-          <ListItemText
-            primary=" N-2 Conocimientos:"
-            secondary={userDataLogged.knowledges.slice(0, 8).map((value, index) => (
-              <Chip sx={{ margin: 0.2 }} color="info" size="small" key={index} label={value.name} />
-            ))}
-          />
+          <Box sx={{ display: 'block' }}>
+            <ListItemText primary=" N-2 Conocimientos:" />
+            <ListItemText
+              component="div"
+              primary={userDataLogged.knowledges.slice(0, 8).map((value, index) => (
+                <Chip
+                  sx={{ margin: 0.2 }}
+                  color="info"
+                  size="small"
+                  key={index}
+                  label={value.name}
+                />
+              ))}
+            />
+          </Box>
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemIcon></ListItemIcon>
-          <ListItemText
-            primary="  N-3 Tecnologias:"
-            secondary={userDataLogged.technologies?.slice(0, 8).map((value, index) => (
-              <Chip sx={{ margin: 0.2 }} color="info" size="small" key={index} label={value.name} />
-            ))}
-          />
+          <Box sx={{ display: 'block' }}>
+            <ListItemText primary=" N-3 Tecnologias:" />
+            <ListItemText
+              component="div"
+              primary={userDataLogged.technologies?.slice(0, 8).map((value, index) => (
+                <Chip
+                  sx={{ margin: 0.2 }}
+                  color="info"
+                  size="small"
+                  key={index}
+                  label={value.name}
+                />
+              ))}
+            />
+          </Box>
         </ListItem>
       </List>
     );
