@@ -22,8 +22,7 @@ function getStyles(name, item, theme) {
 const CustomFilterDropdown = ({ title, dropdownData, filterData, collaboratorKey, valueData }) => {
   const [item, setItem] = useState(valueData ? valueData : []);
   const theme = useTheme();
-  
-  /*let obtainValue=valueData[0].description;*/
+
   const handleChange = (event) => {
     const {
       target: { value }
