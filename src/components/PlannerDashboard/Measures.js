@@ -268,7 +268,7 @@ const Measures = ({
                           </Grid>
                           <Grid item sm={6}>
                             <Actions
-                              actions={kpi.actionData}
+                              actions={kpi}
                               userId={userId}
                               getBusinessObjective={getBusinessObjective}
                               strategy={strategy}

@@ -1,9 +1,24 @@
-import { Card, CardContent, Stack, Typography, Divider, TextField, Chip, Box } from '@mui/material';
+import {
+  CardHeader,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Chip,
+  Grid,
+  IconButton,
+  Box
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import CustomDialog from './CustomDialog';
-import { useState } from 'react';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
 import CustomFilterDropdown from 'components/CustomFilterDropdown';
+import DeleteIcon from '@mui/icons-material/Delete';
+import BorderColorSharpIcon from '@mui/icons-material/BorderColorSharp';
+import useAuth from 'hooks/useAuth';
+import useDelete from 'hooks/useDelete';
+import useEdit from 'hooks/useEdit';
 
 const Actions = ({
   actions,
@@ -21,7 +36,15 @@ const Actions = ({
     time: '',
     author: userId
   });
+  const { userData } = useAuth();
   const [create] = useCreate('/api/business-plan/action-plan', newAction);
+  const [deletion] = useDelete(`/api/business-plan/action-plan/${newAction.id}`);
+  const [edit] = useEdit(`/api/business-plan/action-plan/${newAction.id}`, newAction);
+  const [itemKpiData, setItemKpiData] = useState([]);
+
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [categoryToEdited, setCategoryToEdited] = useState();
 
   const createAction = async () => {
     if (newAction.description == '' || newAction.kpis < 1) {
@@ -51,7 +74,7 @@ const Actions = ({
     });
   };
 
-  const renderMeasuresDialogFields = () => {
+  const renderActionDialogFields = () => {
     return (
       <>
         <Box sx={{ display: 'flex' }} gap={0.5}>
@@ -62,6 +85,7 @@ const Actions = ({
           title={'Indicadores de Gestion'}
           dropdownData={kpisData}
           filterData={executeFilter}
+          valueData={itemKpiData}
         />
         {renderTimeTextField()}
       </>
@@ -78,6 +102,7 @@ const Actions = ({
         size="small"
         variant="outlined"
         value={newAction.time}
+        defaultValue={categoryToEdited}
         onChange={handleDescription}
       />
     );
@@ -87,36 +112,144 @@ const Actions = ({
     setNewAction({ ...newAction, time: event.target.value });
   };
 
+  const deleteAction = async () => {
+    const error = await deletion();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenDeleteDialog(false);
+    setNewAction({ ...newAction, description: '', kpis: null, time: null });
+  };
+
+  const handleClickOpenDeleteDialog = (measures) => {
+    setNewAction({
+      id: measures.id,
+      description: measures.description
+    });
+    setOpenDeleteDialog(true);
+  };
+
+  function hanldeCloseDialog(methodToClose) {
+    setNewAction({ ...newAction, description: '', kpis: null, time: null });
+    setCategoryToEdited();
+    methodToClose(false);
+  }
+
+  const handleClickOpenEditDialog = (actionPlans) => {
+    const kpi = kpisData[0].id;
+    console.log(kpisData);
+    setItemKpiData(kpisData);
+
+    setCategoryToEdited(strategy.description);
+    setNewAction({
+      id: actionPlans.id,
+      description: actionPlans.description,
+      time: actionPlans.time,
+      author: userId,
+      kpis: [kpi]
+    });
+
+    setOpenEditDialog(true);
+  };
+
+  const editAction = async () => {
+    if (setNewAction.description == '' || setNewAction.category < 1) {
+      handleNewMessage({
+        text: 'Por favor ingrese una meta valida antes de continuar.',
+        severity: 'error'
+      });
+      return;
+    }
+    const error = await edit();
+    if (error) return;
+    await getBusinessObjective();
+    setOpenEditDialog(false);
+    setNewAction({ ...newAction, description: '', kpis: null, time: null });
+  };
+
+  const editableAction = (actions) => {
+    if (actions.authorData.id === userData.id) {
+      return (
+        <Grid container direction="row" justifyContent="space-between" alignItems="center">
+          <Grid item>
+            <IconButton onClick={() => handleClickOpenDeleteDialog(actions)}>
+              <DeleteIcon style={{ color: '#03a9f4' }} />
+            </IconButton>
+          </Grid>
+          <Grid item justifySelf="end">
+            <IconButton aria-label="edit" onClick={() => handleClickOpenEditDialog(actions)}>
+              <BorderColorSharpIcon style={{ color: '#03a9f4' }} />
+            </IconButton>
+          </Grid>
+        </Grid>
+      );
+    } else {
+      return;
+    }
+  };
+
   return (
     <>
-      <Card sx={{ margin: 0.5 }}>
-        <CardContent>
-          <Stack
-            direction="column"
-            spacing={1}
-            divider={<Divider orientation="horizontal" flexItem />}
-          >
-            {Object.keys(actions).length > 0
-              ? actions.map((eachMeasurable, index) => {
+      <Grid container>
+        <Card sx={{ width: '100%' }}>
+          <CardContent>
+            {Object.keys(actions.actionData).length > 0
+              ? actions.actionData.map((eachMeasurable, index) => {
                   return (
-                    <Typography variant="body1" key={index} color={'#03a9f4'}>
-                      <b>{eachMeasurable.description}</b>
-                    </Typography>
+                    <Card key={index} sx={{ margin: 0.5 }}>
+                      {eachMeasurable.authorData ? (
+                        <CardHeader
+                          action={editableAction(eachMeasurable)}
+                          subheader={
+                            <Typography
+                              sx={{ fontWeight: 'bold' }}
+                              color={'#03a9f4'}
+                              variant="body1"
+                              key={index}
+                            >
+                              {eachMeasurable.description}
+                            </Typography>
+                          }
+                        />
+                      ) : (
+                        ''
+                      )}
+                    </Card>
                   );
                 })
-              : 'Todavia no hay planes de accion'}
-          </Stack>
-        </CardContent>
-      </Card>
+              : 'Actualmente no hay plan de acción'}
+          </CardContent>
+        </Card>
+      </Grid>
+
       <CustomDialog
         open={openActionsDialog}
         title={'Plan de acción'}
         handleClose={() => setOpenActionsDialog(false)}
         requestMethod={createAction}
-        displayDropdown={renderMeasuresDialogFields()}
+        displayDropdown={renderActionDialogFields()}
         newObject={newAction}
         setNewObject={setNewAction}
         nameMethod={'create'}
+      />
+
+      <CustomDialog
+        nameMethod={'delete'}
+        title={'Eliminación de Plan de Acción'}
+        open={openDeleteDialog}
+        handleClose={() => hanldeCloseDialog(setOpenDeleteDialog)}
+        requestMethod={deleteAction}
+        newObject={newAction}
+      />
+
+      <CustomDialog
+        nameMethod={'edit'}
+        title={'Edición de Plan de Acción seleccionada'}
+        open={openEditDialog}
+        handleClose={() => hanldeCloseDialog(setOpenEditDialog)}
+        displayDropdown={renderActionDialogFields()}
+        requestMethod={editAction}
+        newObject={newAction}
+        setNewObject={setNewAction}
       />
     </>
   );
