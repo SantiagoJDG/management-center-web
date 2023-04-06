@@ -85,7 +85,7 @@ const Actions = ({
           title={'Indicadores de Gestion'}
           dropdownData={kpisData}
           filterData={executeFilter}
-          valueData={itemKpiData}
+          kpiData={itemKpiData}
         />
         {renderTimeTextField()}
       </>
@@ -136,7 +136,6 @@ const Actions = ({
 
   const handleClickOpenEditDialog = (actionPlans) => {
     const kpi = kpisData[0].id;
-    console.log(kpisData);
     setItemKpiData(kpisData);
 
     setCategoryToEdited(strategy.description);
