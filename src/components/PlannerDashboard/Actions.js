@@ -9,7 +9,7 @@ import {
   IconButton,
   Box
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CustomDialog from './CustomDialog';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
