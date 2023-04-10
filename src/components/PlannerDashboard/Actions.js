@@ -137,7 +137,7 @@ const Actions = ({
   const handleClickOpenEditDialog = (actionPlans) => {
     const kpi = kpisData[0].id;
     setItemKpiData(kpisData);
-
+   
     setCategoryToEdited(strategy.description);
     setNewAction({
       id: actionPlans.id,
