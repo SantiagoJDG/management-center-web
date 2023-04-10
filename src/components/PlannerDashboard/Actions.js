@@ -134,10 +134,30 @@ const Actions = ({
     methodToClose(false);
   }
 
+  const filter = (action) => {
+    return kpisData.map((kpi) => {
+      return kpi.actionData.filter((actionA) => {
+        return actionA.description === action;
+      });
+    });
+  };
+
   const handleClickOpenEditDialog = (actionPlans) => {
     const kpi = kpisData[0].id;
-    setItemKpiData(kpisData);
-   
+
+    const filtererd = filter(actionPlans.description);
+    console.log(filtererd)
+    /*const filtered = kpisData.map((kpisData) => {
+      return kpisData.actionData.filter((action) => {
+        const response = action.description === actionPlans.description;
+        console.log(action.description);
+        console.log(actionPlans.description);
+        return response;
+      });
+    });*/
+
+    setItemKpiData(filtererd.description);
+
     setCategoryToEdited(strategy.description);
     setNewAction({
       id: actionPlans.id,

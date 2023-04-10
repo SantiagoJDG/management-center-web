@@ -22,7 +22,6 @@ function getStyles(name, item, theme) {
 const CustomFilterDropdown = ({ title, dropdownData, filterData, collaboratorKey, kpiData }) => {
   const [item, setItem] = useState(kpiData ? kpiData : []);
   const theme = useTheme();
-
   const handleChange = (event) => {
     const {
       target: { value }
