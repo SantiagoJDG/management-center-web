@@ -1,8 +1,6 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import React from 'react';
-import CollaboratorBarFilter, {
-  getDataInformation
-} from '../components/Collaborators/CollaboratorBarFilter';
+import CollaboratorBarFilter from '../components/Collaborators/CollaboratorBarFilter';
 import useMessage from 'hooks/useMessage';
 import '@testing-library/jest-dom';
 
@@ -36,18 +34,15 @@ describe('CollaboratorBarFilter component', () => {
     expect(container).toBeInTheDocument();
   });
 
-  test('returns status 200', async () => {
-    const path = '/api/hiring/offices';
-    const callbackMethod = jest.fn();
-    const mockResponse = { data: 'mock data' };
-
-    jest.spyOn(global, 'fetch').mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockResponse
-    });
-
-    await getDataInformation(path, callbackMethod);
-
-    expect(callbackMethod).toHaveBeenCalledWith(mockResponse);
+  test('executeFilter is called when an item is selected from a dropdown', () => {
+    const executeFilter = jest.fn();
+    const { getAllByRole, getByRole } = render(
+      <CollaboratorBarFilter setCollaborators={setCollaborators} />
+    );
+    const listbox = getAllByRole('button');
+    fireEvent.mouseDown(listbox[0]);
+    const listbox2 = within(getByRole('listbox'));
+    fireEvent.click(listbox2);
+    expect(executeFilter).toHaveBeenCalled();
   });
 });
