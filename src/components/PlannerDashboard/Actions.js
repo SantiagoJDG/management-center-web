@@ -21,7 +21,7 @@ import useDelete from 'hooks/useDelete';
 import useEdit from 'hooks/useEdit';
 
 const Actions = ({
-  actions,
+  kpiParent,
   userId,
   getBusinessObjective,
   strategy,
@@ -134,29 +134,12 @@ const Actions = ({
     methodToClose(false);
   }
 
-  const filter = (action) => {
-    return kpisData.map((kpi) => {
-      return kpi.actionData.filter((actionA) => {
-        return actionA.description === action;
-      });
-    });
-  };
-
   const handleClickOpenEditDialog = (actionPlans) => {
-    const kpi = kpisData[0].id;
-
-    const filtererd = filter(actionPlans.description);
-    console.log(filtererd)
-    /*const filtered = kpisData.map((kpisData) => {
-      return kpisData.actionData.filter((action) => {
-        const response = action.description === actionPlans.description;
-        console.log(action.description);
-        console.log(actionPlans.description);
-        return response;
-      });
-    });*/
-
-    setItemKpiData(filtererd.description);
+    const kpi = kpisData.filter((kpi) => kpi.id == kpiParent.id);
+    const kpiId = kpi.map((kpi) => {
+      return kpi.id;
+    });
+    setItemKpiData(kpi);
 
     setCategoryToEdited(strategy.description);
     setNewAction({
@@ -164,7 +147,7 @@ const Actions = ({
       description: actionPlans.description,
       time: actionPlans.time,
       author: userId,
-      kpis: [kpi]
+      kpis: [kpiId]
     });
 
     setOpenEditDialog(true);
@@ -211,8 +194,8 @@ const Actions = ({
       <Grid container>
         <Card sx={{ width: '100%' }}>
           <CardContent>
-            {Object.keys(actions.actionData).length > 0
-              ? actions.actionData.map((eachMeasurable, index) => {
+            {Object.keys(kpiParent.actionData).length > 0
+              ? kpiParent.actionData.map((eachMeasurable, index) => {
                   return (
                     <Card key={index} sx={{ margin: 0.5 }}>
                       {eachMeasurable.authorData ? (
