@@ -24,9 +24,9 @@ const CustomFilterDropdown = ({
   dropdownData,
   filterData,
   collaboratorKey,
-  selectKpiData
+  preSelectedData
 }) => {
-  const [item, setItem] = useState(selectKpiData ? selectKpiData : []);
+  const [item, setItem] = useState(preSelectedData ? preSelectedData : []);
   const theme = useTheme();
   const handleChange = (event) => {
     const {
