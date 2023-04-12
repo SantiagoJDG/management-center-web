@@ -19,8 +19,14 @@ function getStyles(name, item, theme) {
   };
 }
 
-const CustomFilterDropdown = ({ title, dropdownData, filterData, collaboratorKey, kpiData }) => {
-  const [item, setItem] = useState(kpiData ? kpiData : []);
+const CustomFilterDropdown = ({
+  title,
+  dropdownData,
+  filterData,
+  collaboratorKey,
+  selectKpiData
+}) => {
+  const [item, setItem] = useState(selectKpiData ? selectKpiData : []);
   const theme = useTheme();
   const handleChange = (event) => {
     const {

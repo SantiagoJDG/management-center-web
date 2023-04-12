@@ -85,7 +85,7 @@ const Actions = ({
           title={'Indicadores de Gestion'}
           dropdownData={kpisData}
           filterData={executeFilter}
-          kpiData={itemKpiData}
+          selectKpiData={itemKpiData}
         />
         {renderTimeTextField()}
       </>
