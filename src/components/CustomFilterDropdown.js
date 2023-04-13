@@ -19,10 +19,15 @@ function getStyles(name, item, theme) {
   };
 }
 
-const CustomFilterDropdown = ({ title, dropdownData, filterData, collaboratorKey }) => {
-  const [item, setItem] = useState([]);
+const CustomFilterDropdown = ({
+  title,
+  dropdownData,
+  filterData,
+  collaboratorKey,
+  preSelectedData
+}) => {
+  const [item, setItem] = useState(preSelectedData ? preSelectedData : []);
   const theme = useTheme();
-
   const handleChange = (event) => {
     const {
       target: { value }
@@ -48,13 +53,15 @@ const CustomFilterDropdown = ({ title, dropdownData, filterData, collaboratorKey
           value={item}
           onChange={handleChange}
           input={<OutlinedInput id={`${collaboratorKey}-chip`} label="Chip" />}
-          renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-              {selected.map((value, index) => (
-                <Chip key={index} label={value.name ? value.name : value.description} />
-              ))}
-            </Box>
-          )}
+          renderValue={(selected) => {
+            return (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value, index) => (
+                  <Chip key={index} label={value.name ? value.name : value.description} />
+                ))}
+              </Box>
+            );
+          }}
         >
           {dropdownData.map((parameters, index) => {
             return (
