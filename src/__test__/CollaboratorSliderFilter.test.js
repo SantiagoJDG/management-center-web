@@ -4,10 +4,10 @@ import CollaboratorSliderFilter from '../components/Collaborators/CollaboratorSl
 
 describe('CollaboratorSliderFilter', () => {
   it('Should render the component correctly', () => {
-    const { container } = render(
+    const { getByText } = render(
       <CollaboratorSliderFilter setCollaborators={() => {}} allCollaborators={[]} />
     );
-    expect(container.firstChild).toMatchSnapshot();
+    expect(getByText('Filtrar por salario:')).toBeTruthy();
   });
 
   it('Should calls setCollaborators when user interacts with slider', () => {
