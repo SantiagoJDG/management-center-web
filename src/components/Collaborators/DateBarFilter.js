@@ -42,7 +42,6 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
   }
 
   function getErrorData(reason) {
-    console.log(reason);
     let newError = { error: true, message: '' };
 
     switch (reason) {
