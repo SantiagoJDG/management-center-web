@@ -80,6 +80,20 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     });
   };
 
+  const validateStrategyDelete = (eachStrategy) => {
+    let getKpiAmount = eachStrategy.kpisData.length;
+
+    if (getKpiAmount > 0) {
+      handleNewMessage({
+        text: 'Esta estrategia no se puede eliminar! tiene Indicadores de gestión agsinada',
+        severity: 'error'
+      });
+      return;
+    } else {
+      handleClickOpenDeleteDialog(eachStrategy);
+    }
+  };
+
   const handleClickOpenDeleteDialog = (eachStrategy) => {
     setSelectedStrategy({
       businessGoal: eachStrategy.id,
@@ -146,7 +160,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                         <CustomCardContent
                           category={eachStrategy.id}
                           selectedObject={eachStrategy}
-                          handleClickOpenDeleteDialog={handleClickOpenDeleteDialog}
+                          handleClickOpenDeleteDialog={validateStrategyDelete}
                           handleClickOpenEditDialog={handleClickOpenEditDialog}
                         />
                       </Grid>

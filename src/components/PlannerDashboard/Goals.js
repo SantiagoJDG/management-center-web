@@ -24,7 +24,7 @@ import useDelete from 'hooks/useDelete';
 import useEdit from 'hooks/useEdit';
 import useMessage from 'hooks/useMessage';
 
-const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) => {
+const Goals = ({ strategies, goals, userId, businessPlanObjective, getBusinessObjective }) => {
   const [categories, setCategories] = useState();
   const [categoryToEdited, setCategoryToEdited] = useState();
 
@@ -69,11 +69,28 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
     setOpenEditDialog(true);
   };
 
+  const validateGoalDelete = (goal) => {
+    const strategy = strategies.filter((businessGoalData) => businessGoalData.id == goal.id);
+    const goalsDataAmount = strategy.map((strategy) => {
+      return strategy.businessGoalData;
+    });
+
+    if (goalsDataAmount.length > 0) {
+      handleNewMessage({
+        text: 'Este meta  no se puede eliminar! tiene estrategia asignada',
+        severity: 'error'
+      });
+    } else {
+      handleClickOpenDeleteDialog(goal);
+    }
+  };
+
   const handleClickOpenDeleteDialog = (goal) => {
     setSelectedGoal({
       id: goal.id,
       description: goal.description
     });
+
     setOpenDeleteDialog(true);
   };
 
@@ -179,7 +196,7 @@ const Goals = ({ goals, userId, businessPlanObjective, getBusinessObjective }) =
       return (
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item>
-            <IconButton onClick={() => handleClickOpenDeleteDialog(goal)}>
+            <IconButton onClick={() => validateGoalDelete(goal)}>
               <DeleteIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
