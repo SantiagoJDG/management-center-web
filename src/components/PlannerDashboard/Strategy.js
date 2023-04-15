@@ -85,7 +85,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
 
     if (getKpiAmount > 0) {
       handleNewMessage({
-        text: 'Esta estrategia no se puede eliminar! tiene Indicadores de gestión agsinada',
+        text: 'Esta estrategia no se puede eliminar! tiene Indicadores de gestión asignada',
         severity: 'error'
       });
       return;

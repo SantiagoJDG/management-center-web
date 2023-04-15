@@ -168,7 +168,7 @@ const Measures = ({
     let getactionDataAmount = measures.actionData.length;
     if (getactionDataAmount > 0) {
       handleNewMessage({
-        text: 'Este indicador no se puede eliminar! tiene plan de acción agsinado',
+        text: 'Este indicador no se puede eliminar! tiene plan de acción asignado',
         severity: 'error'
       });
     } else {
