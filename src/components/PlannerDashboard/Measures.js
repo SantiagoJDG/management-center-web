@@ -164,14 +164,9 @@ const Measures = ({
     );
   };
 
-  const validateMeasureDelete = (measures) => {
-    let getactionDataAmount = measures.actionData.length;
-    return getactionDataAmount;
-  };
-
   const handleClickOpenDeleteDialog = (measures) => {
-    const response = validateMeasureDelete(measures);
-    if (response > 0) {
+    let getactionDataAmount = measures.actionData.length;
+    if (getactionDataAmount > 0) {
       handleNewMessage({
         text: 'Este indicador no se puede eliminar! tiene plan de acción asignado',
         severity: 'error'

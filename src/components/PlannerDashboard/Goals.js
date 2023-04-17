@@ -69,18 +69,14 @@ const Goals = ({ strategies, goals, userId, businessPlanObjective, getBusinessOb
     setOpenEditDialog(true);
   };
 
-  const validateGoalDelete = (goal) => {
+  const handleClickOpenDeleteDialog = (goal) => {
     const strategy = strategies.filter((businessGoalData) => businessGoalData.id == goal.id);
+
     const goalsDataAmount = strategy.map((strategy) => {
       return strategy.businessGoalData;
     });
-    return goalsDataAmount.length;
-  };
 
-  const handleClickOpenDeleteDialog = (goal) => {
-    const response = validateGoalDelete(goal);
-
-    if (response > 0) {
+    if (goalsDataAmount.length > 0) {
       handleNewMessage({
         text: 'Este meta  no se puede eliminar! tiene estrategia asignada',
         severity: 'error'
