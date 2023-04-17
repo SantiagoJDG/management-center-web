@@ -10,8 +10,8 @@ const mockCollaboratorData = {
   emailSignature: 'santiagodavila@consultec-it.com',
   email: 'santiagodavila@gmail.com',
   residencyData: {
-    countryData: { name: 'USA' },
-    stateData: { name: 'California' }
+    countryData: { name: 'Argentina' },
+    stateData: { name: 'Buenos Aires' }
   },
   supervisorData: { name: 'Edgar Guevara' },
   companyData: { name: 'Consultec' },
@@ -45,10 +45,10 @@ describe('CollaboratorInformation component', () => {
   it('should render the collaborator information', () => {
     render(<CollaboratorInformation collaboratorData={mockCollaboratorData} />);
 
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('johndoe@example.com')).toBeInTheDocument();
-    expect(screen.getByText('USA')).toBeInTheDocument();
-    expect(screen.getByText('California')).toBeInTheDocument();
+    expect(screen.getByText('Santiago Davila')).toBeInTheDocument();
+    expect(screen.getByText('santiagodavila@consultec-it.com')).toBeInTheDocument();
+    expect(screen.getByText('Argentina')).toBeInTheDocument();
+    expect(screen.getByText('Buenos Aires')).toBeInTheDocument();
     expect(screen.getByText('Edgar Guevara')).toBeInTheDocument();
     expect(screen.getByText('Consultec')).toBeInTheDocument();
     expect(screen.getByText('Panama')).toBeInTheDocument();
