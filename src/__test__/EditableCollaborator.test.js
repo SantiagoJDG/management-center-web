@@ -1,10 +1,7 @@
 import EditableCollaborator from '../components/Collaborators/EditableCollaborator';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
 import 'moment/locale/es';
 import useMessage from 'hooks/useMessage';
-import { getAxiosInstance } from 'utils/axiosClient';
-import { act } from 'react-dom/test-utils';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
