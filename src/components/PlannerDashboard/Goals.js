@@ -74,18 +74,19 @@ const Goals = ({ strategies, goals, userId, businessPlanObjective, getBusinessOb
     const goalsDataAmount = strategy.map((strategy) => {
       return strategy.businessGoalData;
     });
+    return goalsDataAmount.length;
+  };
 
-    if (goalsDataAmount.length > 0) {
+  const handleClickOpenDeleteDialog = (goal) => {
+    const response = validateGoalDelete(goal);
+
+    if (response > 0) {
       handleNewMessage({
         text: 'Este meta  no se puede eliminar! tiene estrategia asignada',
         severity: 'error'
       });
-    } else {
-      handleClickOpenDeleteDialog(goal);
+      return;
     }
-  };
-
-  const handleClickOpenDeleteDialog = (goal) => {
     setSelectedGoal({
       id: goal.id,
       description: goal.description
@@ -196,7 +197,7 @@ const Goals = ({ strategies, goals, userId, businessPlanObjective, getBusinessOb
       return (
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item>
-            <IconButton onClick={() => validateGoalDelete(goal)}>
+            <IconButton onClick={() => handleClickOpenDeleteDialog(goal)}>
               <DeleteIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>

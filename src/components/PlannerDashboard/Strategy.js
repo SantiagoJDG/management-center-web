@@ -82,19 +82,18 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
 
   const validateStrategyDelete = (eachStrategy) => {
     let getKpiAmount = eachStrategy.kpisData.length;
+    return getKpiAmount;
+  };
 
-    if (getKpiAmount > 0) {
+  const handleClickOpenDeleteDialog = (eachStrategy) => {
+    const response = validateStrategyDelete(eachStrategy);
+    if (response > 0) {
       handleNewMessage({
         text: 'Esta estrategia no se puede eliminar! tiene Indicadores de gestión asignada',
         severity: 'error'
       });
       return;
-    } else {
-      handleClickOpenDeleteDialog(eachStrategy);
     }
-  };
-
-  const handleClickOpenDeleteDialog = (eachStrategy) => {
     setSelectedStrategy({
       businessGoal: eachStrategy.id,
       description: eachStrategy.description,
@@ -160,7 +159,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
                         <CustomCardContent
                           category={eachStrategy.id}
                           selectedObject={eachStrategy}
-                          handleClickOpenDeleteDialog={validateStrategyDelete}
+                          handleClickOpenDeleteDialog={handleClickOpenDeleteDialog}
                           handleClickOpenEditDialog={handleClickOpenEditDialog}
                         />
                       </Grid>

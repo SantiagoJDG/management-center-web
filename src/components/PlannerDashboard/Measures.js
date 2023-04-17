@@ -166,17 +166,18 @@ const Measures = ({
 
   const validateMeasureDelete = (measures) => {
     let getactionDataAmount = measures.actionData.length;
-    if (getactionDataAmount > 0) {
+    return getactionDataAmount;
+  };
+
+  const handleClickOpenDeleteDialog = (measures) => {
+    const response = validateMeasureDelete(measures);
+    if (response > 0) {
       handleNewMessage({
         text: 'Este indicador no se puede eliminar! tiene plan de acción asignado',
         severity: 'error'
       });
-    } else {
-      handleClickOpenDeleteDialog(measures);
+      return;
     }
-  };
-
-  const handleClickOpenDeleteDialog = (measures) => {
     setNewMeasure({
       id: measures.id,
       description: measures.description
@@ -207,7 +208,7 @@ const Measures = ({
       return (
         <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item>
-            <IconButton onClick={() => validateMeasureDelete(measures)}>
+            <IconButton onClick={() => handleClickOpenDeleteDialog(measures)}>
               <DeleteIcon style={{ color: '#03a9f4' }} />
             </IconButton>
           </Grid>
