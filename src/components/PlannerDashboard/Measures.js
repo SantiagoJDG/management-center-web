@@ -165,6 +165,14 @@ const Measures = ({
   };
 
   const handleClickOpenDeleteDialog = (measures) => {
+    let getactionDataAmount = measures.actionData.length;
+    if (getactionDataAmount > 0) {
+      handleNewMessage({
+        text: 'Este indicador no se puede eliminar! tiene plan de acción asignado',
+        severity: 'error'
+      });
+      return;
+    }
     setNewMeasure({
       id: measures.id,
       description: measures.description
