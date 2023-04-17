@@ -10,6 +10,7 @@ const Objective = ({ objective, getBusinessObjective }) => {
     <Grid container sx={{ paddingTop: 1 }} direction="row" spacing={1}>
       <Grid item sm={12} lg={3}>
         <Goals
+          strategies={strategiesData}
           goals={goalsData}
           userId={userData.id}
           businessPlanObjective={id}

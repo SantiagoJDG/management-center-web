@@ -81,6 +81,15 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
   };
 
   const handleClickOpenDeleteDialog = (eachStrategy) => {
+    let getKpiAmount = eachStrategy.kpisData.length;
+
+    if (getKpiAmount > 0) {
+      handleNewMessage({
+        text: 'Esta estrategia no se puede eliminar! tiene Indicadores de gestión asignada',
+        severity: 'error'
+      });
+      return;
+    }
     setSelectedStrategy({
       businessGoal: eachStrategy.id,
       description: eachStrategy.description,
