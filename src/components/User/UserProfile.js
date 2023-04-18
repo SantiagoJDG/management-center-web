@@ -2,7 +2,7 @@ import { Avatar, Box, Card, CardActionArea, Grid, Typography } from '@mui/materi
 import { useRouter } from 'next/router';
 
 const UserProfile = ({ userDataLogged }) => {
-  const { internalRoles, name, picture } = userDataLogged;
+  const { rolesData, name, picture } = userDataLogged;
 
   const router = useRouter();
 
@@ -49,7 +49,7 @@ const UserProfile = ({ userDataLogged }) => {
         <Typography variant="h5" align="left" fontWeight="bold">
           Quiero ingresar como
         </Typography>
-        {internalRoles.map((role, index) => {
+        {rolesData?.map((role, index) => {
           return (
             <Grid key={index} item>
               {profileSelection(role.name)}
