@@ -100,17 +100,21 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <ListItem>
                   <ListItemText primary="Empresa contratante" secondary={companyData.name} />
                   <ListItemText primary="Oficina de contrato" secondary={officeData.name} />
-                  <ListItemText
-                    primary="Estado"
-                    secondary={
-                      <Chip
-                        label={statusData.name}
-                        color={statusData.name == 'ACTIVO' ? 'success' : 'error'}
-                        variant="outlined"
-                        size="small"
-                      />
-                    }
-                  />
+                  <Box sx={{ display: 'inline' }}>
+                    <ListItemText primary="Estado" />
+                    <ListItemText
+                      component="div"
+                      primary={
+                        <Chip
+                          sx={{ margin: 0.2 }}
+                          size="small"
+                          label={statusData.name}
+                          color={statusData.name == 'ACTIVO' ? 'success' : 'error'}
+                          variant="outlined"
+                        />
+                      }
+                    />
+                  </Box>
                 </ListItem>
                 <Divider />
 
@@ -193,9 +197,9 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <ListItem>
                   <Grid container>
                     <Grid item sm={12}>
+                      <ListItemText primary="N3-tecnologías predominantes" />
                       <ListItemText
-                        primary="N3-tecnologías predominantes"
-                        secondary={technologies.map((technology) => {
+                        primary={technologies.map((technology) => {
                           return (
                             <Chip
                               key={technology.id}
@@ -228,36 +232,40 @@ const CollaboratorInformation = ({ collaboratorData }) => {
                 <ListItem>
                   <ListItemText primary="Rol" secondary={identityRoleData.name} />
                   <ListItemText primary="Seniority" secondary={seniorityData.name} />
-                  <ListItemText
-                    primary="Readiness"
-                    secondary={
-                      <Chip
-                        label={readinessData.name}
-                        color="primary"
-                        variant="outlined"
-                        size="small"
-                      />
-                    }
-                  />
+                  <Box sx={{ display: 'inline' }}>
+                    <ListItemText primary="Readiness" />
+                    <ListItemText
+                      primary={
+                        <Chip
+                          label={readinessData.name}
+                          color="primary"
+                          variant="outlined"
+                          size="small"
+                        />
+                      }
+                    />
+                  </Box>
                 </ListItem>
                 <Divider />
 
                 <ListItem>
                   <ListItemText primary="Firma de correo" secondary={emailSignature} />
-                  <ListItemText
-                    primary="Rol dentro del sistema"
-                    secondary={internalRoles.map((internalRole) => {
-                      return (
-                        <Chip
-                          key={internalRole.id}
-                          label={internalRole.name}
-                          color="info"
-                          variant="outlined"
-                          size="small"
-                        />
-                      );
-                    })}
-                  />
+                  <Box sx={{ display: 'block' }}>
+                    <ListItemText primary="Rol dentro del sistema" />
+                    <ListItemText
+                      primary={internalRoles.map((internalRole) => {
+                        return (
+                          <Chip
+                            key={internalRole.id}
+                            label={internalRole.name}
+                            color="info"
+                            variant="outlined"
+                            size="small"
+                          />
+                        );
+                      })}
+                    />
+                  </Box>
                 </ListItem>
                 <Divider />
               </List>
