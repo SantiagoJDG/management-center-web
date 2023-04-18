@@ -2,7 +2,10 @@ import EditableCollaborator from '../components/Collaborators/EditableCollaborat
 import '@testing-library/jest-dom';
 import 'moment/locale/es';
 import useMessage from 'hooks/useMessage';
+import { act } from 'react-dom/test-utils';
+
 import { render, screen } from '@testing-library/react';
+import { getAxiosInstance } from 'utils/axiosClient';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
@@ -224,15 +227,20 @@ describe('EditableCollaborator', () => {
     jest.clearAllMocks();
   });
 
-  it('Should render correctly', () => {
+  it('Should render correctly', async () => {
     useMessage.mockReturnValue({ handleNewMessage: jest.fn() });
 
-    render(
-      <EditableCollaborator
-        collaboratorData={collaboratorData}
-        setPrincipalInformation={setPrincipalInformation}
-      ></EditableCollaborator>
-    );
+    getAxiosInstance.mockImplementation(() => ({
+      get: jest.fn(() => Promise.resolve({}))
+    }));
+    await act(async () => {
+      render(
+        <EditableCollaborator
+          collaboratorData={collaboratorData}
+          setPrincipalInformation={setPrincipalInformation}
+        ></EditableCollaborator>
+      );
+    });
 
     expect(screen.findByText('Información de identidad personal')).toBeTruthy();
   });
