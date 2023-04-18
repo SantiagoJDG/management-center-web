@@ -14,16 +14,17 @@ describe('UserProfile component', () => {
     clientData: { id: 3, name: 'Banco General', description: null },
     email: 'sdavila@consultec-ti.com',
     id: 2,
-    internalCode: 'CT002',
+    businessCode: 'CT002',
     internalRoles: [
       { id: 1, name: 'Administrador', collaborator_role: {} },
       { id: 2, name: 'Usuario', collaborator_role: {} }
     ],
     knowledges: [],
-    name: 'Santiago Davila',
+    name: 'Santiago',
+    lastName: 'Davila',
     picture:
       'https://lh3.googleusercontent.com/a/AGNmyxYW7zKsZes0d-yO4AlfbDovbFSuQJyXDgtIQ-E-=s96-c',
-    profiles: [
+      rolesData: [
       { id: 6, name: 'Gestión Operativa', collaborator_profile: {} },
       { id: 4, name: 'Infraestructura', collaborator_profile: {} }
     ],

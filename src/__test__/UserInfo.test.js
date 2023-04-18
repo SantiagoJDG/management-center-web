@@ -5,15 +5,15 @@ import { render } from '@testing-library/react';
 
 describe('UserInfo component', () => {
   const userData = {
-    name: 'Santiago Davila',
+    name: 'Santiago',
+    lastName: 'Davila',
+    businessCode: 'CT001',
     admissionDate: '2022-02-01T00:00:00.000Z',
+    businessEmail:'sdavila@consultec-ti.com',
     supervisorData: {
       name: 'Edgar Guevara'
     },
-    clientData: {
-      name: 'Consultec'
-    },
-    profiles: [
+    profilesData: [
       { name: 'Profile 1' },
       { name: 'Profile 2' },
       { name: 'Profile 3' },
@@ -58,7 +58,7 @@ describe('UserInfo component', () => {
 
   it('Should render user data correctly', () => {
     const { getByText } = render(<UserInfo userDataLogged={userData} />);
-    expect(getByText('Santiago Davila')).toBeInTheDocument();
+    expect(getByText('Santiago')).toBeInTheDocument();
     expect(getByText('Fecha de ingreso')).toBeInTheDocument();
     expect(getByText('Supervisor')).toBeInTheDocument();
     expect(getByText('Cliente')).toBeInTheDocument();
