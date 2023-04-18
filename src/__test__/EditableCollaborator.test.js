@@ -2,6 +2,7 @@ import EditableCollaborator from '../components/Collaborators/EditableCollaborat
 import '@testing-library/jest-dom';
 import 'moment/locale/es';
 import useMessage from 'hooks/useMessage';
+import { render, screen } from '@testing-library/react';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
