@@ -9,7 +9,7 @@ describe('UserInfo component', () => {
     lastName: 'Davila',
     businessCode: 'CT001',
     admissionDate: '2022-02-01T00:00:00.000Z',
-    businessEmail:'sdavila@consultec-ti.com',
+    businessEmail: 'sdavila@consultec-ti.com',
     supervisorData: {
       name: 'Edgar Guevara'
     },

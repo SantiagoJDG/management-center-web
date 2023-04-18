@@ -24,7 +24,7 @@ describe('UserProfile component', () => {
     lastName: 'Davila',
     picture:
       'https://lh3.googleusercontent.com/a/AGNmyxYW7zKsZes0d-yO4AlfbDovbFSuQJyXDgtIQ-E-=s96-c',
-      rolesData: [
+    rolesData: [
       { id: 6, name: 'Gestión Operativa', collaborator_profile: {} },
       { id: 4, name: 'Infraestructura', collaborator_profile: {} }
     ],
