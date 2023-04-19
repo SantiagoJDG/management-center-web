@@ -1,15 +1,20 @@
 import EditableCollaborator from '../components/Collaborators/EditableCollaborator';
 import '@testing-library/jest-dom';
 import 'moment/locale/es';
+import { useRouter } from 'next/router';
+
 import useMessage from 'hooks/useMessage';
 import { act } from 'react-dom/test-utils';
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { getAxiosInstance } from 'utils/axiosClient';
 
 jest.mock('next/router', () => ({
   useRouter: jest.fn()
 }));
+const pushMock = jest.fn().mockImplementation(() => {});
+const putMock = jest.fn().mockImplementation(() => Promise.resolve({}));
+
 jest.mock('hooks/useMessage', () => ({
   __esModule: true,
   default: jest.fn()
@@ -139,7 +144,10 @@ const collaboratorData = {
   residencyData: {
     id: 1,
     address: 'Calle 1 PH bahia 1 apto 1',
-    countryData: {},
+    countryData: {
+      id: 7,
+      name: 'Argentina'
+    },
     stateData: {
       id: 1
     }
@@ -229,10 +237,33 @@ describe('EditableCollaborator', () => {
 
   it('Should render correctly', async () => {
     useMessage.mockReturnValue({ handleNewMessage: jest.fn() });
-
     getAxiosInstance.mockImplementation(() => ({
       get: jest.fn(() => Promise.resolve({}))
     }));
+
+    await act(async () => {
+      render(
+        <EditableCollaborator
+          collaboratorData={collaboratorData}
+          setPrincipalInformation={setPrincipalInformation}
+        ></EditableCollaborator>
+      );
+    });
+    expect(screen.findByText('Información de identidad personal')).toBeTruthy();
+  });
+
+  it('Should Edit name', async () => {
+    useMessage.mockReturnValue({ handleNewMessage: jest.fn() });
+    getAxiosInstance.mockImplementation(() => ({
+      get: jest.fn(() => Promise.resolve({})),
+      put: putMock
+    }));
+    useRouter.mockReturnValue({
+      query: {},
+      push: pushMock,
+      pathname: '/collaborators'
+    });
+
     await act(async () => {
       render(
         <EditableCollaborator
@@ -242,6 +273,15 @@ describe('EditableCollaborator', () => {
       );
     });
 
-    expect(screen.findByText('Información de identidad personal')).toBeTruthy();
+    const buttons = screen.getAllByRole('button');
+
+    fireEvent.click(buttons[0]);
+    const region = within(screen.getByRole('region'));
+    const input = region.getByDisplayValue(/Edgar Alexander Guevara Naranjo/i);
+    fireEvent.click(input);
+    fireEvent.input(input, { target: { value: 'new name' } });
+    fireEvent.click(buttons[buttons.length - 1]);
+
+    expect(putMock).toHaveBeenCalledTimes(1);
   });
 });
