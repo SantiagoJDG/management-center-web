@@ -46,12 +46,12 @@ const UserInfo = ({ userDataLogged }) => {
           <ListItemIcon>
             <AccountCircleIcon color="info" fontSize="large" />
           </ListItemIcon>
-          <ListItemText primary="Supervisor" secondary={userDataLogged.supervisorData.name} />
+          <ListItemText primary="Supervisor" secondary={userDataLogged.supervisorData?.name} />
         </ListItem>
 
         <ListItem disablePadding>
           <ListItemIcon></ListItemIcon>
-          <ListItemText primary="Cliente" secondary={userDataLogged.clientData.name} />
+          <ListItemText primary="Cliente" secondary={userDataLogged.clientData?.name} />
         </ListItem>
 
         <ListItem disablePadding>
@@ -62,7 +62,7 @@ const UserInfo = ({ userDataLogged }) => {
             <ListItemText primary="N-1 Perfil" />
             <ListItemText
               component="div"
-              primary={userDataLogged.profiles.slice(0, 8).map((value, index) => (
+              primary={userDataLogged.profilesData?.slice(0, 8).map((value, index) => (
                 <Chip
                   sx={{ margin: 0.2 }}
                   color="info"
@@ -81,7 +81,7 @@ const UserInfo = ({ userDataLogged }) => {
             <ListItemText primary=" N-2 Conocimientos:" />
             <ListItemText
               component="div"
-              primary={userDataLogged.knowledges.slice(0, 8).map((value, index) => (
+              primary={userDataLogged.knowledges?.slice(0, 8).map((value, index) => (
                 <Chip
                   sx={{ margin: 0.2 }}
                   color="info"
