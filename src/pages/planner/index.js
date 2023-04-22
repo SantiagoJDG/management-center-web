@@ -94,11 +94,11 @@ const Dashboard = () => {
           {businessPlan.objectivesData.map((objective, index) => {
             return (
               <Accordion
-                key={index}
+                key={objective.id}
                 sx={{ background: 'none' }}
                 elevation="0"
-                expanded={expanded === index}
-                onChange={handleAccordionChange(index)}
+                expanded={expanded === objective.id}
+                onChange={handleAccordionChange(objective.id)}
               >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon sx={{ color: 'info.contrastText' }} />}
