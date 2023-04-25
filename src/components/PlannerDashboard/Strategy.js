@@ -42,10 +42,17 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
     setSelectedStrategy({ ...selectedStrategy, businessGoal: goalId.id });
   }
 
-  const createGoal = async () => {
-    create();
+  const createStrategy = async () => {
+    const error = await create();
+    if (error) return;
+    await getBusinessObjective();
     setOpenCreateDialog(false);
-    getBusinessObjective();
+    setSelectedStrategy({
+      ...selectedStrategy,
+      description: '',
+      category: null,
+      businessGoal: null
+    });
   };
 
   const handleClickOpenEditDialog = (strategy) => {
@@ -183,7 +190,7 @@ const Strategy = ({ strategies, goals, userId, businessPlanObjective, getBusines
         title={'Estrategias'}
         handleClose={setOpenCreateDialog}
         displayDropdown={renderGoalsDropdown()}
-        requestMethod={createGoal}
+        requestMethod={createStrategy}
         newObject={selectedStrategy}
         setNewObject={setSelectedStrategy}
         nameMethod={'create'}
