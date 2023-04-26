@@ -1,27 +1,27 @@
-import { Grid, Divider, TextField, Avatar, FormControl, Button } from '@mui/material';
+import { Grid, Divider, TextField, Avatar, ListItemIcon, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import { getAxiosInstance } from 'utils/axiosClient';
-import useMessage from 'hooks/useMessage';
-import { useForm } from 'react-hook-form';
-
+import { useForm, Controller } from 'react-hook-form';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef } from 'react';
 
 const PersonalInformation = ({ onPersonalInfoCompleted }) => {
-  const { register, handleSubmit } = useForm();
-
-  // const { handleNewMessage } = useMessage();
+  const { register, handleSubmit, control } = useForm();
 
   const [initialDate, setInitialDate] = useState();
 
   const [age, setAge] = useState(0);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
+
+  const [phoneNumbers, setPhoneNumbers] = useState([{ code: '', number: '' }]);
+  const [nationalities, setNationalities] = useState(['']);
 
   const [email, setEmail] = useState();
   const [errorMessage, setErrorMessage] = useState('');
@@ -134,33 +134,46 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     }
   };
 
-  const handleCodeChange = (event) => {
-    const input = event.target.value;
-    const expectedLength = 3;
+  const handleAddPhoneNumber = () => {
+    setPhoneNumbers([...phoneNumbers, { code: '', number: '' }]);
+  };
 
-    setCode(input);
+  const handlePhoneChange = (event, index, key) => {
+    const newPhoneNumbers = [...phoneNumbers];
+    newPhoneNumbers[index][key] = event.target.value;
+    setPhoneNumbers(newPhoneNumbers);
+    if (key === 'code') {
+      const input = event.target.value;
+      const expectedLength = 3;
 
-    if (input.length === expectedLength) {
-      secondTextFieldRef.current.focus();
+      if (input.length === expectedLength) {
+        secondTextFieldRef.current.focus();
+      }
     }
   };
 
-  const handlePhoneNumer = (event) => {
-    const phoneNumber = event.target.value;
-    setPhoneNumber(phoneNumber);
+  const handleAddNationality = () => {
+    setNationalities([...nationalities, '']);
   };
 
-  const handleFormSubmit = () => {
-    onPersonalInfoCompleted(true);
+  const handleNationalityChange = (event, index) => {
+    const newNationalities = [...nationalities];
+    newNationalities[index] = event.target.value;
+    setNationalities(newNationalities);
   };
-  const onSubmit = (data) => console.log(data);
 
   useEffect(() => {
     getResidenceData();
   }, [age]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit((data) => {
+        console.log(data);
+        console.log(phoneNumbers);
+        console.log('in');
+      })}
+    >
       <Grid container direction={'row'} xs={12} justifyContent={'start'} p={2}>
         <Grid item xs={6}>
           <Grid container direction={'column'} spacing={2} p={2}>
@@ -220,7 +233,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
             </Grid>
             <Grid item>
               <LocalizationProvider dateAdapter={AdapterMoment}>
-                <DatePicker
+                {/* <DatePicker
                   required
                   // name="birthdate"
                   label="Fecha de nacimiento"
@@ -229,10 +242,20 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                     handleOnChangeDate(newValue);
                   }}
                   renderInput={(params) => <TextField {...params} />}
-                  // {...register('birthdate', {
-                  //   required: true,
-                  //   onChange: handleOnChangeDate(newValue)
-                  // })}
+                /> */}
+                <Controller
+                  name="birthdate"
+                  control={control}
+                  render={() => (
+                    <DatePicker
+                      label="Fecha de nacimiento"
+                      maxDate={moment().format()}
+                      onChange={(newValue) => {
+                        handleOnChangeDate(newValue);
+                      }}
+                      renderInput={(params) => <TextField {...params} label={'Date'} />}
+                    />
+                  )}
                 />
               </LocalizationProvider>
               <TextField
@@ -261,34 +284,44 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 })}
               />
             </Grid>
-            <Grid item>
-              <TextField
-                required
-                sx={{ width: '25%' }}
-                id="code"
-                label="Code"
-                placeholder="000"
-                type="number"
-                name="code"
-                variant="outlined"
-                size="small"
-                value={code}
-                {...register('code', { required: true, onChange: handleCodeChange })}
-              />
-              <TextField
-                required
-                sx={{ width: '70%', ml: 1 }}
-                id="number"
-                name="number"
-                label="Telefono de contacto"
-                placeholder="0000 00000"
-                type="number"
-                size="small"
-                variant="outlined"
-                onChange={handlePhoneNumer}
-                inputRef={secondTextFieldRef}
-                {...register('number', { required: true })}
-              />
+            {phoneNumbers.map((phone, index) => (
+              <Grid item key={index}>
+                <TextField
+                  required
+                  sx={{ width: '25%' }}
+                  id={`code-${index}`}
+                  label="Code"
+                  placeholder="000"
+                  type="number"
+                  name={`code-${index}`}
+                  variant="outlined"
+                  size="small"
+                  value={phone.code}
+                  onChange={(event) => handlePhoneChange(event, index, 'code')}
+                />
+                <TextField
+                  required
+                  sx={{ width: '70%', ml: 1 }}
+                  id={`number-${index}`}
+                  name={`number-${index}`}
+                  label="Telefono de contacto"
+                  placeholder="0000 00000"
+                  type="number"
+                  size="small"
+                  variant="outlined"
+                  inputRef={secondTextFieldRef}
+                  value={phone.number}
+                  onChange={(event) => handlePhoneChange(event, index, 'number')}
+                />
+              </Grid>
+            ))}
+            <Grid item p={1}>
+              <ListItemIcon>
+                <AddCircleOutlineIcon color="info" onClick={handleAddPhoneNumber} />
+                <Typography onClick={handleAddPhoneNumber} variant="h9" sx={{ color: 'info.main' }}>
+                  Agregar informacion personal
+                </Typography>
+              </ListItemIcon>
             </Grid>
           </Grid>
         </Grid>
@@ -302,7 +335,6 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 optionList={countries}
                 elmentCallback={handleCountry}
                 requiredField={true}
-                // {...register('countryID', { required: true })}
               />
             </Grid>
             <Grid item>
@@ -313,37 +345,33 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 optionList={states}
                 elmentCallback={handleState}
                 requiredField={true}
-                // {...register('cityId', { required: true })}
               />
             </Grid>
-            <Grid item>
-              <TextField
-                sx={{ width: '100%' }}
-                name="address"
-                required
-                size="small"
-                placeholder="Escribe tu direccion residencial"
-                label="Direcion residencial"
-                error={formErrors.address && formErrors.address.error}
-                helperText={formErrors.address && formErrors.address.description}
-                {...register('address', { required: true })}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                sx={{ width: '100%' }}
-                name="nationalities"
-                required
-                size="small"
-                placeholder="Escribe una ancionalidad"
-                label="Nacionalidades"
-                {...register('nationalities', { required: true })}
-              />
+            {nationalities.map((value, index) => (
+              <Grid item key={index}>
+                <TextField
+                  required
+                  size={'small'}
+                  label="Nationalidades"
+                  variant="outlined"
+                  sx={{ width: '100%' }}
+                  value={value}
+                  onChange={(event) => handleNationalityChange(event, index)}
+                />
+              </Grid>
+            ))}
+            <Grid item p={1}>
+              <ListItemIcon>
+                <AddCircleOutlineIcon color="info" onClick={handleAddNationality} />
+                <Typography onClick={handleAddNationality} variant="h9" sx={{ color: 'info.main' }}>
+                  Agregar nacionalidad
+                </Typography>
+              </ListItemIcon>
             </Grid>
           </Grid>
         </Grid>
       </Grid>
-      <button onSubmit>xlick</button>
+      <button onSubmit>Submit</button>
     </form>
   );
 };
