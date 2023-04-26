@@ -227,7 +227,7 @@ const Goals = ({ strategies, goals, userId, businessPlanObjective, getBusinessOb
             {goals
               ? goals.map((eachGoal, index) => {
                   return (
-                    <Card key={index} sx={{ margin: 0.5 }}>
+                    <Card key={eachGoal.id} sx={{ margin: 0.5 }}>
                       {eachGoal.categoryData ? (
                         <CardHeader
                           action={editableGoal(eachGoal)}
