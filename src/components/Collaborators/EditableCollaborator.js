@@ -463,6 +463,7 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
                       value={newCollaborator.name}
                       onChange={handleTextChange}
                       size="small"
+                      data-testid="name-input"
                       fullWidth
                       required
                       error={formErrors.name && formErrors.name.error}
