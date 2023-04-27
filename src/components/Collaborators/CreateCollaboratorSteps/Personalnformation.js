@@ -12,7 +12,13 @@ import 'moment/locale/es';
 import { useState, useEffect, useRef } from 'react';
 
 const PersonalInformation = ({ onPersonalInfoCompleted }) => {
-  const { register, handleSubmit, control } = useForm();
+  const {
+    register,
+    handleSubmit,
+    control,
+    trigger,
+    formState: { errors }
+  } = useForm();
 
   const [initialDate, setInitialDate] = useState();
 
@@ -23,13 +29,10 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
   const [phoneNumbers, setPhoneNumbers] = useState([{ code: '', number: '' }]);
   const [nationalities, setNationalities] = useState(['']);
 
-  const [email, setEmail] = useState();
-  const [errorMessage, setErrorMessage] = useState('');
+  // const [email, setEmail] = useState();
+  const [errorEmailMessage, setEmailErrorMessage] = useState('');
 
-  const [code, setCode] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-
-  const [formErrors, setFormErrors] = useState({});
+  const [residencyErrors, setResidencyErrors] = useState({});
 
   const [newCollaborator, setNewCollaborator] = useState({
     name: '',
@@ -37,20 +40,18 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     birthdate: undefined,
     personalEmail: undefined,
     photoAdress: '',
-    residency: {
-      address: '',
-      countryId: '',
-      cityId: ''
-    },
+    address: '',
+    countryId: '',
+    cityId: '',
     nationalities: [
       {
-        docAdress: '',
-        countryId: undefined
+        docAdress: ''
+        // countryId: undefined
       }
     ],
     contactPhones: [
       {
-        areaCode: code,
+        areaCode: '',
         number: undefined
       }
     ]
@@ -96,22 +97,21 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
       selectedValue.id = idReturned;
       callbackAfetedSaved([...previousElements, selectedValue]);
     }
-    console.log(elementName);
-    console.log(selectedValue.id);
     setNewCollaborator({ ...newCollaborator, [elementName]: selectedValue.id });
+    setResidencyErrors({ ...residencyErrors, [elementName]: { error: false, description: '' } });
   }
 
   function handleCountry(country) {
     handleAutoCompleteValue(
       country,
-      'residency.countryId',
+      'countryId',
       '/api/residence/countries',
       setCountries,
       countries
     );
   }
   function handleState(state) {
-    handleAutoCompleteValue(state, 'residency.cityId', '/api/residence/states', setStates, states);
+    handleAutoCompleteValue(state, 'cityId', '/api/residence/states', setStates, states);
   }
 
   const handleOnChangeDate = (newValue) => {
@@ -123,14 +123,12 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
 
   const handleOnChangeEmail = (event) => {
     const inputValue = event.target.value;
-    setEmail(inputValue);
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(inputValue)) {
-      setEmail(inputValue);
-      setErrorMessage('');
+      setEmailErrorMessage('');
     } else {
-      setErrorMessage('El valor ingresado no es un correo electrónico válido.');
+      setEmailErrorMessage('El valor ingresado no es un correo electrónico válido.');
     }
   };
 
@@ -142,6 +140,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     const newPhoneNumbers = [...phoneNumbers];
     newPhoneNumbers[index][key] = event.target.value;
     setPhoneNumbers(newPhoneNumbers);
+
     if (key === 'code') {
       const input = event.target.value;
       const expectedLength = 3;
@@ -164,16 +163,35 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
 
   useEffect(() => {
     getResidenceData();
-  }, [age]);
+  }, [age, setResidencyErrors]);
+
+  const handleButtonClick = () => {
+    if (!newCollaborator.countryId || !newCollaborator.cityId) {
+      const newErrors = {
+        ...residencyErrors,
+        countryId: {
+          ...(newCollaborator.countryId ? {} : { error: true, description: 'Campo requerido' })
+          // Add any other fields you want to update here
+        },
+        cityId: {
+          ...(newCollaborator.cityId ? {} : { error: true, description: 'Campo requerido' })
+          // Add any other fields you want to update here
+        }
+      };
+      setResidencyErrors(newErrors);
+    }
+
+    const isValid = trigger();
+
+    if (isValid) {
+      handleSubmit((data) => {
+        console.log(data);
+      })();
+    }
+  };
 
   return (
-    <form
-      onSubmit={handleSubmit((data) => {
-        console.log(data);
-        console.log(phoneNumbers);
-        console.log('in');
-      })}
-    >
+    <form noValidate>
       <Grid container direction={'row'} xs={12} justifyContent={'start'} p={2}>
         <Grid item xs={6}>
           <Grid container direction={'column'} spacing={2} p={2}>
@@ -199,6 +217,14 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 placeholder="Adjuntar y subir archivo"
                 label="Fotografia del Consultor"
                 {...register('photoAdress', { required: true })}
+                error={errors.photoAdress && true}
+                helperText={
+                  errors.photoAdress && (
+                    <Typography variant="caption" color="error">
+                      Campo obligatorio
+                    </Typography>
+                  )
+                }
               />
             </Grid>
             <Grid item>
@@ -210,10 +236,14 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 placeholder="Nombre completo del Consultor"
                 label="Nombre del Consultor"
                 {...register('name', { required: true })}
-
-                // value={newCollaborator.name}
-                // error={formErrors.name && formErrors.name.error}
-                // helperText={formErrors.name && formErrors.name.description}
+                error={errors.name && true}
+                helperText={
+                  errors.name && (
+                    <Typography variant="caption" color="error">
+                      Campo obligatorio
+                    </Typography>
+                  )
+                }
               />
             </Grid>
             <Grid item>
@@ -225,35 +255,48 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 placeholder="Apellido completo del Consultor"
                 label="Apellido del Consultor"
                 {...register('lastName', { required: true })}
-
-                // value={newCollaborator.lastName}
-                // error={formErrors.lastName && formErrors.lastName.error}
-                // helperText={formErrors.lastName && formErrors.lastName.description}
+                error={errors.lastName && true}
+                helperText={
+                  errors.lastName && (
+                    <Typography variant="caption" color="error">
+                      Campo obligatorio
+                    </Typography>
+                  )
+                }
               />
             </Grid>
             <Grid item>
               <LocalizationProvider dateAdapter={AdapterMoment}>
-                {/* <DatePicker
-                  required
-                  // name="birthdate"
-                  label="Fecha de nacimiento"
-                  maxDate={moment().format()}
-                  onChange={(newValue) => {
-                    handleOnChangeDate(newValue);
-                  }}
-                  renderInput={(params) => <TextField {...params} />}
-                /> */}
                 <Controller
                   name="birthdate"
                   control={control}
-                  render={() => (
+                  render={({ field: { value, onChange } }) => (
                     <DatePicker
                       label="Fecha de nacimiento"
                       maxDate={moment().format()}
+                      value={value || null}
                       onChange={(newValue) => {
+                        onChange(newValue);
                         handleOnChangeDate(newValue);
                       }}
-                      renderInput={(params) => <TextField {...params} label={'Date'} />}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          required
+                          label={'Fecha de nacimiento'}
+                          placeholder="DD/MM/YYYY"
+                          name="birthdate"
+                          error={errors.birthdate && true}
+                          helperText={
+                            errors.birthdate && (
+                              <Typography variant="caption" color="error">
+                                Campo obligatorio
+                              </Typography>
+                            )
+                          }
+                          {...register('birthdate', { required: true })}
+                        />
+                      )}
                     />
                   )}
                 />
@@ -276,12 +319,19 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 size="small"
                 fullWidth
                 name="personalEmail"
-                error={!!errorMessage}
-                helperText={errorMessage}
                 {...register('personalEmail', {
                   required: true,
                   onChange: handleOnChangeEmail
                 })}
+                error={errors.personalEmail || !!errorEmailMessage}
+                helperText={
+                  errorEmailMessage ||
+                  (errors.personalEmail && (
+                    <Typography variant="caption" color="error">
+                      Campo obligatorio
+                    </Typography>
+                  ))
+                }
               />
             </Grid>
             {phoneNumbers.map((phone, index) => (
@@ -297,7 +347,18 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                   variant="outlined"
                   size="small"
                   value={phone.code}
-                  onChange={(event) => handlePhoneChange(event, index, 'code')}
+                  {...register(`code-${index}`, {
+                    required: true,
+                    onChange: (event) => handlePhoneChange(event, index, 'code')
+                  })}
+                  error={errors[`code-${index}`]}
+                  helperText={
+                    errors[`code-${index}`] && (
+                      <Typography variant="caption" color="error">
+                        Campo obligatorio
+                      </Typography>
+                    )
+                  }
                 />
                 <TextField
                   required
@@ -311,7 +372,18 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                   variant="outlined"
                   inputRef={secondTextFieldRef}
                   value={phone.number}
-                  onChange={(event) => handlePhoneChange(event, index, 'number')}
+                  {...register(`number-${index}`, {
+                    required: true,
+                    onChange: (event) => handlePhoneChange(event, index, 'number')
+                  })}
+                  error={errors[`number-${index}`]}
+                  helperText={
+                    errors[`number-${index}`] && (
+                      <Typography variant="caption" color="error">
+                        Campo obligatorio
+                      </Typography>
+                    )
+                  }
                 />
               </Grid>
             ))}
@@ -330,7 +402,8 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
           <Grid container spacing={2} p={2} direction={'column'}>
             <Grid item>
               <CustomAutoComplete
-                formError={formErrors.country}
+                formError={residencyErrors.countryId}
+                name="countryId"
                 label="País de residencia"
                 optionList={countries}
                 elmentCallback={handleCountry}
@@ -339,7 +412,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
             </Grid>
             <Grid item>
               <CustomAutoComplete
-                formError={formErrors.state}
+                formError={residencyErrors.cityId}
                 name="cityId"
                 label="Ciudad de residencia"
                 optionList={states}
@@ -352,11 +425,23 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 <TextField
                   required
                   size={'small'}
-                  label="Nationalidades"
+                  name={'nacionalidades'}
+                  label="Naionalidades"
                   variant="outlined"
                   sx={{ width: '100%' }}
                   value={value}
-                  onChange={(event) => handleNationalityChange(event, index)}
+                  {...register('nacionalidades', {
+                    required: true,
+                    onChange: (event) => handleNationalityChange(event, index)
+                  })}
+                  error={errors['nacionalidades']}
+                  helperText={
+                    errors['nacionalidades'] && (
+                      <Typography variant="caption" color="error">
+                        Campo obligatorio
+                      </Typography>
+                    )
+                  }
                 />
               </Grid>
             ))}
@@ -371,7 +456,9 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
           </Grid>
         </Grid>
       </Grid>
-      <button onSubmit>Submit</button>
+      <button type="button" onClick={handleButtonClick}>
+        Submit
+      </button>
     </form>
   );
 };
