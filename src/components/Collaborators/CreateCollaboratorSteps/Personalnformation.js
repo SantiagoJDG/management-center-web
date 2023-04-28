@@ -10,6 +10,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef } from 'react';
+import useCreate from 'hooks/useCreate';
 
 const PersonalInformation = ({ onPersonalInfoCompleted }) => {
   const {
@@ -20,33 +21,21 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     formState: { errors }
   } = useForm();
 
-  const [initialDate, setInitialDate] = useState();
-
-  const [age, setAge] = useState(0);
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
-
-  const [phoneNumbers, setPhoneNumbers] = useState([{ code: '', number: '' }]);
-  const [nationalities, setNationalities] = useState(['']);
-
-  // const [email, setEmail] = useState();
-  const [errorEmailMessage, setEmailErrorMessage] = useState('');
-
-  const [residencyErrors, setResidencyErrors] = useState({});
-
   const [newCollaborator, setNewCollaborator] = useState({
     name: '',
     lastName: '',
     birthdate: undefined,
     personalEmail: undefined,
     photoAdress: '',
-    address: '',
-    countryId: '',
-    cityId: '',
+    residency: {
+      countryId: '',
+      cityId: '',
+      address: ''
+    },
     nationalities: [
       {
-        docAdress: ''
-        // countryId: undefined
+        docAdress: '',
+        countryId: undefined
       }
     ],
     contactPhones: [
@@ -56,6 +45,21 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
       }
     ]
   });
+  const [create] = useCreate('/api/collaborator', newCollaborator);
+
+  const [initialDate, setInitialDate] = useState();
+
+  const [age, setAge] = useState(0);
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+
+  const [phoneNumbers, setPhoneNumbers] = useState([{ areaCode: '', number: '' }]);
+  const [nationalities, setNationalities] = useState([{ docAdress: '', countryId: '' }]);
+
+  // const [email, setEmail] = useState();
+  const [errorEmailMessage, setEmailErrorMessage] = useState('');
+
+  const [residencyErrors, setResidencyErrors] = useState({});
 
   const secondTextFieldRef = useRef(null);
 
@@ -97,7 +101,12 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
       selectedValue.id = idReturned;
       callbackAfetedSaved([...previousElements, selectedValue]);
     }
-    setNewCollaborator({ ...newCollaborator, [elementName]: selectedValue.id });
+    const newResidency = { ...newCollaborator.residency, [elementName]: selectedValue.id };
+    setNewCollaborator({
+      ...newCollaborator,
+      residency: newResidency
+    });
+
     setResidencyErrors({ ...residencyErrors, [elementName]: { error: false, description: '' } });
   }
 
@@ -127,13 +136,14 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(inputValue)) {
       setEmailErrorMessage('');
+      setNewCollaborator({ ...newCollaborator, personalEmail: inputValue });
     } else {
       setEmailErrorMessage('El valor ingresado no es un correo electrónico válido.');
     }
   };
 
   const handleAddPhoneNumber = () => {
-    setPhoneNumbers([...phoneNumbers, { code: '', number: '' }]);
+    setPhoneNumbers([...phoneNumbers, { areaCode: '', number: '' }]);
   };
 
   const handlePhoneChange = (event, index, key) => {
@@ -141,7 +151,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     newPhoneNumbers[index][key] = event.target.value;
     setPhoneNumbers(newPhoneNumbers);
 
-    if (key === 'code') {
+    if (key === 'areaCode') {
       const input = event.target.value;
       const expectedLength = 3;
 
@@ -152,30 +162,24 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
   };
 
   const handleAddNationality = () => {
-    setNationalities([...nationalities, '']);
+    setNationalities([...nationalities, { docAdress: '', countryId: '' }]);
   };
 
   const handleNationalityChange = (event, index) => {
     const newNationalities = [...nationalities];
-    newNationalities[index] = event.target.value;
+    newNationalities[index] = { ...newNationalities[index], docAdress: event.target.value };
     setNationalities(newNationalities);
   };
 
-  useEffect(() => {
-    getResidenceData();
-  }, [age, setResidencyErrors]);
-
   const handleButtonClick = () => {
-    if (!newCollaborator.countryId || !newCollaborator.cityId) {
+    if (!newCollaborator.residency.countryId || !newCollaborator.residency.cityId) {
       const newErrors = {
         ...residencyErrors,
         countryId: {
           ...(newCollaborator.countryId ? {} : { error: true, description: 'Campo requerido' })
-          // Add any other fields you want to update here
         },
         cityId: {
           ...(newCollaborator.cityId ? {} : { error: true, description: 'Campo requerido' })
-          // Add any other fields you want to update here
         }
       };
       setResidencyErrors(newErrors);
@@ -184,11 +188,23 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     const isValid = trigger();
 
     if (isValid) {
-      handleSubmit((data) => {
-        console.log(data);
+      setNewCollaborator({
+        ...newCollaborator,
+        contactPhones: phoneNumbers,
+        nationalities: nationalities
+      });
+
+      handleSubmit(() => {
+        console.log(newCollaborator);
+        create;
+        onPersonalInfoCompleted(true);
       })();
     }
   };
+
+  useEffect(() => {
+    getResidenceData();
+  }, [age, setResidencyErrors]);
 
   return (
     <form noValidate>
@@ -216,12 +232,16 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 name="photoAdress"
                 placeholder="Adjuntar y subir archivo"
                 label="Fotografia del Consultor"
-                {...register('photoAdress', { required: true })}
+                {...register('photoAdress', {
+                  required: true,
+                  onChange: (event) =>
+                    setNewCollaborator({ ...newCollaborator, photoAdress: event.target.value })
+                })}
                 error={errors.photoAdress && true}
                 helperText={
                   errors.photoAdress && (
                     <Typography variant="caption" color="error">
-                      Campo obligatorio
+                      Campo requerido
                     </Typography>
                   )
                 }
@@ -235,12 +255,16 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 size="small"
                 placeholder="Nombre completo del Consultor"
                 label="Nombre del Consultor"
-                {...register('name', { required: true })}
+                {...register('name', {
+                  required: true,
+                  onChange: (event) =>
+                    setNewCollaborator({ ...newCollaborator, name: event.target.value })
+                })}
                 error={errors.name && true}
                 helperText={
                   errors.name && (
                     <Typography variant="caption" color="error">
-                      Campo obligatorio
+                      Campo requerido
                     </Typography>
                   )
                 }
@@ -254,12 +278,16 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 name="lastName"
                 placeholder="Apellido completo del Consultor"
                 label="Apellido del Consultor"
-                {...register('lastName', { required: true })}
+                {...register('lastName', {
+                  required: true,
+                  onChange: (event) =>
+                    setNewCollaborator({ ...newCollaborator, lastName: event.target.value })
+                })}
                 error={errors.lastName && true}
                 helperText={
                   errors.lastName && (
                     <Typography variant="caption" color="error">
-                      Campo obligatorio
+                      Campo requerido
                     </Typography>
                   )
                 }
@@ -290,7 +318,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                           helperText={
                             errors.birthdate && (
                               <Typography variant="caption" color="error">
-                                Campo obligatorio
+                                Campo requerido
                               </Typography>
                             )
                           }
@@ -328,7 +356,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                   errorEmailMessage ||
                   (errors.personalEmail && (
                     <Typography variant="caption" color="error">
-                      Campo obligatorio
+                      Campo requerido
                     </Typography>
                   ))
                 }
@@ -339,23 +367,23 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 <TextField
                   required
                   sx={{ width: '25%' }}
-                  id={`code-${index}`}
+                  id={`areaCode-${index}`}
                   label="Code"
                   placeholder="000"
                   type="number"
-                  name={`code-${index}`}
+                  name={`areaCode-${index}`}
                   variant="outlined"
                   size="small"
-                  value={phone.code}
-                  {...register(`code-${index}`, {
+                  value={phone.areaCode}
+                  {...register(`areaCode-${index}`, {
                     required: true,
-                    onChange: (event) => handlePhoneChange(event, index, 'code')
+                    onChange: (event) => handlePhoneChange(event, index, 'areaCode')
                   })}
-                  error={errors[`code-${index}`]}
+                  error={errors[`areaCode-${index}`]}
                   helperText={
-                    errors[`code-${index}`] && (
+                    errors[`areaCode-${index}`] && (
                       <Typography variant="caption" color="error">
-                        Campo obligatorio
+                        Campo requerido
                       </Typography>
                     )
                   }
@@ -380,7 +408,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                   helperText={
                     errors[`number-${index}`] && (
                       <Typography variant="caption" color="error">
-                        Campo obligatorio
+                        Campo requerido
                       </Typography>
                     )
                   }
@@ -420,6 +448,37 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 requiredField={true}
               />
             </Grid>
+            <Grid item>
+              <TextField
+                sx={{ width: '100%' }}
+                required
+                size="small"
+                name="address"
+                placeholder="Escribe tu direccion residencial"
+                label="Direcion residencial"
+                {...register('address', {
+                  required: true,
+                  onChange: (event) => {
+                    const newResidency = {
+                      ...newCollaborator.residency,
+                      address: event.target.value
+                    };
+                    setNewCollaborator({
+                      ...newCollaborator,
+                      residency: newResidency
+                    });
+                  }
+                })}
+                error={errors.address && true}
+                helperText={
+                  errors.address && (
+                    <Typography variant="caption" color="error">
+                      Campo requerido
+                    </Typography>
+                  )
+                }
+              />
+            </Grid>
             {nationalities.map((value, index) => (
               <Grid item key={index}>
                 <TextField
@@ -429,16 +488,13 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                   label="Naionalidades"
                   variant="outlined"
                   sx={{ width: '100%' }}
-                  value={value}
-                  {...register('nacionalidades', {
-                    required: true,
-                    onChange: (event) => handleNationalityChange(event, index)
-                  })}
+                  value={value.docAdress}
+                  onChange={(event) => handleNationalityChange(event, index)}
                   error={errors['nacionalidades']}
                   helperText={
                     errors['nacionalidades'] && (
                       <Typography variant="caption" color="error">
-                        Campo obligatorio
+                        Campo requerido
                       </Typography>
                     )
                   }
