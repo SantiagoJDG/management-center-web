@@ -1,4 +1,4 @@
-import { Grid, Divider, TextField, Avatar, ListItemIcon, Typography } from '@mui/material';
+import { Grid, Divider, TextField, Avatar, ListItemIcon, Typography, styled } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,6 +11,14 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef } from 'react';
 import useCreate from 'hooks/useCreate';
+
+const CssTextField = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#2196f3'
+    }
+  }
+});
 
 const PersonalInformation = ({ onPersonalInfoCompleted }) => {
   const {
@@ -26,7 +34,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     lastName: '',
     birthdate: undefined,
     personalEmail: undefined,
-    photoAdress: '',
+    photoAddress: '',
     residency: {
       countryId: '',
       cityId: '',
@@ -56,7 +64,6 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
   const [phoneNumbers, setPhoneNumbers] = useState([{ areaCode: '', number: '' }]);
   const [nationalities, setNationalities] = useState([{ docAdress: '', countryId: '' }]);
 
-  // const [email, setEmail] = useState();
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
 
   const [residencyErrors, setResidencyErrors] = useState({});
@@ -159,19 +166,31 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
         secondTextFieldRef.current.focus();
       }
     }
+    setNewCollaborator({
+      ...newCollaborator,
+      contactPhones: newPhoneNumbers
+    });
   };
 
   const handleAddNationality = () => {
-    setNationalities([...nationalities, { docAdress: '', countryId: '' }]);
+    setNationalities([...nationalities, { docAdress: '', countryId: 1 }]);
   };
 
   const handleNationalityChange = (event, index) => {
     const newNationalities = [...nationalities];
-    newNationalities[index] = { ...newNationalities[index], docAdress: event.target.value };
+    newNationalities[index] = {
+      ...newNationalities[index],
+      docAdress: event.target.value,
+      countryId: 1
+    };
     setNationalities(newNationalities);
+    setNewCollaborator({
+      ...newCollaborator,
+      nationalities: newNationalities
+    });
   };
 
-  const handleButtonClick = () => {
+  const handleResidencyErrors = () => {
     if (!newCollaborator.residency.countryId || !newCollaborator.residency.cityId) {
       const newErrors = {
         ...residencyErrors,
@@ -184,19 +203,15 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
       };
       setResidencyErrors(newErrors);
     }
+  };
 
+  const handleButtonClick = () => {
+    handleResidencyErrors();
     const isValid = trigger();
-
     if (isValid) {
-      setNewCollaborator({
-        ...newCollaborator,
-        contactPhones: phoneNumbers,
-        nationalities: nationalities
-      });
-
-      handleSubmit(() => {
+      handleSubmit(async () => {
         console.log(newCollaborator);
-        create;
+        await create();
         onPersonalInfoCompleted(true);
       })();
     }
@@ -204,15 +219,15 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
 
   useEffect(() => {
     getResidenceData();
-  }, [age, setResidencyErrors]);
+  }, [age]);
 
   return (
     <form noValidate>
-      <Grid container direction={'row'} xs={12} justifyContent={'start'} p={2}>
-        <Grid item xs={6}>
-          <Grid container direction={'column'} spacing={2} p={2}>
+      <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
+        <Grid item xs={5}>
+          <Grid container direction={'column'} spacing={3} p={2}>
             <Grid item>
-              <Grid container xs={3}>
+              <Grid container>
                 <Grid
                   item
                   sx={{
@@ -225,7 +240,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                   </Avatar>
                 </Grid>
               </Grid>
-              <TextField
+              <CssTextField
                 sx={{ width: '100%' }}
                 required
                 size="small"
@@ -235,7 +250,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 {...register('photoAdress', {
                   required: true,
                   onChange: (event) =>
-                    setNewCollaborator({ ...newCollaborator, photoAdress: event.target.value })
+                    setNewCollaborator({ ...newCollaborator, photoAddress: event.target.value })
                 })}
                 error={errors.photoAdress && true}
                 helperText={
@@ -248,7 +263,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
               />
             </Grid>
             <Grid item>
-              <TextField
+              <CssTextField
                 sx={{ width: '100%' }}
                 required
                 name="name"
@@ -271,7 +286,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
               />
             </Grid>
             <Grid item>
-              <TextField
+              <CssTextField
                 sx={{ width: '100%' }}
                 required
                 size="small"
@@ -308,8 +323,9 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                         handleOnChangeDate(newValue);
                       }}
                       renderInput={(params) => (
-                        <TextField
+                        <CssTextField
                           {...params}
+                          sx={{ width: '77%' }}
                           required
                           label={'Fecha de nacimiento'}
                           placeholder="DD/MM/YYYY"
@@ -329,8 +345,8 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                   )}
                 />
               </LocalizationProvider>
-              <TextField
-                sx={{ width: '27%', ml: 1 }}
+              <CssTextField
+                sx={{ width: '20%', ml: 1 }}
                 label="Edad"
                 value={age}
                 InputProps={{
@@ -340,8 +356,9 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
               />
             </Grid>
             <Grid item>
-              <TextField
+              <CssTextField
                 required
+                sx={{ width: '100%' }}
                 label="Email"
                 variant="outlined"
                 size="small"
@@ -364,7 +381,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
             </Grid>
             {phoneNumbers.map((phone, index) => (
               <Grid item key={index}>
-                <TextField
+                <CssTextField
                   required
                   sx={{ width: '25%' }}
                   id={`areaCode-${index}`}
@@ -388,9 +405,9 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                     )
                   }
                 />
-                <TextField
+                <CssTextField
                   required
-                  sx={{ width: '70%', ml: 1 }}
+                  sx={{ width: '60%', ml: 1 }}
                   id={`number-${index}`}
                   name={`number-${index}`}
                   label="Telefono de contacto"
@@ -415,10 +432,18 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 />
               </Grid>
             ))}
-            <Grid item p={1}>
+            <Grid sx={{ pl: 2, pt: 1 }}>
               <ListItemIcon>
-                <AddCircleOutlineIcon color="info" onClick={handleAddPhoneNumber} />
-                <Typography onClick={handleAddPhoneNumber} variant="h9" sx={{ color: 'info.main' }}>
+                <AddCircleOutlineIcon
+                  color="info"
+                  onClick={handleAddPhoneNumber}
+                  fontSize="small"
+                />
+                <Typography
+                  onClick={handleAddPhoneNumber}
+                  variant="h9"
+                  sx={{ color: 'info.main', fontSize: 'small' }}
+                >
                   Agregar informacion personal
                 </Typography>
               </ListItemIcon>
@@ -427,8 +452,8 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
         </Grid>
         <Divider orientation="vertical" flexItem></Divider>
         <Grid item xs={5}>
-          <Grid container spacing={2} p={2} direction={'column'}>
-            <Grid item>
+          <Grid container spacing={3} p={2} direction={'column'}>
+            <Grid item sx={{ width: '100%' }}>
               <CustomAutoComplete
                 formError={residencyErrors.countryId}
                 name="countryId"
@@ -438,7 +463,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 requiredField={true}
               />
             </Grid>
-            <Grid item>
+            <Grid item sx={{ width: '100%' }}>
               <CustomAutoComplete
                 formError={residencyErrors.cityId}
                 name="cityId"
@@ -449,7 +474,7 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
               />
             </Grid>
             <Grid item>
-              <TextField
+              <CssTextField
                 sx={{ width: '100%' }}
                 required
                 size="small"
@@ -481,15 +506,18 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
             </Grid>
             {nationalities.map((value, index) => (
               <Grid item key={index}>
-                <TextField
+                <CssTextField
                   required
                   size={'small'}
                   name={'nacionalidades'}
-                  label="Naionalidades"
+                  label="Nacionalidades"
                   variant="outlined"
                   sx={{ width: '100%' }}
                   value={value.docAdress}
-                  onChange={(event) => handleNationalityChange(event, index)}
+                  {...register(`nacionalidades`, {
+                    required: true,
+                    onChange: (event) => handleNationalityChange(event, index)
+                  })}
                   error={errors['nacionalidades']}
                   helperText={
                     errors['nacionalidades'] && (
@@ -501,20 +529,28 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
                 />
               </Grid>
             ))}
-            <Grid item p={1}>
+            <Grid sx={{ pl: 2, pt: 1 }}>
               <ListItemIcon>
-                <AddCircleOutlineIcon color="info" onClick={handleAddNationality} />
-                <Typography onClick={handleAddNationality} variant="h9" sx={{ color: 'info.main' }}>
+                <AddCircleOutlineIcon
+                  color="info"
+                  fontSize="small"
+                  onClick={handleAddNationality}
+                />
+                <Typography
+                  onClick={handleAddNationality}
+                  variant="h9"
+                  sx={{ color: 'info.main', fontSize: 'small' }}
+                >
                   Agregar nacionalidad
                 </Typography>
               </ListItemIcon>
             </Grid>
           </Grid>
+          <button type="button" onClick={handleButtonClick}>
+            Submit
+          </button>
         </Grid>
       </Grid>
-      <button type="button" onClick={handleButtonClick}>
-        Submit
-      </button>
     </form>
   );
 };
