@@ -13,12 +13,12 @@ import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonalInformation from '../components/Collaborators/CreateCollaboratorSteps/Personalnformation';
 import CreateCollaboratorSteps2 from 'components/Collaborators/CreateCollaboratorSteps/create-collaborator-steps 2';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
-  const [personalInfoCompleted, setPersonalInfoCompleted] = useState(false);
+  const formValidate = useRef(null);
 
   const isStepOptional = (step) => {
     return step === 1;
@@ -28,31 +28,16 @@ const CreateCollaboratorSteps = () => {
     return skipped.has(step);
   };
 
-  const handleNext = () => {
-    let newSkipped = skipped;
-    if (isStepSkipped(activeStep)) {
-      newSkipped = new Set(newSkipped.values());
-      newSkipped.delete(activeStep);
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped(newSkipped);
-  };
-
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
+
   const steps = [
     {
       id: 1,
       title: 'Llena la Infomacion personal',
       stepName: 'Agregar Informacion Personal',
-      component: (
-        <PersonalInformation
-          nextStep={activeStep}
-          onPersonalInfoCompleted={setPersonalInfoCompleted}
-        />
-      )
+      component: <PersonalInformation ref={formValidate} setActiveStep={setActiveStep} />
     },
     {
       id: 2,
@@ -61,6 +46,16 @@ const CreateCollaboratorSteps = () => {
       component: <CreateCollaboratorSteps2 />
     }
   ];
+
+  const handleNext = () => {
+    formValidate.current();
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
+    setSkipped(newSkipped);
+  };
 
   const handleSkip = () => {
     if (!isStepOptional(activeStep)) {
@@ -105,7 +100,7 @@ const CreateCollaboratorSteps = () => {
             </Button>
           )}
 
-          <Button onClick={handleNext} disabled={!personalInfoCompleted}>
+          <Button onClick={handleNext}>
             {activeStep === steps.length - 1 ? 'Finalizar' : 'Continuar'}
           </Button>
         </Box>
@@ -125,7 +120,14 @@ const CreateCollaboratorSteps = () => {
         </Typography>
       </Grid>
       <Grid container xs={10} direction="column" p={1}>
-        <Paper elevation={1}>
+        <Paper
+          elevation={1}
+          sx={{
+            backgroundImage: "url('/background_sidebar_mirror.png')",
+            backgroundPosition: 'bottom right',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
           <Grid item>
             <Grid container xs={12} justifyContent="space-between" sx={{ p: 1 }}>
               <Grid item p={1}>

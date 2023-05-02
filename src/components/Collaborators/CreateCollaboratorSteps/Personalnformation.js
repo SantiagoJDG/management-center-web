@@ -9,7 +9,7 @@ import { useForm, Controller } from 'react-hook-form';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import moment from 'moment';
 import 'moment/locale/es';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 import useCreate from 'hooks/useCreate';
 
 const CssTextField = styled(TextField)({
@@ -20,7 +20,7 @@ const CssTextField = styled(TextField)({
   }
 });
 
-const PersonalInformation = ({ onPersonalInfoCompleted }) => {
+const PersonalInformation = forwardRef((props, ref) => {
   const {
     register,
     handleSubmit,
@@ -205,20 +205,21 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
     }
   };
 
-  const handleButtonClick = () => {
+  const validateForm = () => {
     handleResidencyErrors();
     const isValid = trigger();
+    console.log(newCollaborator);
     if (isValid) {
       handleSubmit(async () => {
-        console.log(newCollaborator);
         await create();
-        onPersonalInfoCompleted(true);
+        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })();
     }
   };
 
   useEffect(() => {
     getResidenceData();
+    ref.current = validateForm;
   }, [age]);
 
   return (
@@ -546,13 +547,10 @@ const PersonalInformation = ({ onPersonalInfoCompleted }) => {
               </ListItemIcon>
             </Grid>
           </Grid>
-          <button type="button" onClick={handleButtonClick}>
-            Submit
-          </button>
         </Grid>
       </Grid>
     </form>
   );
-};
-
+});
+PersonalInformation.displayName = 'PersonalInformation';
 export default PersonalInformation;
