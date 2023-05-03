@@ -143,7 +143,6 @@ const PersonalInformation = forwardRef((props, ref) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(inputValue)) {
       setEmailErrorMessage('');
-      console.log('before');
       setNewCollaborator({ ...newCollaborator, personalEmail: inputValue });
     } else {
       setEmailErrorMessage('El valor ingresado no es un correo electrónico válido.');
@@ -209,7 +208,6 @@ const PersonalInformation = forwardRef((props, ref) => {
   const validateForm = () => {
     handleResidencyErrors();
     const isValid = trigger();
-    console.log(newCollaborator);
     if (isValid) {
       handleSubmit(async () => {
         const error = await create();
