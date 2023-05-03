@@ -180,7 +180,7 @@ const CreateCollaboratorSteps = () => {
           </Grid>
         </Paper>
 
-        <Grid item sx={12}>
+        <Grid item xs={12}>
           <Grid container>
             {activeStep === steps.length ? finishedStepsOptions() : backSkipNextButtons()}
           </Grid>

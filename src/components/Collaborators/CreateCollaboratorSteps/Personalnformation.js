@@ -28,6 +28,7 @@ const PersonalInformation = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
+  const [isMounted, setIsMounted] = useState(false);
 
   const [newCollaborator, setNewCollaborator] = useState({
     name: '',
@@ -139,10 +140,10 @@ const PersonalInformation = forwardRef((props, ref) => {
 
   const handleOnChangeEmail = (event) => {
     const inputValue = event.target.value;
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(inputValue)) {
       setEmailErrorMessage('');
+      console.log('before');
       setNewCollaborator({ ...newCollaborator, personalEmail: inputValue });
     } else {
       setEmailErrorMessage('El valor ingresado no es un correo electrónico válido.');
@@ -156,7 +157,7 @@ const PersonalInformation = forwardRef((props, ref) => {
   const handlePhoneChange = (event, index, key) => {
     const newPhoneNumbers = [...phoneNumbers];
     newPhoneNumbers[index][key] = event.target.value;
-    setPhoneNumbers(newPhoneNumbers);
+    // setPhoneNumbers(newPhoneNumbers);
 
     if (key === 'areaCode') {
       const input = event.target.value;
@@ -211,16 +212,20 @@ const PersonalInformation = forwardRef((props, ref) => {
     console.log(newCollaborator);
     if (isValid) {
       handleSubmit(async () => {
-        await create();
+        const error = await create();
+        if (error) return;
         props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })();
     }
   };
 
   useEffect(() => {
-    getResidenceData();
+    if (!isMounted) {
+      getResidenceData();
+      setIsMounted(true);
+    }
     ref.current = validateForm;
-  }, [age]);
+  }, [age, newCollaborator, isMounted]);
 
   return (
     <form noValidate>
@@ -367,7 +372,7 @@ const PersonalInformation = forwardRef((props, ref) => {
                 name="personalEmail"
                 {...register('personalEmail', {
                   required: true,
-                  onChange: handleOnChangeEmail
+                  onChange: (event) => handleOnChangeEmail(event)
                 })}
                 error={errors.personalEmail || !!errorEmailMessage}
                 helperText={
