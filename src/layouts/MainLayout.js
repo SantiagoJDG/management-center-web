@@ -52,7 +52,7 @@ const MainLayout = (props) => {
                 backgroundImage: "url('/background.png')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                height: '100vh'
+                height: '100%'
               }}
             >
               <BreadCrumb />

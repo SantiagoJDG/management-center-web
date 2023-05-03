@@ -90,18 +90,33 @@ const CreateCollaboratorSteps = () => {
     return (
       <Grid item>
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-          <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
-            Volver
+          <Button
+            color="inherit"
+            variant="outlined"
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            size={'small'}
+            sx={{ borderRadius: 8, mt: 1, backgroundColor: '#D3D3D3' }}
+          >
+            <Typography sx={{ pl: 5, pr: 5 }} color="white">
+              Volver
+            </Typography>
           </Button>
-          <Box sx={{ flex: '1 1 auto' }} />
+          <Box sx={{ flex: '1 1 auto' }} variant="outlined" />
           {isStepOptional(activeStep) && (
             <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-              Saltar
+              <Typography sx={{ pl: 2, pr: 10 }}>Saltar</Typography>
             </Button>
           )}
-
-          <Button onClick={handleNext}>
-            {activeStep === steps.length - 1 ? 'Finalizar' : 'Continuar'}
+          <Button
+            onClick={handleNext}
+            variant="outlined"
+            size={'small'}
+            sx={{ borderRadius: 8, mt: 1, ml: 1 }}
+          >
+            <Typography sx={{ pl: 5, pr: 5 }}>
+              {activeStep === steps.length - 1 ? 'Finalizar' : 'Continuar'}
+            </Typography>
           </Button>
         </Box>
       </Grid>
