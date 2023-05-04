@@ -51,14 +51,15 @@ const MainLayout = (props) => {
                 width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
                 backgroundImage: "url('/background.png')",
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                height: '100%'
+                backgroundPosition: 'bottom',
+                height: '100vh'
               }}
             >
               <BreadCrumb />
 
               <Box
                 sx={{
+                  height: '100%',
                   p: 3
                 }}
               >
