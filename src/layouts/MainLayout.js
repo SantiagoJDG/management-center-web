@@ -51,7 +51,7 @@ const MainLayout = (props) => {
                 width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
                 backgroundImage: "url('/background.png')",
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundPosition: 'bottom',
                 height: '100vh'
               }}
             >
@@ -59,6 +59,7 @@ const MainLayout = (props) => {
 
               <Box
                 sx={{
+                  height: '100%',
                   p: 3
                 }}
               >

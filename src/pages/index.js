@@ -31,6 +31,11 @@ export default function Home() {
       path: '/planner',
       view: ['administrador']
     },
+    {
+      name: 'Agregar nuevo colaborador',
+      path: '/create-collaborator-steps',
+      view: ['administrador']
+    },
     { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] }
   ];
 
@@ -54,6 +59,13 @@ export default function Home() {
         return (
           <ListItemIcon>
             <DashboardIcon />
+          </ListItemIcon>
+        );
+
+      case '/create-collaborator':
+        return (
+          <ListItemIcon>
+            <PersonIcon />
           </ListItemIcon>
         );
 

@@ -24,6 +24,8 @@ const BreadCrumb = () => {
           return 'Colaboradores';
         case 'new-collaborator':
           return 'Nuevo Colaborador';
+        case 'create-collaborator-steps':
+          return 'Agregar nuevo colaborador';
       }
     };
 

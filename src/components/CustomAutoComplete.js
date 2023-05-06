@@ -1,5 +1,13 @@
-import { Autocomplete, createFilterOptions, TextField } from '@mui/material';
+import { Autocomplete, createFilterOptions, TextField, styled } from '@mui/material';
 import { useState, useEffect } from 'react';
+
+const CssTextField = styled(Autocomplete)({
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#2196f3'
+    }
+  }
+});
 
 const CustomAutoComplete = ({
   name,
@@ -37,7 +45,7 @@ const CustomAutoComplete = ({
 
   const getInformationView = () => {
     return (
-      <Autocomplete
+      <CssTextField
         id={`custom-${name}`}
         name={name}
         size="small"
