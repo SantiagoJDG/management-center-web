@@ -49,10 +49,11 @@ const MainLayout = (props) => {
               sx={{
                 flexGrow: 1,
                 width: { sm: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
-                backgroundImage: "url('/background.png')",
+                backgroundImage: "url('/background-02-hires.png')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'bottom',
-                height: '100vh'
+                minheight: '100vh',
+                height: 'auto'
               }}
             >
               <BreadCrumb />
