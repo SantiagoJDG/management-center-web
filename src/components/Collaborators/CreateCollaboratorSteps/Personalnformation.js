@@ -1,4 +1,4 @@
-import { Grid, Divider, TextField, Avatar, ListItemIcon, Typography, styled } from '@mui/material';
+import { Grid, Divider, Avatar, ListItemIcon, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,14 +11,7 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import useCreate from 'hooks/useCreate';
-
-const CssTextField = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: '#2196f3'
-    }
-  }
-});
+import { CssTextField } from '../../../styles/formButton';
 
 const PersonalInformation = forwardRef((props, ref) => {
   const {
@@ -226,14 +219,8 @@ const PersonalInformation = forwardRef((props, ref) => {
   }, [age, newCollaborator, isMounted]);
 
   return (
-    <Grid
-      container
-      direction={'row'}
-      xs={11}
-      justifyContent={'space-between'}
-      sx={{ boxSizing: 'border-box' }}
-    >
-      <Grid item xs={5}>
+    <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
+      <Grid item xs={5} mt={1}>
         <Grid container direction={'column'} spacing={3} p={2}>
           <Grid item>
             <Grid container>

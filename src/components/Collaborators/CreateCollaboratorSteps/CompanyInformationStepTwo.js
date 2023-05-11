@@ -1,19 +1,13 @@
 import { useState, forwardRef, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Grid, TextField, styled, Typography, Divider, CardMedia } from '@mui/material';
+import { Grid, Typography, Divider, CardMedia } from '@mui/material';
+import useEdit from 'hooks/useEdit';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { CssTextField } from '../../../styles/formButton';
 import moment from 'moment';
 import 'moment/locale/es';
-
-const CssTextField = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: '#2196f3'
-    }
-  }
-});
 
 const CompanyInformationStepTwo = forwardRef((props, ref) => {
   const [age, setAge] = useState(0);
@@ -23,6 +17,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
     onBoardingDate: '',
     corporateEmail: ''
   });
+  const [edit] = useEdit('/api/collaborator', companyInformation);
 
   const {
     register,
@@ -59,10 +54,11 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
-    console.log(companyInformation);
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
+        const error = await edit();
+        if (error) return;
         props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })();
     }

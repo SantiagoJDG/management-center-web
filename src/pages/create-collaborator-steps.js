@@ -16,7 +16,7 @@ import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaborat
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
 
@@ -137,7 +137,7 @@ const CreateCollaboratorSteps = () => {
               <Grid item>
                 <Box sx={{ width: '100%' }}>
                   <Stepper activeStep={activeStep} alternativeLabel>
-                    {steps.map((label, index) => {
+                    {steps.map((label) => {
                       const stepProps = {};
                       const labelProps = {};
                       return (

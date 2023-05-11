@@ -52,8 +52,8 @@ const MainLayout = (props) => {
                 backgroundImage: "url('/background-02-hires.png')",
                 backgroundSize: 'cover',
                 backgroundPosition: 'bottom',
-                minheight: '100vh',
-                height: 'auto'
+                minHeight: '100vh',
+                height: '100%'
               }}
             >
               <BreadCrumb />
