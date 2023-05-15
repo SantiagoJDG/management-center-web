@@ -12,17 +12,13 @@ import {
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonalInformation from '../components/Collaborators/CreateCollaboratorSteps/Personalnformation';
-import CreateCollaboratorSteps2 from 'components/Collaborators/CreateCollaboratorSteps/create-collaborator-steps 2';
+import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
-
-  const isStepOptional = (step) => {
-    return step === 1;
-  };
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -37,13 +33,15 @@ const CreateCollaboratorSteps = () => {
       id: 1,
       title: 'Llena la Infomacion personal',
       stepName: 'Agregar Informacion Personal',
+      backgroungImg: '/pills-cut-right.png',
       component: <PersonalInformation ref={formValidate} setActiveStep={setActiveStep} />
     },
     {
       id: 2,
-      title: 'Este seria el paso 2',
-      stepName: 'Paso 2',
-      component: <CreateCollaboratorSteps2 />
+      title: 'Llena la informacion personal en la empresa',
+      stepName: 'Informacion de alta en la empresa',
+      backgroungImg: '/pills-orange.png',
+      component: <CompanyInformationStepTwo ref={formValidate} setActiveStep={setActiveStep} />
     }
   ];
 
@@ -55,19 +53,6 @@ const CreateCollaboratorSteps = () => {
       newSkipped.delete(activeStep);
     }
     setSkipped(newSkipped);
-  };
-
-  const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
-      throw new Error("You can't skip a step that isn't optional.");
-    }
-
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    setSkipped((prevSkipped) => {
-      const newSkipped = new Set(prevSkipped.values());
-      newSkipped.add(activeStep);
-      return newSkipped;
-    });
   };
 
   const handleReset = () => {
@@ -92,7 +77,6 @@ const CreateCollaboratorSteps = () => {
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <Button
             color="inherit"
-            variant="outlined"
             disabled={activeStep === 0}
             onClick={handleBack}
             size={'small'}
@@ -102,12 +86,6 @@ const CreateCollaboratorSteps = () => {
               Volver
             </Typography>
           </Button>
-          <Box sx={{ flex: '1 1 auto' }} variant="outlined" />
-          {isStepOptional(activeStep) && (
-            <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-              <Typography sx={{ pl: 2, pr: 10 }}>Saltar</Typography>
-            </Button>
-          )}
           <Button
             onClick={handleNext}
             variant="outlined"
@@ -125,7 +103,7 @@ const CreateCollaboratorSteps = () => {
 
   return (
     <>
-      <Grid container xs={12} sx={{ display: 'flex', m: 1 }}>
+      <Grid container xs={12} sx={{ display: 'flex', m: 0.5 }}>
         <ListItemIcon>
           <HailRoundedIcon fontSize="large" style={{ color: '#2196f3' }} />
         </ListItemIcon>
@@ -138,14 +116,19 @@ const CreateCollaboratorSteps = () => {
         <Paper
           elevation={1}
           sx={{
-            backgroundImage: "url('/background_sidebar_mirror.png')",
+            backgroundImage: `url(${steps[activeStep].backgroungImg})`,
             backgroundPosition: 'bottom right',
-            backgroundRepeat: 'no-repeat'
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '30%',
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '75vh',
+            height: 'auto'
           }}
         >
           <Grid item>
             <Grid container xs={12} justifyContent="space-between" sx={{ p: 1 }}>
-              <Grid item p={1}>
+              <Grid item p={0.5}>
                 <ListItemIcon>
                   <AddCircleOutlineIcon />
                   <Typography variant="h9">{steps[activeStep].stepName}</Typography>
@@ -154,15 +137,9 @@ const CreateCollaboratorSteps = () => {
               <Grid item>
                 <Box sx={{ width: '100%' }}>
                   <Stepper activeStep={activeStep} alternativeLabel>
-                    {steps.map((label, index) => {
+                    {steps.map((label) => {
                       const stepProps = {};
                       const labelProps = {};
-                      if (isStepOptional(index)) {
-                        labelProps.optional = <Typography variant="caption">Optional</Typography>;
-                      }
-                      if (isStepSkipped(index)) {
-                        stepProps.completed = false;
-                      }
                       return (
                         <Step key={label.id} {...stepProps}>
                           <StepLabel {...labelProps}>{label.title}</StepLabel>
@@ -175,7 +152,7 @@ const CreateCollaboratorSteps = () => {
             </Grid>
           </Grid>
 
-          <Grid item xs={10} sx={{ marginLeft: 3 }}>
+          <Grid item flexGrow={1} xs={10} sx={{ marginLeft: 3 }}>
             {steps[activeStep].component}
           </Grid>
         </Paper>

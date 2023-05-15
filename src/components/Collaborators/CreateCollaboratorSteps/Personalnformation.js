@@ -1,4 +1,4 @@
-import { Grid, Divider, TextField, Avatar, ListItemIcon, Typography, styled } from '@mui/material';
+import { Grid, Divider, Avatar, ListItemIcon, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,14 +11,7 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import useCreate from 'hooks/useCreate';
-
-const CssTextField = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderColor: '#2196f3'
-    }
-  }
-});
+import { CssTextField } from '../../../styles/formButton';
 
 const PersonalInformation = forwardRef((props, ref) => {
   const {
@@ -226,281 +219,200 @@ const PersonalInformation = forwardRef((props, ref) => {
   }, [age, newCollaborator, isMounted]);
 
   return (
-    <form noValidate>
-      <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
-        <Grid item xs={5}>
-          <Grid container direction={'column'} spacing={3} p={2}>
-            <Grid item>
-              <Grid container>
-                <Grid
-                  item
-                  sx={{
-                    position: 'absolute',
-                    top: 240
-                  }}
-                >
-                  <Avatar sx={{ height: '60px', width: '60px' }}>
-                    <HailRoundedIcon fontSize="large" />
-                  </Avatar>
-                </Grid>
-              </Grid>
-              <CssTextField
-                sx={{ width: '100%' }}
-                required
-                size="small"
-                name="photoAdress"
-                placeholder="Adjuntar y subir archivo"
-                label="Fotografia del Consultor"
-                {...register('photoAdress', {
-                  required: true,
-                  onChange: (event) =>
-                    setNewCollaborator({ ...newCollaborator, photoAddress: event.target.value })
-                })}
-                error={errors.photoAdress && true}
-                helperText={
-                  errors.photoAdress && (
-                    <Typography variant="caption" color="error">
-                      Campo requerido
-                    </Typography>
-                  )
-                }
-              />
-            </Grid>
-            <Grid item>
-              <CssTextField
-                sx={{ width: '100%' }}
-                required
-                name="name"
-                size="small"
-                placeholder="Nombre completo del Consultor"
-                label="Nombre del Consultor"
-                {...register('name', {
-                  required: true,
-                  onChange: (event) =>
-                    setNewCollaborator({ ...newCollaborator, name: event.target.value })
-                })}
-                error={errors.name && true}
-                helperText={
-                  errors.name && (
-                    <Typography variant="caption" color="error">
-                      Campo requerido
-                    </Typography>
-                  )
-                }
-              />
-            </Grid>
-            <Grid item>
-              <CssTextField
-                sx={{ width: '100%' }}
-                required
-                size="small"
-                name="lastName"
-                placeholder="Apellido completo del Consultor"
-                label="Apellido del Consultor"
-                {...register('lastName', {
-                  required: true,
-                  onChange: (event) =>
-                    setNewCollaborator({ ...newCollaborator, lastName: event.target.value })
-                })}
-                error={errors.lastName && true}
-                helperText={
-                  errors.lastName && (
-                    <Typography variant="caption" color="error">
-                      Campo requerido
-                    </Typography>
-                  )
-                }
-              />
-            </Grid>
-            <Grid item>
-              <LocalizationProvider dateAdapter={AdapterMoment}>
-                <Controller
-                  name="birthdate"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <DatePicker
-                      label="Fecha de nacimiento"
-                      maxDate={moment().format()}
-                      value={value || null}
-                      onChange={(newValue) => {
-                        onChange(newValue);
-                        handleOnChangeDate(newValue);
-                      }}
-                      renderInput={(params) => (
-                        <CssTextField
-                          {...params}
-                          sx={{ width: '77%' }}
-                          required
-                          label={'Fecha de nacimiento'}
-                          placeholder="DD/MM/YYYY"
-                          name="birthdate"
-                          error={errors.birthdate && true}
-                          helperText={
-                            errors.birthdate && (
-                              <Typography variant="caption" color="error">
-                                Campo requerido
-                              </Typography>
-                            )
-                          }
-                          {...register('birthdate', { required: true })}
-                        />
-                      )}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-              <CssTextField
-                sx={{ width: '20%', ml: 1 }}
-                label="Edad"
-                value={age}
-                InputProps={{
-                  readOnly: true
+    <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
+      <Grid item xs={5} mt={1}>
+        <Grid container direction={'column'} spacing={3} p={2}>
+          <Grid item>
+            <Grid container>
+              <Grid
+                item
+                sx={{
+                  position: 'absolute',
+                  top: 235
                 }}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item>
-              <CssTextField
-                required
-                sx={{ width: '100%' }}
-                label="Email"
-                variant="outlined"
-                size="small"
-                fullWidth
-                name="personalEmail"
-                {...register('personalEmail', {
-                  required: true,
-                  onChange: (event) => handleOnChangeEmail(event)
-                })}
-                error={errors.personalEmail || !!errorEmailMessage}
-                helperText={
-                  errorEmailMessage ||
-                  (errors.personalEmail && (
-                    <Typography variant="caption" color="error">
-                      Campo requerido
-                    </Typography>
-                  ))
-                }
-              />
-            </Grid>
-            {phoneNumbers.map((phone, index) => (
-              <Grid item key={index}>
-                <CssTextField
-                  required
-                  sx={{ width: '25%' }}
-                  id={`areaCode-${index}`}
-                  label="Code"
-                  placeholder="000"
-                  type="number"
-                  name={`areaCode-${index}`}
-                  variant="outlined"
-                  size="small"
-                  value={phone.areaCode}
-                  {...register(`areaCode-${index}`, {
-                    required: true,
-                    onChange: (event) => handlePhoneChange(event, index, 'areaCode')
-                  })}
-                  error={errors[`areaCode-${index}`]}
-                  helperText={
-                    errors[`areaCode-${index}`] && (
-                      <Typography variant="caption" color="error">
-                        Campo requerido
-                      </Typography>
-                    )
-                  }
-                />
-                <CssTextField
-                  required
-                  sx={{ width: '60%', ml: 1 }}
-                  id={`number-${index}`}
-                  name={`number-${index}`}
-                  label="Telefono de contacto"
-                  placeholder="0000 00000"
-                  type="number"
-                  size="small"
-                  variant="outlined"
-                  inputRef={secondTextFieldRef}
-                  value={phone.number}
-                  {...register(`number-${index}`, {
-                    required: true,
-                    onChange: (event) => handlePhoneChange(event, index, 'number')
-                  })}
-                  error={errors[`number-${index}`]}
-                  helperText={
-                    errors[`number-${index}`] && (
-                      <Typography variant="caption" color="error">
-                        Campo requerido
-                      </Typography>
-                    )
-                  }
-                />
+              >
+                <Avatar sx={{ height: '60px', width: '60px' }}>
+                  <HailRoundedIcon fontSize="large" />
+                </Avatar>
               </Grid>
-            ))}
-            <Grid sx={{ pl: 2, pt: 1 }}>
-              <ListItemIcon>
-                <AddCircleOutlineIcon
-                  color="info"
-                  onClick={handleAddPhoneNumber}
-                  fontSize="small"
-                />
-                <Typography
-                  onClick={handleAddPhoneNumber}
-                  variant="h9"
-                  sx={{ color: 'info.main', fontSize: 'small' }}
-                >
-                  Agregar informacion personal
-                </Typography>
-              </ListItemIcon>
             </Grid>
+            <CssTextField
+              sx={{ width: '100%' }}
+              required
+              size="small"
+              name="photoAdress"
+              placeholder="Adjuntar y subir archivo"
+              label="Fotografia del Consultor"
+              {...register('photoAdress', {
+                required: true,
+                onChange: (event) =>
+                  setNewCollaborator({ ...newCollaborator, photoAddress: event.target.value })
+              })}
+              error={errors.photoAdress && true}
+              helperText={
+                errors.photoAdress && (
+                  <Typography variant="caption" color="error" sx={{ boxSizing: 'content-box' }}>
+                    Campo requerido
+                  </Typography>
+                )
+              }
+            />
           </Grid>
-        </Grid>
-        <Divider orientation="vertical" flexItem></Divider>
-        <Grid item xs={5}>
-          <Grid container spacing={3} p={2} direction={'column'}>
-            <Grid item sx={{ width: '100%' }}>
-              <CustomAutoComplete
-                formError={residencyErrors.countryId}
-                name="countryId"
-                label="País de residencia"
-                optionList={countries}
-                elmentCallback={handleCountry}
-                requiredField={true}
+          <Grid item>
+            <CssTextField
+              sx={{ width: '100%' }}
+              required
+              name="name"
+              size="small"
+              placeholder="Nombre completo del Consultor"
+              label="Nombre del Consultor"
+              {...register('name', {
+                required: true,
+                onChange: (event) =>
+                  setNewCollaborator({ ...newCollaborator, name: event.target.value })
+              })}
+              error={errors.name && true}
+              helperText={
+                errors.name && (
+                  <Typography variant="caption" color="error">
+                    Campo requerido
+                  </Typography>
+                )
+              }
+            />
+          </Grid>
+          <Grid item>
+            <CssTextField
+              sx={{ width: '100%' }}
+              required
+              size="small"
+              name="lastName"
+              placeholder="Apellido completo del Consultor"
+              label="Apellido del Consultor"
+              {...register('lastName', {
+                required: true,
+                onChange: (event) =>
+                  setNewCollaborator({ ...newCollaborator, lastName: event.target.value })
+              })}
+              error={errors.lastName && true}
+              helperText={
+                errors.lastName && (
+                  <Typography variant="caption" color="error">
+                    Campo requerido
+                  </Typography>
+                )
+              }
+            />
+          </Grid>
+          <Grid item>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <Controller
+                name="birthdate"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DatePicker
+                    label="Fecha de nacimiento"
+                    maxDate={moment().format()}
+                    value={value || null}
+                    onChange={(newValue) => {
+                      onChange(newValue);
+                      handleOnChangeDate(newValue);
+                    }}
+                    renderInput={(params) => (
+                      <CssTextField
+                        {...params}
+                        sx={{ width: '77%' }}
+                        required
+                        label={'Fecha de nacimiento'}
+                        placeholder="DD/MM/YYYY"
+                        name="birthdate"
+                        error={errors.birthdate && true}
+                        helperText={
+                          errors.birthdate && (
+                            <Typography variant="caption" color="error">
+                              Campo requerido
+                            </Typography>
+                          )
+                        }
+                        {...register('birthdate', { required: true })}
+                      />
+                    )}
+                  />
+                )}
               />
-            </Grid>
-            <Grid item sx={{ width: '100%' }}>
-              <CustomAutoComplete
-                formError={residencyErrors.cityId}
-                name="cityId"
-                label="Ciudad de residencia"
-                optionList={states}
-                elmentCallback={handleState}
-                requiredField={true}
-              />
-            </Grid>
-            <Grid item>
+            </LocalizationProvider>
+            <CssTextField
+              sx={{ width: '20%', ml: 1 }}
+              label="Edad"
+              value={age}
+              InputProps={{
+                readOnly: true
+              }}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item>
+            <CssTextField
+              required
+              sx={{ width: '100%' }}
+              label="Email"
+              variant="outlined"
+              size="small"
+              fullWidth
+              name="personalEmail"
+              {...register('personalEmail', {
+                required: true,
+                onChange: (event) => handleOnChangeEmail(event)
+              })}
+              error={errors.personalEmail || !!errorEmailMessage}
+              helperText={
+                errorEmailMessage ||
+                (errors.personalEmail && (
+                  <Typography variant="caption" color="error">
+                    Campo requerido
+                  </Typography>
+                ))
+              }
+            />
+          </Grid>
+          {phoneNumbers.map((phone, index) => (
+            <Grid item key={index}>
               <CssTextField
-                sx={{ width: '100%' }}
                 required
+                sx={{ width: '25%' }}
+                id={`areaCode-${index}`}
+                label="Code"
+                placeholder="000"
+                type="number"
+                name={`areaCode-${index}`}
+                variant="outlined"
                 size="small"
-                name="address"
-                placeholder="Escribe tu direccion residencial"
-                label="Direcion residencial"
-                {...register('address', {
+                value={phone.areaCode}
+                {...register(`areaCode-${index}`, {
                   required: true,
-                  onChange: (event) => {
-                    const newResidency = {
-                      ...newCollaborator.residency,
-                      address: event.target.value
-                    };
-                    setNewCollaborator({
-                      ...newCollaborator,
-                      residency: newResidency
-                    });
-                  }
+                  onChange: (event) => handlePhoneChange(event, index, 'areaCode')
                 })}
-                error={errors.address && true}
+                error={errors[`areaCode-${index}`]}
+              />
+              <CssTextField
+                required
+                sx={{ width: '60%', ml: 1 }}
+                id={`number-${index}`}
+                name={`number-${index}`}
+                label="Telefono de contacto"
+                placeholder="0000 00000"
+                type="number"
+                size="small"
+                variant="outlined"
+                inputRef={secondTextFieldRef}
+                value={phone.number}
+                {...register(`number-${index}`, {
+                  required: true,
+                  onChange: (event) => handlePhoneChange(event, index, 'number')
+                })}
+                error={errors[`number-${index}`]}
                 helperText={
-                  errors.address && (
+                  errors[`number-${index}`] && (
                     <Typography variant="caption" color="error">
                       Campo requerido
                     </Typography>
@@ -508,51 +420,115 @@ const PersonalInformation = forwardRef((props, ref) => {
                 }
               />
             </Grid>
-            {nationalities.map((value, index) => (
-              <Grid item key={index}>
-                <CssTextField
-                  required
-                  size={'small'}
-                  name={'nacionalidades'}
-                  label="Nacionalidades"
-                  variant="outlined"
-                  sx={{ width: '100%' }}
-                  value={value.docAdress}
-                  {...register(`nacionalidades`, {
-                    required: true,
-                    onChange: (event) => handleNationalityChange(event, index)
-                  })}
-                  error={errors['nacionalidades']}
-                  helperText={
-                    errors['nacionalidades'] && (
-                      <Typography variant="caption" color="error">
-                        Campo requerido
-                      </Typography>
-                    )
-                  }
-                />
-              </Grid>
-            ))}
-            <Grid sx={{ pl: 2, pt: 1 }}>
-              <ListItemIcon>
-                <AddCircleOutlineIcon
-                  color="info"
-                  fontSize="small"
-                  onClick={handleAddNationality}
-                />
-                <Typography
-                  onClick={handleAddNationality}
-                  variant="h9"
-                  sx={{ color: 'info.main', fontSize: 'small' }}
-                >
-                  Agregar nacionalidad
-                </Typography>
-              </ListItemIcon>
-            </Grid>
+          ))}
+          <Grid sx={{ pl: 2, pt: 1 }}>
+            <ListItemIcon>
+              <AddCircleOutlineIcon color="info" onClick={handleAddPhoneNumber} fontSize="small" />
+              <Typography
+                onClick={handleAddPhoneNumber}
+                variant="h9"
+                sx={{ color: 'info.main', fontSize: 'small' }}
+              >
+                Agregar informacion personal
+              </Typography>
+            </ListItemIcon>
           </Grid>
         </Grid>
       </Grid>
-    </form>
+      <Divider orientation="vertical" flexItem></Divider>
+      <Grid item xs={5}>
+        <Grid container spacing={3} p={2} direction={'column'}>
+          <Grid item sx={{ width: '100%' }}>
+            <CustomAutoComplete
+              formError={residencyErrors.countryId}
+              name="countryId"
+              label="País de residencia"
+              optionList={countries}
+              elmentCallback={handleCountry}
+              requiredField={true}
+            />
+          </Grid>
+          <Grid item sx={{ width: '100%' }}>
+            <CustomAutoComplete
+              formError={residencyErrors.cityId}
+              name="cityId"
+              label="Ciudad de residencia"
+              optionList={states}
+              elmentCallback={handleState}
+              requiredField={true}
+            />
+          </Grid>
+          <Grid item>
+            <CssTextField
+              sx={{ width: '100%' }}
+              required
+              size="small"
+              name="address"
+              placeholder="Escribe tu direccion residencial"
+              label="Direcion residencial"
+              {...register('address', {
+                required: true,
+                onChange: (event) => {
+                  const newResidency = {
+                    ...newCollaborator.residency,
+                    address: event.target.value
+                  };
+                  setNewCollaborator({
+                    ...newCollaborator,
+                    residency: newResidency
+                  });
+                }
+              })}
+              error={errors.address && true}
+              helperText={
+                errors.address && (
+                  <Typography variant="caption" color="error">
+                    Campo requerido
+                  </Typography>
+                )
+              }
+            />
+          </Grid>
+          {nationalities.map((value, index) => (
+            <Grid item key={index}>
+              <CssTextField
+                required
+                size={'small'}
+                name={'nacionalidades'}
+                label="Nacionalidades"
+                variant="outlined"
+                sx={{ width: '100%' }}
+                value={value.docAdress}
+                {...register(`nacionalidades`, {
+                  required: true,
+                  onChange: (event) => handleNationalityChange(event, index)
+                })}
+                error={errors['nacionalidades']}
+                helperText={
+                  errors['nacionalidades'] && (
+                    <Typography variant="caption" color="error">
+                      Campo requerido
+                    </Typography>
+                  )
+                }
+              />
+            </Grid>
+          ))}
+          <Grid sx={{ pl: 2, pt: 1 }}>
+            <ListItemIcon>
+              <AddCircleOutlineIcon color="info" fontSize="small" onClick={handleAddNationality} />
+              <Typography
+                onClick={handleAddNationality}
+                variant="h9"
+                sx={{ color: 'info.main', fontSize: 'small' }}
+              >
+                Agregar nacionalidad
+              </Typography>
+            </ListItemIcon>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 });
 PersonalInformation.displayName = 'PersonalInformation';
