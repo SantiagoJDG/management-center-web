@@ -13,7 +13,7 @@ import { useState, useEffect, useRef, forwardRef } from 'react';
 import useCreate from 'hooks/useCreate';
 import { CssTextField } from '../../../styles/formButton';
 
-const PersonalInformation = forwardRef((props, ref) => {
+const PersonalInformationStepOne = forwardRef((props, ref) => {
   const {
     register,
     handleSubmit,
@@ -531,5 +531,5 @@ const PersonalInformation = forwardRef((props, ref) => {
     </Grid>
   );
 });
-PersonalInformation.displayName = 'PersonalInformation';
-export default PersonalInformation;
+PersonalInformationStepOne.displayName = 'PersonalInformation';
+export default PersonalInformationStepOne;

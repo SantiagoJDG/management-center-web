@@ -11,12 +11,13 @@ import {
 } from '@mui/material';
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import PersonalInformation from '../components/Collaborators/CreateCollaboratorSteps/Personalnformation';
+import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
 import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
+import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(2);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
 
@@ -34,7 +35,7 @@ const CreateCollaboratorSteps = () => {
       title: 'Llena la Infomacion personal',
       stepName: 'Agregar Informacion Personal',
       backgroungImg: '/pills-cut-right.png',
-      component: <PersonalInformation ref={formValidate} setActiveStep={setActiveStep} />
+      component: <PersonalInformationStepOne ref={formValidate} setActiveStep={setActiveStep} />
     },
     {
       id: 2,
@@ -42,6 +43,13 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Informacion de alta en la empresa',
       backgroungImg: '/pills-orange.png',
       component: <CompanyInformationStepTwo ref={formValidate} setActiveStep={setActiveStep} />
+    },
+    {
+      id: 3,
+      title: 'Información de contratacion',
+      stepName: 'Llena la información de contratación',
+      backgroungImg: '/pills-green.png',
+      component: <ContractInformationStepThree ref={formValidate} setActiveStep={setActiveStep} />
     }
   ];
 
@@ -137,12 +145,16 @@ const CreateCollaboratorSteps = () => {
               <Grid item>
                 <Box sx={{ width: '100%' }}>
                   <Stepper activeStep={activeStep} alternativeLabel>
-                    {steps.map((label) => {
+                    {steps.map((label, index) => {
                       const stepProps = {};
                       const labelProps = {};
                       return (
                         <Step key={label.id} {...stepProps}>
-                          <StepLabel {...labelProps}>{label.title}</StepLabel>
+                          <StepLabel {...labelProps}>
+                            <Typography variant="body2">
+                              {index === activeStep ? label.title : ''}
+                            </Typography>
+                          </StepLabel>
                         </Step>
                       );
                     })}
