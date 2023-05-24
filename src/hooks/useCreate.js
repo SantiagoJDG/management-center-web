@@ -7,7 +7,8 @@ const useCreate = (path, body) => {
 
   const create = async () => {
     try {
-      await getAxiosInstance().post(path, body);
+      const response = await getAxiosInstance().post(path, body);
+      return response;
     } catch (error) {
       console.error(error);
       handleNewMessage({

@@ -16,10 +16,10 @@ import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaborat
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
-
+  const [newCollaboratorId, setNewCollaboratorId] = useState(null);
   const isStepSkipped = (step) => {
     return skipped.has(step);
   };
@@ -34,14 +34,26 @@ const CreateCollaboratorSteps = () => {
       title: 'Llena la Infomacion personal',
       stepName: 'Agregar Informacion Personal',
       backgroungImg: '/pills-cut-right.png',
-      component: <PersonalInformation ref={formValidate} setActiveStep={setActiveStep} />
+      component: (
+        <PersonalInformation
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          setNewCollaboratorId={setNewCollaboratorId}
+        />
+      )
     },
     {
       id: 2,
       title: 'Llena la informacion personal en la empresa',
       stepName: 'Informacion de alta en la empresa',
       backgroungImg: '/pills-orange.png',
-      component: <CompanyInformationStepTwo ref={formValidate} setActiveStep={setActiveStep} />
+      component: (
+        <CompanyInformationStepTwo
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
     }
   ];
 
