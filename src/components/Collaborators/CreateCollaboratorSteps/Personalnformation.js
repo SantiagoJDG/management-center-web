@@ -66,7 +66,7 @@ const PersonalInformation = forwardRef((props, ref) => {
 
   const getResidenceData = async () => {
     getDataInformation('/api/residence/countries', setCountries);
-    getDataInformation('/api/residence/states', setStates);
+    getDataInformation('/api/residence/cities', setStates);
   };
 
   const getDataInformation = (path, callbackMethod) => {
