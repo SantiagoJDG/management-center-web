@@ -17,9 +17,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
     admissionDate: '',
     businessEmail: ''
   });
-  const collaboratorId = 43; //Se debe recibir un ID de collaborator en esta pantalla porque acá ya esta creado.
-
-  const [edit] = useEdit(`/api/collaborator/${collaboratorId}`, companyInformation);
+  const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, companyInformation);
 
   const {
     register,
@@ -68,8 +66,9 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
+    console.log(props.newCollaboratorId);
     ref.current = validateForm;
-  }, []);
+  }, [companyInformation]);
 
   return (
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>

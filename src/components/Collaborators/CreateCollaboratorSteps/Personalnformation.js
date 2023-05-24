@@ -203,8 +203,10 @@ const PersonalInformation = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const error = await create();
-        if (error) return;
+        const execution = await create();
+        if (execution.status !== 200) return;
+        const idNewCollaborator = execution.data;
+        props.setNewCollaboratorId(idNewCollaborator);
         props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })();
     }
