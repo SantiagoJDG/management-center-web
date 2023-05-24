@@ -54,7 +54,6 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
-    console.log(companyInformation);
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
@@ -66,7 +65,6 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    console.log(props.newCollaboratorId);
     ref.current = validateForm;
   }, [companyInformation]);
 
