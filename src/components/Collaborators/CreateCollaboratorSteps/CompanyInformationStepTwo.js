@@ -13,11 +13,11 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   const [age, setAge] = useState(0);
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
   const [companyInformation, setCompanyInformation] = useState({
-    codeEmployee: '',
-    onBoardingDate: '',
-    corporateEmail: ''
+    businessCode: '',
+    admissionDate: '',
+    businessEmail: ''
   });
-  const [edit] = useEdit('/api/collaborator', companyInformation);
+  const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, companyInformation);
 
   const {
     register,
@@ -37,7 +37,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
     }
     setCompanyInformation({
       ...companyInformation,
-      onBoardingDate: date
+      admissionDate: date
     });
     setAge(age);
   };
@@ -47,7 +47,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(inputValue)) {
       setEmailErrorMessage('');
-      setCompanyInformation({ ...companyInformation, corporateEmail: inputValue });
+      setCompanyInformation({ ...companyInformation, businessEmail: inputValue });
     } else {
       setEmailErrorMessage('El valor ingresado no es un correo electrónico válido.');
     }
@@ -66,7 +66,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
 
   useEffect(() => {
     ref.current = validateForm;
-  }, []);
+  }, [companyInformation]);
 
   return (
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
@@ -77,24 +77,24 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
               size="small"
               label="Codigo de empleado"
               fullWidth
-              name="employeeCode"
-              {...register('employeeCode', {
+              name="businessCode"
+              {...register('businessCode', {
                 required: true,
                 onChange: (event) => {
                   setCompanyInformation({
                     ...companyInformation,
-                    codeEmployee: event.target.value
+                    businessCode: event.target.value
                   });
                 }
               })}
-              error={errors.employeeCode}
-              helperText={errors.employeeCode && 'Campo requerido'}
+              error={errors.businessCode}
+              helperText={errors.businessCode && 'Campo requerido'}
             />
           </Grid>
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
-                name="onBoardingDate"
+                name="admissionDate"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
@@ -113,16 +113,16 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
                         size="small"
                         label={'Fecha de ingreso'}
                         placeholder="DD/MM/YYYY"
-                        name="onBoardingDate"
-                        error={errors.onBoardingDate && true}
+                        name="admissionDate"
+                        error={errors.admissionDate && true}
                         helperText={
-                          errors.onBoardingDate && (
+                          errors.admissionDate && (
                             <Typography variant="caption" color="error">
                               Campo requerido
                             </Typography>
                           )
                         }
-                        {...register('onBoardingDate', { required: true })}
+                        {...register('admissionDate', { required: true })}
                       />
                     )}
                   />
@@ -147,15 +147,15 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
               variant="outlined"
               size="small"
               fullWidth
-              name="personalEmail"
-              {...register('personalEmail', {
+              name="businessEmail"
+              {...register('businessEmail', {
                 required: true,
                 onChange: (event) => handleOnChangeEmail(event)
               })}
-              error={errors.personalEmail || !!errorEmailMessage}
+              error={errors.businessEmail || !!errorEmailMessage}
               helperText={
                 errorEmailMessage ||
-                (errors.personalEmail && (
+                (errors.businessEmail && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
