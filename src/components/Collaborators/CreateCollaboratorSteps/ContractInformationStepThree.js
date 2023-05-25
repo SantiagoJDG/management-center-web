@@ -19,13 +19,13 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
-  const [isMounted, setIsMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const [contractInformation, setContractInformation] = useState({
     companyId: '',
-    contractCofficeId: '',
-    typeOfContract: undefined,
-    contractDurability: undefined,
+    officeId: '',
+    type: undefined,
+    durability: undefined,
     initialDate: '',
     endDate: '',
     expireTime: '',
@@ -37,13 +37,13 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   const [initialDate, setInitialDate] = useState();
   const [expirationTime, setExpirationTime] = useState('');
   const [offices, setOffices] = useState([]);
-  const [typeOfContract, setTypeOfContract] = useState([]);
+  const [contractType, setContractType] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [companyErrors, setCompanyErrors] = useState({});
 
   const getResidenceData = async () => {
     getDataInformation('/api/hiring/offices', setOffices);
-    getDataInformation('/api/hiring/types', setTypeOfContract);
+    getDataInformation('/api/hiring/types', setContractType);
     getDataInformation('/api/hiring/companies', setCompanies);
   };
 
@@ -102,8 +102,8 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
       type,
       'typeOfContract',
       '/api/hiring/types',
-      setTypeOfContract,
-      typeOfContract
+      setContractType,
+      contractType
     );
   }
   function handleCompanies(office) {
@@ -125,8 +125,8 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   const handleDropdownErrors = () => {
     if (
       !contractInformation.companyId ||
-      !contractInformation.contractCofficeId ||
-      !contractInformation.typeOfContract
+      !contractInformation.officeId ||
+      !contractInformation.type
     ) {
       const newErrors = {
         ...companyErrors,
@@ -137,9 +137,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
           ...(contractInformation.offices ? {} : { error: true, description: 'Campo requerido' })
         },
         typeOfContract: {
-          ...(contractInformation.typeOfContract
-            ? {}
-            : { error: true, description: 'Campo requerido' })
+          ...(contractInformation.type ? {} : { error: true, description: 'Campo requerido' })
         }
       };
       setCompanyErrors(newErrors);
@@ -159,12 +157,12 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    if (!isMounted) {
+    if (!mounted) {
       getResidenceData();
-      setIsMounted(true);
+      setMounted(true);
     }
     ref.current = validateForm;
-  }, [contractInformation, isMounted]);
+  }, [contractInformation, mounted]);
 
   return (
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
@@ -195,7 +193,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               formError={companyErrors.typeOfContract}
               name="contractId"
               label="Tipo de contrato"
-              optionList={typeOfContract}
+              optionList={contractType}
               elmentCallback={handleTypeOfContract}
               requiredField={true}
             />
@@ -212,7 +210,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
                 onChange: (event) =>
                   setContractInformation({
                     ...contractInformation,
-                    contractDurability: event.target.value
+                    durability: event.target.value
                   })
               })}
               error={errors.contractDurability && true}
