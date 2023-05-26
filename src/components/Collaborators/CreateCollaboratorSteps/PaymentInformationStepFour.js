@@ -6,6 +6,7 @@ import 'moment/locale/es';
 import { useState, useEffect, forwardRef } from 'react';
 import useEdit from 'hooks/useEdit';
 import { CssTextField } from '../../../styles/formButton';
+import useMessage from 'hooks/useMessage';
 
 const ContractInformationStepFour = forwardRef((props, ref) => {
   const {
@@ -15,7 +16,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     formState: { errors }
   } = useForm();
   const [mounted, setMounted] = useState(false);
-
+  const { handleNewMessage } = useMessage();
   const [paymentInformation, setPaymentInformation] = useState({
     bankName: '',
     countryBank: '',
@@ -79,36 +80,34 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleOffice(office) {
-    handleAutoCompleteValue(
-      office,
-      'contractCofficeId',
-      '/api/hiring/offices',
-      setOffices,
-      offices
-    );
+    handleAutoCompleteValue(office, 'officePayer', '/api/hiring/offices', setOffices, offices);
+    setPaymentInformation({
+      extraterritoriality:
+        paymentInformation.countryBank != paymentInformation.officePayer ? 'Si' : 'No'
+    });
   }
   function handleCountry(country) {
     handleAutoCompleteValue(
       country,
-      'countryId',
+      'countryBank',
       '/api/residence/countries',
       setCountries,
       countries
     );
+    setPaymentInformation({
+      extraterritoriality: 'Si'
+    });
   }
 
   const handleDropdownErrors = () => {
     if (!paymentInformation.companyId || !paymentInformation.officeId || !paymentInformation.type) {
       const newErrors = {
         ...paymentErrors,
-        companyId: {
-          ...(paymentInformation.company ? {} : { error: true, description: 'Campo requerido' })
+        officePayer: {
+          ...(paymentInformation.officePayer ? {} : { error: true, description: 'Campo requerido' })
         },
-        contractCofficeId: {
-          ...(paymentInformation.offices ? {} : { error: true, description: 'Campo requerido' })
-        },
-        typeOfContract: {
-          ...(paymentInformation.type ? {} : { error: true, description: 'Campo requerido' })
+        countryBank: {
+          ...(paymentInformation.countryBank ? {} : { error: true, description: 'Campo requerido' })
         }
       };
       setPaymentErrors(newErrors);
@@ -122,6 +121,10 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       handleSubmit(async () => {
         const error = await edit();
         if (error) return;
+        handleNewMessage({
+          text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
+          severity: 'success'
+        });
         props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })();
     }
@@ -228,7 +231,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
           </Grid>
           <Grid item>
             <CustomAutoComplete
-              formError={paymentErrors.contractCofficeId}
+              formError={paymentErrors.officePayer}
               name="officeId"
               label="Oficina que fondea al recurso"
               optionList={offices}
@@ -239,27 +242,13 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
           <Grid item>
             <CssTextField
               sx={{ width: '100%' }}
-              required
-              name="extraterritoriality"
-              size="small"
-              type={'number'}
               label="Extraterritorialidad"
-              {...register('extraterritoriality', {
-                required: true,
-                onChange: (event) =>
-                  setPaymentInformation({
-                    ...paymentInformation,
-                    extraterritoriality: event.target.value
-                  })
-              })}
-              error={errors.extraterritoriality && true}
-              helperText={
-                errors.extraterritoriality && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
-                  </Typography>
-                )
-              }
+              value={paymentInformation.extraterritoriality}
+              InputProps={{
+                readOnly: true
+              }}
+              size="small"
+              variant="outlined"
             />
           </Grid>
         </Grid>

@@ -10,6 +10,7 @@ import 'moment/locale/es';
 import { useState, useEffect, forwardRef } from 'react';
 import useEdit from 'hooks/useEdit';
 import { CssTextField } from '../../../styles/formButton';
+import useMessage from 'hooks/useMessage';
 
 const ContractInformationStepThree = forwardRef((props, ref) => {
   const {
@@ -20,7 +21,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     formState: { errors }
   } = useForm();
   const [mounted, setMounted] = useState(false);
-
+  const { handleNewMessage } = useMessage();
   const [contractInformation, setContractInformation] = useState({
     companyId: '',
     officeId: '',
@@ -151,6 +152,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
       handleSubmit(async () => {
         const error = await edit();
         if (error) return;
+        handleNewMessage({
+          text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
+          severity: 'success'
+        });
         props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       })();
     }

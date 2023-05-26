@@ -59,8 +59,8 @@ const CreateCollaboratorSteps = () => {
     },
     {
       id: 3,
-      title: 'Información de contratacion',
-      stepName: 'Llena la información de contratación',
+      title: 'Llena la Información de contratacion',
+      stepName: 'Información de contratación',
       backgroungImg: '/pills-green.png',
       component: (
         <ContractInformationStepThree
@@ -72,8 +72,8 @@ const CreateCollaboratorSteps = () => {
     },
     {
       id: 4,
-      title: 'Información de pago',
-      stepName: 'Llena la información de pago',
+      title: 'Llena la información de pago   ',
+      stepName: 'Información de pago',
       backgroungImg: '/pills-cyan.png',
       component: (
         <PaymentInformationStepFour
