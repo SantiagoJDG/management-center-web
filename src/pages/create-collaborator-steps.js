@@ -14,6 +14,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
 import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
+import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
@@ -58,11 +59,24 @@ const CreateCollaboratorSteps = () => {
     },
     {
       id: 3,
-      title: 'Información de contratacion',
-      stepName: 'Llena la información de contratación',
+      title: 'Llena la Información de contratacion',
+      stepName: 'Información de contratación',
       backgroungImg: '/pills-green.png',
       component: (
         <ContractInformationStepThree
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 4,
+      title: 'Llena la información de pago   ',
+      stepName: 'Información de pago',
+      backgroungImg: '/pills-cyan.png',
+      component: (
+        <PaymentInformationStepFour
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}

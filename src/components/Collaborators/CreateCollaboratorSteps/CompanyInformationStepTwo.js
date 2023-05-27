@@ -6,10 +6,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { CssTextField } from '../../../styles/formButton';
+import useMessage from 'hooks/useMessage';
 import moment from 'moment';
 import 'moment/locale/es';
 
 const CompanyInformationStepTwo = forwardRef((props, ref) => {
+  const { handleNewMessage } = useMessage();
   const [age, setAge] = useState(0);
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
   const [companyInformation, setCompanyInformation] = useState({
@@ -53,13 +55,27 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
     }
   };
 
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
+        severity: 'success'
+      });
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
   const validateForm = () => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const error = await edit();
-        if (error) return;
-        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        const execution = await edit();
+        afterExecution(execution);
       })();
     }
   };

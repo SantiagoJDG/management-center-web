@@ -7,7 +7,8 @@ const useEdit = (path, body) => {
 
   const edit = async () => {
     try {
-      await getAxiosInstance().put(path, body);
+      const response = await getAxiosInstance().put(path, body);
+      return response;
     } catch (error) {
       console.error(error);
       handleNewMessage({

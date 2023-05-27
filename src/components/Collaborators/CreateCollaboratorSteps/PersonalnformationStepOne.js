@@ -12,6 +12,7 @@ import 'moment/locale/es';
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import useCreate from 'hooks/useCreate';
 import { CssTextField } from '../../../styles/formButton';
+import useMessage from 'hooks/useMessage';
 
 const PersonalInformationStepOne = forwardRef((props, ref) => {
   const {
@@ -22,6 +23,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     formState: { errors }
   } = useForm();
   const [isMounted, setIsMounted] = useState(false);
+  const { handleNewMessage } = useMessage();
 
   const [newCollaborator, setNewCollaborator] = useState({
     name: '',
@@ -149,7 +151,6 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const handlePhoneChange = (event, index, key) => {
     const newPhoneNumbers = [...phoneNumbers];
     newPhoneNumbers[index][key] = event.target.value;
-    // setPhoneNumbers(newPhoneNumbers);
 
     if (key === 'areaCode') {
       const input = event.target.value;
@@ -198,16 +199,30 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     }
   };
 
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
+        severity: 'success'
+      });
+      const idNewCollaborator = execution.data;
+      props.setNewCollaboratorId(idNewCollaborator);
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
   const validateForm = () => {
     handleResidencyErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
         const execution = await create();
-        if (execution.status !== 200) return;
-        const idNewCollaborator = execution.data;
-        props.setNewCollaboratorId(idNewCollaborator);
-        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        afterExecution(execution);
       })();
     }
   };
@@ -495,19 +510,19 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
             <Grid item key={index}>
               <CssTextField
                 required
-                size={'small'}
-                name={'nacionalidades'}
+                size="small"
+                name={`nationalities-${index}`}
                 label="Nacionalidades"
                 variant="outlined"
                 sx={{ width: '100%' }}
                 value={value.docAdress}
-                {...register(`nacionalidades`, {
+                {...register(`nationalities-${index}`, {
                   required: true,
                   onChange: (event) => handleNationalityChange(event, index)
                 })}
-                error={errors['nacionalidades']}
+                error={errors[`nationalities-${index}`]}
                 helperText={
-                  errors['nacionalidades'] && (
+                  errors[`nationalities-${index}`] && (
                     <Typography variant="caption" color="error">
                       Campo requerido
                     </Typography>
