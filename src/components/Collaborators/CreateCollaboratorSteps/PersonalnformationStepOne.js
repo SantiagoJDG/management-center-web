@@ -511,18 +511,18 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               <CssTextField
                 required
                 size="small"
-                name={`nacionalidades-${index}`}
+                name={`nationalities-${index}`}
                 label="Nacionalidades"
                 variant="outlined"
                 sx={{ width: '100%' }}
                 value={value.docAdress}
-                {...register(`nacionalidades-${index}`, {
+                {...register(`nationalities-${index}`, {
                   required: true,
                   onChange: (event) => handleNationalityChange(event, index)
                 })}
-                error={errors[`nacionalidades-${index}`]}
+                error={errors[`nationalities-${index}`]}
                 helperText={
-                  errors[`nacionalidades-${index}`] && (
+                  errors[`nationalities-${index}`] && (
                     <Typography variant="caption" color="error">
                       Campo requerido
                     </Typography>

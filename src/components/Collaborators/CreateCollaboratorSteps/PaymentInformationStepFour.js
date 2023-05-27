@@ -21,7 +21,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     bankName: '',
     countryBank: '',
     accountNumber: undefined,
-    stimatedbankTransferBill: undefined,
+    stimatedBankTransferBill: undefined,
     officePayer: '',
     extraterritoriality: '',
     paymentPeriodicity: ''
@@ -207,21 +207,21 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '100%' }}
               required
-              name="stimatedbankTransferBill"
+              name="stimatedBankTransferBill"
               size="small"
               type={'number'}
               label="Estimado comision bancaria USD$"
-              {...register('stimatedbankTransferBill', {
+              {...register('stimatedBankTransferBill', {
                 required: true,
                 onChange: (event) =>
                   setPaymentInformation({
                     ...paymentInformation,
-                    stimatedbankTransferBill: event.target.value
+                    stimatedBankTransferBill: event.target.value
                   })
               })}
-              error={errors.stimatedbankTransferBill && true}
+              error={errors.stimatedBankTransferBill && true}
               helperText={
-                errors.stimatedbankTransferBill && (
+                errors.stimatedBankTransferBill && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
