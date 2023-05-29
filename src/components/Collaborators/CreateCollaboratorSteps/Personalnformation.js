@@ -28,7 +28,8 @@ const PersonalInformation = forwardRef((props, ref) => {
     lastName: '',
     birthdate: undefined,
     personalEmail: undefined,
-    photoAddress: '',
+    file: '',
+    folder: 'profiles_img_user',
     residency: {
       countryId: '',
       cityId: '',
@@ -48,13 +49,13 @@ const PersonalInformation = forwardRef((props, ref) => {
     ]
   });
   const [create] = useCreate('/api/collaborator', newCollaborator);
+  const path = 'http://localhost:3001/api/collaborator/';
 
   const [initialDate, setInitialDate] = useState();
 
   const [age, setAge] = useState(0);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
-
   const [phoneNumbers, setPhoneNumbers] = useState([{ areaCode: '', number: '' }]);
   const [nationalities, setNationalities] = useState([{ docAdress: '', countryId: '' }]);
 
@@ -88,6 +89,11 @@ const PersonalInformation = forwardRef((props, ref) => {
       console.error('Error while save new item...', error);
     }
   }
+
+  const handleFileChange = (e) => {
+    setNewCollaborator({ ...newCollaborator, file: e.target.files[0] });
+    console.log(newCollaborator);
+  };
 
   async function handleAutoCompleteValue(
     selectedValue,
@@ -203,11 +209,20 @@ const PersonalInformation = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const execution = await create();
-        if (execution.status !== 200) return;
-        const idNewCollaborator = execution.data;
-        props.setNewCollaboratorId(idNewCollaborator);
-        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        try {
+          const response = await getAxiosInstance().post(path, newCollaborator, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          console.log(response.data);
+          if (response.status !== 200) return;
+          const idNewCollaborator = response.data;
+          props.setNewCollaboratorId(idNewCollaborator);
+          props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        } catch (error) {
+          console.error(error);
+        }
       })();
     }
   };
@@ -242,17 +257,14 @@ const PersonalInformation = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               required
               size="small"
-              name="photoAdress"
+              name="file"
+              type="file"
               placeholder="Adjuntar y subir archivo"
               label="Fotografia del Consultor"
-              {...register('photoAdress', {
-                required: true,
-                onChange: (event) =>
-                  setNewCollaborator({ ...newCollaborator, photoAddress: event.target.value })
-              })}
-              error={errors.photoAdress && true}
+              onChange={handleFileChange}
+              error={errors.file && true}
               helperText={
-                errors.photoAdress && (
+                errors.file && (
                   <Typography variant="caption" color="error" sx={{ boxSizing: 'content-box' }}>
                     Campo requerido
                   </Typography>
