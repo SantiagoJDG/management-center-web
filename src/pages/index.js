@@ -36,7 +36,8 @@ export default function Home() {
       path: '/create-collaborator-steps',
       view: ['administrador']
     },
-    { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] }
+    { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] },
+    { name: 'Nueva vista', path: '/nueva-vista', view: ['administrador'] }
   ];
 
   const getIcon = (path) => {
@@ -63,6 +64,13 @@ export default function Home() {
         );
 
       case '/create-collaborator':
+        return (
+          <ListItemIcon>
+            <PersonIcon />
+          </ListItemIcon>
+        );
+
+      case '/nueva-vista':
         return (
           <ListItemIcon>
             <PersonIcon />
