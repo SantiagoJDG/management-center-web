@@ -178,9 +178,15 @@ const EditableCollaborator = ({ collaboratorData, setPrincipalInformation }) => 
       let modifiedCollaborator;
 
       if (collaboratorData) {
-        modifiedCollaborator = await getAxiosInstance().put(`/api/collaborator/${collaboratorData.id}`,collaboratorToSave);
+        modifiedCollaborator = await getAxiosInstance().put(
+          `/api/collaborator/${collaboratorData.id}`,
+          collaboratorToSave
+        );
       } else {
-        modifiedCollaborator = await getAxiosInstance().post('/api/collaborator/',collaboratorToSave);
+        modifiedCollaborator = await getAxiosInstance().post(
+          '/api/collaborator/',
+          collaboratorToSave
+        );
       }
       return modifiedCollaborator.data;
     } catch (error) {
