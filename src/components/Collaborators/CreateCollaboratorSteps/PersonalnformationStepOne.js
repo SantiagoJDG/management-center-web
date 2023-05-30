@@ -50,8 +50,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
       }
     ]
   });
-  const [create] = useCreate('/api/collaborator', newCollaborator);
-  const path = 'http://localhost:3001/api/collaborator/';
+  //const [create] = useCreate('/api/collaborator', newCollaborator);
+  const path = '/api/collaborator/';
 
   const [initialDate, setInitialDate] = useState();
 
@@ -60,11 +60,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const [states, setStates] = useState([]);
   const [phoneNumbers, setPhoneNumbers] = useState([{ areaCode: '', number: '' }]);
   const [nationalities, setNationalities] = useState([{ docAdress: '', countryId: '' }]);
-
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
-
   const [residencyErrors, setResidencyErrors] = useState({});
-
   const secondTextFieldRef = useRef(null);
 
   const getResidenceData = async () => {
@@ -227,25 +224,16 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-<<<<<<< HEAD:src/components/Collaborators/CreateCollaboratorSteps/Personalnformation.js
         try {
-          const response = await getAxiosInstance().post(path, newCollaborator, {
+          const execution = await getAxiosInstance().post(path, newCollaborator, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
           });
-          console.log(response.data);
-          if (response.status !== 200) return;
-          const idNewCollaborator = response.data;
-          props.setNewCollaboratorId(idNewCollaborator);
-          props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+          afterExecution(execution);
         } catch (error) {
           console.error(error);
         }
-=======
-        const execution = await create();
-        afterExecution(execution);
->>>>>>> development:src/components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne.js
       })();
     }
   };
