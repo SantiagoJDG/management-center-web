@@ -10,7 +10,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef, forwardRef } from 'react';
-import useCreate from 'hooks/useCreate';
 import { CssTextField } from '../../../styles/formButton';
 import useMessage from 'hooks/useMessage';
 
@@ -50,11 +49,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
       }
     ]
   });
-  //const [create] = useCreate('/api/collaborator', newCollaborator);
+
   const path = '/api/collaborator/';
-
   const [initialDate, setInitialDate] = useState();
-
   const [age, setAge] = useState(0);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
