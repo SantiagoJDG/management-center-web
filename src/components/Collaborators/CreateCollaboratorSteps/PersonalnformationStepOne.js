@@ -12,8 +12,9 @@ import 'moment/locale/es';
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import useCreate from 'hooks/useCreate';
 import { CssTextField } from '../../../styles/formButton';
+import useMessage from 'hooks/useMessage';
 
-const PersonalInformation = forwardRef((props, ref) => {
+const PersonalInformationStepOne = forwardRef((props, ref) => {
   const {
     register,
     handleSubmit,
@@ -22,6 +23,7 @@ const PersonalInformation = forwardRef((props, ref) => {
     formState: { errors }
   } = useForm();
   const [isMounted, setIsMounted] = useState(false);
+  const { handleNewMessage } = useMessage();
 
   const [newCollaborator, setNewCollaborator] = useState({
     name: '',
@@ -203,11 +205,29 @@ const PersonalInformation = forwardRef((props, ref) => {
     }
   };
 
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
+        severity: 'success'
+      });
+      const idNewCollaborator = execution.data;
+      props.setNewCollaboratorId(idNewCollaborator);
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
   const validateForm = () => {
     handleResidencyErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
+<<<<<<< HEAD:src/components/Collaborators/CreateCollaboratorSteps/Personalnformation.js
         try {
           const response = await getAxiosInstance().post(path, newCollaborator, {
             headers: {
@@ -222,6 +242,10 @@ const PersonalInformation = forwardRef((props, ref) => {
         } catch (error) {
           console.error(error);
         }
+=======
+        const execution = await create();
+        afterExecution(execution);
+>>>>>>> development:src/components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne.js
       })();
     }
   };
@@ -506,19 +530,19 @@ const PersonalInformation = forwardRef((props, ref) => {
             <Grid item key={index}>
               <CssTextField
                 required
-                size={'small'}
-                name={'nacionalidades'}
+                size="small"
+                name={`nationalities-${index}`}
                 label="Nacionalidades"
                 variant="outlined"
                 sx={{ width: '100%' }}
                 value={value.docAdress}
-                {...register(`nacionalidades`, {
+                {...register(`nationalities-${index}`, {
                   required: true,
                   onChange: (event) => handleNationalityChange(event, index)
                 })}
-                error={errors['nacionalidades']}
+                error={errors[`nationalities-${index}`]}
                 helperText={
-                  errors['nacionalidades'] && (
+                  errors[`nationalities-${index}`] && (
                     <Typography variant="caption" color="error">
                       Campo requerido
                     </Typography>
@@ -544,5 +568,5 @@ const PersonalInformation = forwardRef((props, ref) => {
     </Grid>
   );
 });
-PersonalInformation.displayName = 'PersonalInformation';
-export default PersonalInformation;
+PersonalInformationStepOne.displayName = 'PersonalInformation';
+export default PersonalInformationStepOne;
