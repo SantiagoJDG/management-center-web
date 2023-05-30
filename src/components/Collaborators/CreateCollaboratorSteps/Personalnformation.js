@@ -155,7 +155,6 @@ const PersonalInformation = forwardRef((props, ref) => {
   const handlePhoneChange = (event, index, key) => {
     const newPhoneNumbers = [...phoneNumbers];
     newPhoneNumbers[index][key] = event.target.value;
-    // setPhoneNumbers(newPhoneNumbers);
 
     if (key === 'areaCode') {
       const input = event.target.value;
