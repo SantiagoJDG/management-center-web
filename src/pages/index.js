@@ -36,8 +36,7 @@ export default function Home() {
       path: '/create-collaborator-steps',
       view: ['administrador']
     },
-    { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] },
-    { name: 'Nueva vista', path: '/nueva-vista', view: ['administrador'] }
+    { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] }
   ];
 
   const getIcon = (path) => {
