@@ -10,6 +10,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef, forwardRef } from 'react';
+import useCreate from 'hooks/useCreate';
 import { CssTextField } from '../../../styles/formButton';
 import useMessage from 'hooks/useMessage';
 
@@ -30,7 +31,6 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     birthdate: undefined,
     personalEmail: undefined,
     file: '',
-    folder: 'profiles_img_user',
     residency: {
       countryId: '',
       cityId: '',
@@ -50,15 +50,24 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     ]
   });
 
-  const path = '/api/collaborator/';
+  const [create] = useCreate('/api/collaborator', newCollaborator, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+
   const [initialDate, setInitialDate] = useState();
+
   const [age, setAge] = useState(0);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
+
   const [phoneNumbers, setPhoneNumbers] = useState([{ areaCode: '', number: '' }]);
   const [nationalities, setNationalities] = useState([{ docAdress: '', countryId: '' }]);
+
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
   const [residencyErrors, setResidencyErrors] = useState({});
+
   const secondTextFieldRef = useRef(null);
 
   const getResidenceData = async () => {
@@ -221,16 +230,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        try {
-          const execution = await getAxiosInstance().post(path, newCollaborator, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          afterExecution(execution);
-        } catch (error) {
-          console.error(error);
-        }
+        const execution = await create();
+        afterExecution(execution);
       })();
     }
   };
