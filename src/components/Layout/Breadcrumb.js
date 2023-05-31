@@ -1,8 +1,16 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { Breadcrumbs, Link, Typography, AppBar, Grid, ListItemIcon } from '@mui/material';
+import {
+  Breadcrumbs,
+  Link as MuiLink,
+  Typography,
+  AppBar,
+  Grid,
+  ListItemIcon
+} from '@mui/material';
 import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
+import Link from 'next/link';
 
 const BreadCrumb = () => {
   const [active, setActive] = useState(true);
@@ -41,9 +49,13 @@ const BreadCrumb = () => {
     );
   });
 
-  const displayIcon = (goBack) => {
+  function LinkRouter(props) {
+    return <MuiLink {...props} component={Link} />;
+  }
+
+  function displayIcon(goBack) {
     return !goBack && <ArrowCircleLeftOutlinedIcon />;
-  };
+  }
 
   useEffect(() => {
     segments.length == 0 ? setActive(true) : setActive(false);
@@ -65,9 +77,9 @@ const BreadCrumb = () => {
         <Grid>
           <Breadcrumbs aria-label="breadcrumb">
             <Typography variant="subtitle1">
-              <Link key={'/'} href={'/'} underline="none" color={active ? 'primary' : 'inherit'}>
+              <LinkRouter underline="none" color={active ? 'primary' : 'inherit'} href="/">
                 Menú principal
-              </Link>
+              </LinkRouter>
             </Typography>
             {breadcrumbLinks}
           </Breadcrumbs>
