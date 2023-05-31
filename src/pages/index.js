@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 import useAuth from 'hooks/useAuth';
 
 export default function Home() {
-  const { userData, userToken, waitingUser } = useAuth();
+  const { userToken, waitingUser } = useAuth();
 
   const router = useRouter();
 
