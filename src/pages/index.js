@@ -47,21 +47,18 @@ export default function Home() {
             <GroupsIcon />
           </ListItemIcon>
         );
-
       case '/planner':
         return (
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
         );
-
       case '/create-collaborator':
         return (
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
         );
-
       default:
         return (
           <ListItemIcon>

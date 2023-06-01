@@ -1,18 +1,18 @@
-import { Grid, Divider, Avatar, ListItemIcon, Typography } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import HailRoundedIcon from '@mui/icons-material/HailRounded';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import CustomAutoComplete from 'components/CustomAutoComplete';
-import { getAxiosInstance } from 'utils/axiosClient';
-import { useForm, Controller } from 'react-hook-form';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HailRoundedIcon from '@mui/icons-material/HailRounded';
+import { Avatar, Divider, Grid, ListItemIcon, Typography } from '@mui/material';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import CustomAutoComplete from 'components/CustomAutoComplete';
+import useCreate from 'hooks/useCreate';
+import useMessage from 'hooks/useMessage';
 import moment from 'moment';
 import 'moment/locale/es';
-import { useState, useEffect, useRef, forwardRef } from 'react';
-import useCreate from 'hooks/useCreate';
-import { CssTextField } from '../../../styles/formButton';
-import useMessage from 'hooks/useMessage';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { getAxiosInstance } from 'utils/axiosClient';
+import { CssMuiFileInput, CssTextField } from '../../../styles/formButton';
 
 const PersonalInformationStepOne = forwardRef((props, ref) => {
   const {
@@ -22,6 +22,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
+
   const [isMounted, setIsMounted] = useState(false);
   const { handleNewMessage } = useMessage();
 
@@ -30,7 +31,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     lastName: '',
     birthdate: undefined,
     personalEmail: undefined,
-    photoAddress: '',
+    file: '',
     residency: {
       countryId: '',
       cityId: '',
@@ -49,7 +50,12 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
       }
     ]
   });
-  const [create] = useCreate('/api/collaborator', newCollaborator);
+
+  const [create] = useCreate('/api/collaborator', newCollaborator, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
 
   const [initialDate, setInitialDate] = useState();
 
@@ -61,8 +67,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const [nationalities, setNationalities] = useState([{ docAdress: '', countryId: '' }]);
 
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
-
   const [residencyErrors, setResidencyErrors] = useState({});
+
+  const [photo, setPhoto] = useState();
 
   const secondTextFieldRef = useRef(null);
 
@@ -90,6 +97,11 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
       console.error('Error while save new item...', error);
     }
   }
+
+  const handleFileChange = (newFile) => {
+    setNewCollaborator({ ...newCollaborator, file: newFile });
+    setPhoto(newFile ? URL.createObjectURL(newFile) : '');
+  };
 
   async function handleAutoCompleteValue(
     selectedValue,
@@ -248,32 +260,42 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
                   top: 235
                 }}
               >
-                <Avatar sx={{ height: '60px', width: '60px' }}>
+                <Avatar sx={{ height: '60px', width: '60px' }} src={photo}>
                   <HailRoundedIcon fontSize="large" />
                 </Avatar>
               </Grid>
+              <Grid item>
+                <Controller
+                  name="file"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CssMuiFileInput
+                      size="small"
+                      placeholder="Adjuntar y subir archivo"
+                      label="Fotografia del Consultor"
+                      value={field.value}
+                      onChange={(newValue) => {
+                        handleFileChange(newValue);
+                        field.onChange(newValue);
+                      }}
+                      error={errors.file}
+                      helperText={
+                        errors.file && (
+                          <Typography
+                            variant="caption"
+                            color="error"
+                            sx={{ boxSizing: 'content-box' }}
+                          >
+                            Campo requerido
+                          </Typography>
+                        )
+                      }
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <CssTextField
-              sx={{ width: '100%' }}
-              required
-              size="small"
-              name="photoAdress"
-              placeholder="Adjuntar y subir archivo"
-              label="Fotografia del Consultor"
-              {...register('photoAdress', {
-                required: true,
-                onChange: (event) =>
-                  setNewCollaborator({ ...newCollaborator, photoAddress: event.target.value })
-              })}
-              error={errors.photoAdress && true}
-              helperText={
-                errors.photoAdress && (
-                  <Typography variant="caption" color="error" sx={{ boxSizing: 'content-box' }}>
-                    Campo requerido
-                  </Typography>
-                )
-              }
-            />
           </Grid>
           <Grid item>
             <CssTextField
@@ -548,5 +570,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     </Grid>
   );
 });
+
 PersonalInformationStepOne.displayName = 'PersonalInformation';
+
 export default PersonalInformationStepOne;
