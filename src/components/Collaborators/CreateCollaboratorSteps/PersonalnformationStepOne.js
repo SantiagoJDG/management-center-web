@@ -1,18 +1,18 @@
-import { Grid, Divider, Avatar, ListItemIcon, Typography } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import HailRoundedIcon from '@mui/icons-material/HailRounded';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import CustomAutoComplete from 'components/CustomAutoComplete';
-import { getAxiosInstance } from 'utils/axiosClient';
-import { useForm, Controller } from 'react-hook-form';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HailRoundedIcon from '@mui/icons-material/HailRounded';
+import { Avatar, Divider, Grid, ListItemIcon, Typography } from '@mui/material';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import CustomAutoComplete from 'components/CustomAutoComplete';
+import useCreate from 'hooks/useCreate';
+import useMessage from 'hooks/useMessage';
 import moment from 'moment';
 import 'moment/locale/es';
-import { useState, useEffect, useRef, forwardRef } from 'react';
-import useCreate from 'hooks/useCreate';
-import { CssTextField, CssMuiFileInput } from '../../../styles/formButton';
-import useMessage from 'hooks/useMessage';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { getAxiosInstance } from 'utils/axiosClient';
+import { CssMuiFileInput, CssTextField } from '../../../styles/formButton';
 
 const PersonalInformationStepOne = forwardRef((props, ref) => {
   const {
@@ -22,6 +22,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
+
   const [isMounted, setIsMounted] = useState(false);
   const { handleNewMessage } = useMessage();
 
@@ -569,4 +570,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     </Grid>
   );
 });
+
+PersonalInformationStepOne.displayName = 'PersonalInformation';
+
 export default PersonalInformationStepOne;
