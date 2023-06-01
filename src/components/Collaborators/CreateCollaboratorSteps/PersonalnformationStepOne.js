@@ -11,7 +11,7 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, useRef, forwardRef } from 'react';
 import useCreate from 'hooks/useCreate';
-import { CssTextField } from '../../../styles/formButton';
+import { CssTextField, CssMuiFileInput } from '../../../styles/formButton';
 import useMessage from 'hooks/useMessage';
 
 const PersonalInformationStepOne = forwardRef((props, ref) => {
@@ -68,6 +68,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
   const [residencyErrors, setResidencyErrors] = useState({});
 
+  const [photo, setPhoto] = useState();
+
   const secondTextFieldRef = useRef(null);
 
   const getResidenceData = async () => {
@@ -95,9 +97,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     }
   }
 
-  const handleFileChange = (e) => {
-    setNewCollaborator({ ...newCollaborator, file: e.target.files[0] });
-    console.log(newCollaborator);
+  const handleFileChange = (newFile) => {
+    setNewCollaborator({ ...newCollaborator, file: newFile });
+    setPhoto(newFile ? URL.createObjectURL(newFile) : '');
   };
 
   async function handleAutoCompleteValue(
@@ -257,29 +259,42 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
                   top: 235
                 }}
               >
-                <Avatar sx={{ height: '60px', width: '60px' }}>
+                <Avatar sx={{ height: '60px', width: '60px' }} src={photo}>
                   <HailRoundedIcon fontSize="large" />
                 </Avatar>
               </Grid>
+              <Grid item>
+                <Controller
+                  name="file"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <CssMuiFileInput
+                      size="small"
+                      placeholder="Adjuntar y subir archivo"
+                      label="Fotografia del Consultor"
+                      value={field.value}
+                      onChange={(newValue) => {
+                        handleFileChange(newValue);
+                        field.onChange(newValue);
+                      }}
+                      error={errors.file}
+                      helperText={
+                        errors.file && (
+                          <Typography
+                            variant="caption"
+                            color="error"
+                            sx={{ boxSizing: 'content-box' }}
+                          >
+                            Campo requerido
+                          </Typography>
+                        )
+                      }
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <CssTextField
-              sx={{ width: '100%' }}
-              required
-              size="small"
-              name="file"
-              type="file"
-              placeholder="Adjuntar y subir archivo"
-              label="Fotografia del Consultor"
-              onChange={handleFileChange}
-              error={errors.file && true}
-              helperText={
-                errors.file && (
-                  <Typography variant="caption" color="error" sx={{ boxSizing: 'content-box' }}>
-                    Campo requerido
-                  </Typography>
-                )
-              }
-            />
           </Grid>
           <Grid item>
             <CssTextField
@@ -554,5 +569,4 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     </Grid>
   );
 });
-PersonalInformationStepOne.displayName = 'PersonalInformation';
 export default PersonalInformationStepOne;
