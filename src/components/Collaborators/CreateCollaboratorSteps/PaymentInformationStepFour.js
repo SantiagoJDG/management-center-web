@@ -273,5 +273,5 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   );
 });
 
-ContractInformationStepFour.displayName = 'PersonalInformation';
+ContractInformationStepFour.displayName = 'ContractInformationStepFour';
 export default ContractInformationStepFour;

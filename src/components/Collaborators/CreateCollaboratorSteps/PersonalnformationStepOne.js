@@ -548,5 +548,5 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     </Grid>
   );
 });
-PersonalInformationStepOne.displayName = 'PersonalInformation';
+PersonalInformationStepOne.displayName = 'PersonalInformationStepOne';
 export default PersonalInformationStepOne;

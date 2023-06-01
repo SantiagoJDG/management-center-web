@@ -366,5 +366,5 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   );
 });
 
-ContractInformationStepThree.displayName = 'PersonalInformation';
+ContractInformationStepThree.displayName = 'ContractInformationStepThree';
 export default ContractInformationStepThree;
