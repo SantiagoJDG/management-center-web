@@ -15,10 +15,11 @@ import PersonalInformationStepOne from '../components/Collaborators/CreateCollab
 import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
 import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
+import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(4);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(null);
@@ -77,6 +78,19 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-cyan.png',
       component: (
         <PaymentInformationStepFour
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 5,
+      title: 'Llena la información de compensación & Beneficios USD$',
+      stepName: 'Información de compensación & Beneficios',
+      backgroungImg: '/pills-cyan.png',
+      component: (
+        <BillingInformationStepFive
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
