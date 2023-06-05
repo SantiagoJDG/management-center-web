@@ -95,11 +95,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               <Grid item key={index}>
                 <CssTextField
                   required
-                  sx={{ width: '75%' }}
                   id={`number-${index}`}
                   name={`number-${index}`}
                   label="Porcentaje de incremento de tarifa"
-                  placeholder="%"
+                  placeholder="%0.00"
                   type="number"
                   size="small"
                   fullWidth
@@ -126,11 +125,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
 
           <Grid item>
             <CssTextField
-              sx={{ width: '75%' }}
               size="small"
               label="Nueva tarifa USD$"
               type="number"
-              placeholder="$0000.00"
+              placeholder="$0.00"
               fullWidth
               name="newRate"
               {...register('newRate', {
