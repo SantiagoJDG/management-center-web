@@ -1,6 +1,6 @@
-import { useState, forwardRef, useEffect } from 'react';
+import { useState, forwardRef, useRef, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { Grid, Typography, Divider, CardMedia } from '@mui/material';
+import { Grid, Typography, ListItemIcon, Divider, CardMedia } from '@mui/material';
 import useEdit from 'hooks/useEdit';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -8,18 +8,46 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { CssTextField } from '../../../styles/formButton';
 import useMessage from 'hooks/useMessage';
 import moment from 'moment';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+
 import 'moment/locale/es';
 
 const RateIncreaseStepSix = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
-  const [age, setAge] = useState(0);
-  const [errorEmailMessage, setEmailErrorMessage] = useState('');
-  const [companyInformation, setCompanyInformation] = useState({
-    businessCode: '',
+  const [rateIncrease, setRateIncrease] = useState({
     admissionDate: '',
-    businessEmail: ''
+    newRate: '',
+    rateIncreasePercentages: [
+      {
+        rateIncreasePercentage: ''
+      }
+    ]
   });
-  const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, companyInformation);
+  const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, rateIncrease);
+  const [numbeRateIncrease, setNumberRateIncrease] = useState([{ rateIncreasePercentage: '' }]);
+  const secondTextFieldRef = useRef(null);
+
+  const handleAddNumberRateIncrease = () => {
+    setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
+  };
+
+  const handleNumbeRateChange = (event, index, key) => {
+    const newnumbeRateIncrease = [...numbeRateIncrease];
+    newnumbeRateIncrease[index][key] = event.target.value;
+
+    if (key === 'areaCode') {
+      const input = event.target.value;
+      const expectedLength = 3;
+
+      if (input.length === expectedLength) {
+        secondTextFieldRef.current.focus();
+      }
+    }
+    setRateIncrease({
+      ...rateIncrease,
+      rateIncreasePercentages: newnumbeRateIncrease
+    });
+  };
 
   const {
     register,
@@ -28,32 +56,6 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
-
-  const calculateAge = (date) => {
-    const today = new Date();
-    const birthDate = new Date(date);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const month = today.getMonth() - birthDate.getMonth();
-    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    setCompanyInformation({
-      ...companyInformation,
-      admissionDate: date
-    });
-    setAge(age);
-  };
-
-  const handleOnChangeEmail = (event) => {
-    const inputValue = event.target.value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.test(inputValue)) {
-      setEmailErrorMessage('');
-      setCompanyInformation({ ...companyInformation, businessEmail: inputValue });
-    } else {
-      setEmailErrorMessage('El valor ingresado no es un correo electrónico válido.');
-    }
-  };
 
   const afterExecution = (execution) => {
     if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
@@ -82,29 +84,66 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
 
   useEffect(() => {
     ref.current = validateForm;
-  }, [companyInformation]);
+  }, [rateIncrease]);
 
   return (
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
       <Grid item xs={5}>
         <Grid container direction={'column'} spacing={5} p={2}>
           <Grid item>
+            {numbeRateIncrease.map((Rate, index) => (
+              <Grid item key={index}>
+                <CssTextField
+                  required
+                  sx={{ width: '75%' }}
+                  id={`number-${index}`}
+                  name={`number-${index}`}
+                  label="Porcentaje de incremento de tarifa"
+                  placeholder="%"
+                  type="number"
+                  size="small"
+                  fullWidth
+                  variant="outlined"
+                  inputRef={secondTextFieldRef}
+                  value={Rate.number}
+                  {...register(`number-${index}`, {
+                    required: true,
+                    onChange: (event) => handleNumbeRateChange(event, index, 'number')
+                  })}
+                  error={errors[`number-${index}`]}
+                  helperText={
+                    errors[`number-${index}`] && (
+                      <Typography variant="caption" color="error">
+                        Campo requerido
+                      </Typography>
+                    )
+                  }
+                />
+                <Grid sx={{ pl: 2, pt: 2 }}></Grid>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Grid item>
             <CssTextField
+              sx={{ width: '75%' }}
               size="small"
-              label="Codigo de empleado"
+              label="Nueva tarifa USD$"
+              type="number"
+              placeholder="$0000.00"
               fullWidth
-              name="businessCode"
-              {...register('businessCode', {
+              name="newRate"
+              {...register('newRate', {
                 required: true,
                 onChange: (event) => {
-                  setCompanyInformation({
-                    ...companyInformation,
-                    businessCode: event.target.value
+                  setRateIncrease({
+                    ...rateIncrease,
+                    newRate: event.target.value
                   });
                 }
               })}
-              error={errors.businessCode}
-              helperText={errors.businessCode && 'Campo requerido'}
+              error={errors.newRate}
+              helperText={errors.newRate && 'Campo requerido'}
             />
           </Grid>
           <Grid item>
@@ -114,12 +153,11 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
-                    label="Fecha de ingreso"
+                    label="Fecha de efectidad del ajuste"
                     maxDate={moment().format()}
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
-                      calculateAge(newValue);
                     }}
                     renderInput={(params) => (
                       <CssTextField
@@ -127,7 +165,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                         sx={{ width: '100%' }}
                         required
                         size="small"
-                        label={'Fecha de ingreso'}
+                        label={'Fecha de efectidad del ajuste'}
                         placeholder="DD/MM/YYYY"
                         name="admissionDate"
                         error={errors.admissionDate && true}
@@ -144,53 +182,37 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   />
                 )}
               />
-            </LocalizationProvider>
-          </Grid>
-          <Grid item>
-            <CssTextField
-              label="Antiguedad"
-              value={age}
-              size={'small'}
-              InputProps={{ readOnly: true }}
-              fullWidth
-            />
-          </Grid>
-          <Grid item>
-            <CssTextField
-              required
-              sx={{ width: '100%' }}
-              label="Email"
-              variant="outlined"
-              size="small"
-              fullWidth
-              name="businessEmail"
-              {...register('businessEmail', {
-                required: true,
-                onChange: (event) => handleOnChangeEmail(event)
-              })}
-              error={errors.businessEmail || !!errorEmailMessage}
-              helperText={
-                errorEmailMessage ||
-                (errors.businessEmail && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
+              <Grid sx={{ pl: 2, pt: 1 }}>
+                <ListItemIcon>
+                  <AddCircleOutlineIcon
+                    color="info"
+                    onClick={handleAddNumberRateIncrease}
+                    fontSize="small"
+                  />
+                  <Typography
+                    onClick={handleAddNumberRateIncrease}
+                    variant="h9"
+                    sx={{ color: 'info.main', fontSize: 'small' }}
+                  >
+                    Agregar incremento
                   </Typography>
-                ))
-              }
-            />
+                </ListItemIcon>
+              </Grid>
+            </LocalizationProvider>
           </Grid>
         </Grid>
       </Grid>
+
       <Divider orientation="vertical" flexItem></Divider>
       <Grid item xs={5}>
         <Grid container spacing={3} p={2} direction={'column'}>
           <CardMedia
             sx={{
-              width: 300,
-              height: 300,
+              width: 150,
+              height: 250,
               margin: 1
             }}
-            image="prop-0.png"
+            image="prop-01.png"
           />
         </Grid>
       </Grid>
@@ -198,5 +220,5 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   );
 });
 
-RateIncreaseStepSix.displayName = 'CompanyInformation';
+RateIncreaseStepSix.displayName = 'RateIncrease';
 export default RateIncreaseStepSix;

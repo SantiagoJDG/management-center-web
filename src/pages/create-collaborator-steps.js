@@ -15,15 +15,33 @@ import PersonalInformationStepOne from '../components/Collaborators/CreateCollab
 import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
 import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
+import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(4);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(null);
+
   const isStepSkipped = (step) => {
     return skipped.has(step);
+  };
+
+  const isStepOptional = (step) => {
+    return step === 1;
+  };
+
+  const handleSkip = () => {
+    if (!isStepOptional(activeStep)) {
+      throw new Error("You can't skip a step that isn't optional.");
+    }
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped((prevSkipped) => {
+      const newSkipped = new Set(prevSkipped.values());
+      newSkipped.add(activeStep);
+      return newSkipped;
+    });
   };
 
   const handleBack = () => {
@@ -82,6 +100,19 @@ const CreateCollaboratorSteps = () => {
           newCollaboratorId={newCollaboratorId}
         />
       )
+    },
+    {
+      id: 6,
+      title: 'Llena la información de incremento de tarifa',
+      stepName: 'Información de incremento de tarifa',
+      backgroungImg: '/pills-cyan.png',
+      component: (
+        <RateIncreaseStepSix
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
     }
   ];
 
@@ -96,7 +127,7 @@ const CreateCollaboratorSteps = () => {
   };
 
   const handleReset = () => {
-    setActiveStep(0);
+    setActiveStep(4);
   };
 
   const finishedStepsOptions = () => {
@@ -126,6 +157,13 @@ const CreateCollaboratorSteps = () => {
               Volver
             </Typography>
           </Button>
+          {isStepOptional(activeStep) && (
+            <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+              <Typography sx={{ pl: 5, pr: 5 }} color="white">
+                Saltar paso
+              </Typography>
+            </Button>
+          )}
           <Button
             onClick={handleNext}
             variant="outlined"
