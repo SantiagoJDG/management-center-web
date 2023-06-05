@@ -127,7 +127,7 @@ const CreateCollaboratorSteps = () => {
   };
 
   const handleReset = () => {
-    setActiveStep(4);
+    setActiveStep(0);
   };
 
   const finishedStepsOptions = () => {
