@@ -8,9 +8,9 @@ import { useForm, Controller } from 'react-hook-form';
 import moment from 'moment';
 import 'moment/locale/es';
 import { useState, useEffect, forwardRef } from 'react';
-import useEdit from 'hooks/useEdit';
 import { CssTextField } from '../../../styles/formButton';
 import useMessage from 'hooks/useMessage';
+import useCreate from 'hooks/useCreate';
 
 const ContractInformationStepThree = forwardRef((props, ref) => {
   const {
@@ -25,15 +25,25 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   const [contractInformation, setContractInformation] = useState({
     companyId: '',
     officeId: '',
-    type: undefined,
+    typeId: undefined,
     durability: undefined,
     initialDate: '',
     endDate: '',
     expireTime: '',
-    currency: '',
-    salary: ''
+    currencyId: '',
+    baseAmount: ''
   });
-  const [edit] = useEdit('/api/collaborator', contractInformation);
+  // file,
+
+  const [create] = useCreate(
+    `/api/collaborator/${props.newCollaboratorId}/contract`,
+    contractInformation,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  );
 
   const [initialDate, setInitialDate] = useState();
   const [expirationTime, setExpirationTime] = useState('');
@@ -90,22 +100,11 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   }
 
   function handleOffice(office) {
-    handleAutoCompleteValue(
-      office,
-      'contractCofficeId',
-      '/api/hiring/offices',
-      setOffices,
-      offices
-    );
+    handleAutoCompleteValue(office, 'officeId', '/api/hiring/offices', setOffices, offices);
   }
+
   function handleTypeOfContract(type) {
-    handleAutoCompleteValue(
-      type,
-      'typeOfContract',
-      '/api/hiring/types',
-      setContractType,
-      contractType
-    );
+    handleAutoCompleteValue(type, 'typeId', '/api/hiring/types', setContractType, contractType);
   }
   function handleCompanies(office) {
     handleAutoCompleteValue(office, 'companyId', '/api/hiring/companies', setCompanies, companies);
@@ -150,7 +149,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const error = await edit();
+        const error = await create();
         if (error) return;
         handleNewMessage({
           text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
@@ -326,7 +325,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '30%' }}
               label="Moneda"
-              value={contractInformation.currency}
+              value={contractInformation.currencyId}
               InputProps={{
                 readOnly: true
               }}
@@ -338,21 +337,21 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               required
               type="number"
               size="small"
-              name="salary"
+              name="baseAmount"
               placeholder="$0000.00"
               label="Tarifa mensual bruta"
-              {...register('salary', {
+              {...register('baseAmount', {
                 required: true,
                 onChange: (event) => {
                   setContractInformation({
                     ...contractInformation,
-                    salary: event.target.value
+                    baseAmount: event.target.value
                   });
                 }
               })}
-              error={errors.salary && true}
+              error={errors.baseAmount && true}
               helperText={
-                errors.salary && (
+                errors.baseAmount && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
