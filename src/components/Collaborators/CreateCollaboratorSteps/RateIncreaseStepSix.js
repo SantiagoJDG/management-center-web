@@ -7,6 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { CssTextField } from '../../../styles/formButton';
 import useMessage from 'hooks/useMessage';
+import moment from 'moment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 import 'moment/locale/es';
@@ -16,67 +17,35 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   const [rateIncrease, setRateIncrease] = useState({
     admissionDate: '',
     newRate: '',
-    rateIncrement: '',
-    rateIncreasePercentage: '',
-    rateIncreaseIncrement: [
+    rateIncreasePercentages: [
       {
-        rateIncrease: ''
+        rateIncreasePercentage: ''
       }
     ]
   });
   const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, rateIncrease);
-  const [numbeRateIncrease, setNumberRateIncrease] = useState([{ rateIncrease: '' }]);
+  const [numbeRateIncrease, setNumberRateIncrease] = useState([{ rateIncreasePercentage: '' }]);
   const secondTextFieldRef = useRef(null);
-  const [increment, setIncrement] = useState(0);
-  const [percentage, setPercentage] = useState(0);
-  const [nuevaTarifa, setNuevaTarifa] = useState(0);
 
   const handleAddNumberRateIncrease = () => {
-    setNumberRateIncrease([...numbeRateIncrease, { rateIncrease: '' }]);
-  };
-
-  const handleIncrementChange = (event) => {
-    debugger;
-    const newIncrement = parseFloat(event.target.value);
-    setIncrement(newIncrement);
-    setRateIncrease({ ...rateIncrease, rateIncrement: newIncrement });
-    calculateNuevaTarifa(newIncrement, percentage);
-  };
-
-  const handlePercentageChange = (event) => {
-    debugger;
-    const newPercentage = parseFloat(event.target.value);
-    setPercentage(newPercentage);
-    setRateIncrease({ ...rateIncrease, rateIncreasePercentage: newPercentage });
-    calculateNuevaTarifa(increment, newPercentage);
-  };
-
-  const calculateNuevaTarifa = (newIncrement, newPercentage) => {
-    debugger;
-    const nuevaTarifaValue = newIncrement + (newIncrement * newPercentage) / 100;
-    setNuevaTarifa(nuevaTarifaValue.toFixed(2));
-    setRateIncrease({ ...rateIncrease, newRate: nuevaTarifaValue.toFixed(2) });
+    setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
   };
 
   const handleNumbeRateChange = (event, index, key) => {
     const newnumbeRateIncrease = [...numbeRateIncrease];
     newnumbeRateIncrease[index][key] = event.target.value;
 
-    const newIncrement = parseFloat(event.target.value);
-    setIncrement(newIncrement);
-    setRateIncrease({ ...rateIncrease, rateIncreaseIncrement: newIncrement });
-    calculateNuevaTarifa(newIncrement, percentage);
+    if (key === 'areaCode') {
+      const input = event.target.value;
+      const expectedLength = 3;
 
-    const input = event.target.value;
-    const expectedLength = 3;
-
-    if (input.length === expectedLength) {
-      secondTextFieldRef.current.focus();
+      if (input.length === expectedLength) {
+        secondTextFieldRef.current.focus();
+      }
     }
-
     setRateIncrease({
       ...rateIncrease,
-      rateIncreaseIncrement: newnumbeRateIncrease
+      rateIncreasePercentages: newnumbeRateIncrease
     });
   };
 
@@ -128,12 +97,9 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   required
                   id={`number-${index}`}
                   name={`number-${index}`}
-                  label="Incremento"
+                  label="Porcentaje de incremento de tarifa"
                   placeholder="%0.00"
                   type="number"
-                  inputProps={{ min: 1, max: 100 }}
-                  min={1}
-                  max={100}
                   size="small"
                   fullWidth
                   variant="outlined"
@@ -156,38 +122,6 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               </Grid>
             ))}
           </Grid>
-          <Grid item>
-            <CssTextField
-              size="small"
-              label="Porcentaje de incremento de tarifa"
-              type="number"
-              placeholder="$0.00"
-              fullWidth
-              name="rateIncreasePercentage"
-              {...register('rateIncreasePercentage', {
-                required: true,
-                onChange: (event) => handlePercentageChange(event)
-              })}
-              error={errors.rateIncreasePercentage}
-              helperText={errors.rateIncreasePercentage && 'Campo requerido'}
-            />
-          </Grid>
-          <Grid item>
-            <CssTextField
-              size="small"
-              label="Incremento"
-              type="number"
-              placeholder="$0.00"
-              fullWidth
-              name="rateIncrement"
-              {...register('increment', {
-                required: true,
-                onChange: (event) => handleIncrementChange(event)
-              })}
-              error={errors.rateIncrement}
-              helperText={errors.rateIncrement && 'Campo requerido'}
-            />
-          </Grid>
 
           <Grid item>
             <CssTextField
@@ -196,8 +130,16 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               type="number"
               placeholder="$0.00"
               fullWidth
-              value={nuevaTarifa}
               name="newRate"
+              {...register('newRate', {
+                required: true,
+                onChange: (event) => {
+                  setRateIncrease({
+                    ...rateIncrease,
+                    newRate: event.target.value
+                  });
+                }
+              })}
               error={errors.newRate}
               helperText={errors.newRate && 'Campo requerido'}
             />
@@ -220,6 +162,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                         sx={{ width: '100%' }}
                         required
                         size="small"
+                        inputProps={{
+                          min: 1,
+                          max: 100
+                        }}
                         label={'Fecha de efectidad del ajuste'}
                         placeholder="DD/MM/YYYY"
                         name="admissionDate"
