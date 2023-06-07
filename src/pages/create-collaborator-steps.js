@@ -88,7 +88,7 @@ const CreateCollaboratorSteps = () => {
       id: 5,
       title: 'Compensación & Beneficios USD$',
       stepName: 'Información de compensación & Beneficios',
-      backgroungImg: '/pills-cyan.png',
+      backgroungImg: '/pills-cut-right.png',
       component: (
         <BillingInformationStepFive
           ref={formValidate}
