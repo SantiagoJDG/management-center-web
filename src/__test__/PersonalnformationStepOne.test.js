@@ -24,7 +24,7 @@ describe('PersonalInformation', () => {
     await act(async () => {
       render(<PersonalnformationStepOne ref={jest.fn()} />);
     });
-    expect(screen.getByText('Fotografia del Consultor')).toBeInTheDocument();
+    expect(screen.getAllByText('Fotografia del Consultor')[0]).toBeInTheDocument();
   });
 
   it('validateForm method should be executed ', async () => {
