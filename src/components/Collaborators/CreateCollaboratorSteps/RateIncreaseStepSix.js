@@ -7,9 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { CssTextField } from '../../../styles/formButton';
 import useMessage from 'hooks/useMessage';
-import moment from 'moment';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-
 import 'moment/locale/es';
 
 const RateIncreaseStepSix = forwardRef((props, ref) => {
@@ -35,14 +33,6 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     const newnumbeRateIncrease = [...numbeRateIncrease];
     newnumbeRateIncrease[index][key] = event.target.value;
 
-    if (key === 'areaCode') {
-      const input = event.target.value;
-      const expectedLength = 3;
-
-      if (input.length === expectedLength) {
-        secondTextFieldRef.current.focus();
-      }
-    }
     setRateIncrease({
       ...rateIncrease,
       rateIncreasePercentages: newnumbeRateIncrease
@@ -89,7 +79,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   return (
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
       <Grid item xs={5}>
-        <Grid container direction={'column'} spacing={5} p={2}>
+        <Grid container direction={'column'} spacing={4} p={2}>
           <Grid item>
             {numbeRateIncrease.map((Rate, index) => (
               <Grid item key={index}>
@@ -102,6 +92,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   type="number"
                   size="small"
                   fullWidth
+                  inputProps={{
+                    min: 1,
+                    max: 100
+                  }}
                   variant="outlined"
                   inputRef={secondTextFieldRef}
                   value={Rate.number}
@@ -118,7 +112,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                     )
                   }
                 />
-                <Grid sx={{ pl: 2, pt: 2 }}></Grid>
+                <Grid sx={{ pl: 2, pt: 1 }}></Grid>
               </Grid>
             ))}
           </Grid>
@@ -162,10 +156,6 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                         sx={{ width: '100%' }}
                         required
                         size="small"
-                        inputProps={{
-                          min: 1,
-                          max: 100
-                        }}
                         label={'Fecha de efectidad del ajuste'}
                         placeholder="DD/MM/YYYY"
                         name="admissionDate"
@@ -183,27 +173,26 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   />
                 )}
               />
-              <Grid sx={{ pl: 2, pt: 1 }}>
-                <ListItemIcon>
-                  <AddCircleOutlineIcon
-                    color="info"
-                    onClick={handleAddNumberRateIncrease}
-                    fontSize="small"
-                  />
-                  <Typography
-                    onClick={handleAddNumberRateIncrease}
-                    variant="h9"
-                    sx={{ color: 'info.main', fontSize: 'small' }}
-                  >
-                    Agregar incremento
-                  </Typography>
-                </ListItemIcon>
-              </Grid>
             </LocalizationProvider>
+          </Grid>
+          <Grid item>
+            <ListItemIcon>
+              <AddCircleOutlineIcon
+                color="info"
+                onClick={handleAddNumberRateIncrease}
+                fontSize="small"
+              />
+              <Typography
+                onClick={handleAddNumberRateIncrease}
+                variant="h9"
+                sx={{ color: 'info.main', fontSize: 'small' }}
+              >
+                Agregar incremento
+              </Typography>
+            </ListItemIcon>
           </Grid>
         </Grid>
       </Grid>
-
       <Divider orientation="vertical" flexItem></Divider>
       <Grid item xs={5}>
         <Grid container spacing={3} p={2} direction={'column'}>
