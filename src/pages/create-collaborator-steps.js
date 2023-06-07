@@ -86,7 +86,7 @@ const CreateCollaboratorSteps = () => {
     },
     {
       id: 5,
-      title: 'Llena la información de compensación & Beneficios USD$',
+      title: 'Compensación & Beneficios USD$',
       stepName: 'Información de compensación & Beneficios',
       backgroungImg: '/pills-cyan.png',
       component: (
@@ -197,7 +197,7 @@ const CreateCollaboratorSteps = () => {
                       return (
                         <Step key={label.id} {...stepProps}>
                           <StepLabel {...labelProps}>
-                            <Typography variant="body2">
+                            <Typography variant="caption">
                               {index === activeStep ? label.title : ''}
                             </Typography>
                           </StepLabel>
