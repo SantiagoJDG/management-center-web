@@ -82,6 +82,19 @@ const CreateCollaboratorSteps = () => {
           newCollaboratorId={newCollaboratorId}
         />
       )
+    },
+    {
+      id: 8,
+      title: 'Llena la información de identidad consultec',
+      stepName: 'Información de identidad consultec',
+      backgroungImg: '/pills-cyan.png',
+      component: (
+        <PaymentInformationStepFour
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
     }
   ];
 
