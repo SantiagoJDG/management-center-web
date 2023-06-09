@@ -13,7 +13,7 @@ import 'moment/locale/es';
 const RateIncreaseStepSix = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
   const [rateIncrease, setRateIncrease] = useState({
-    admissionDate: '',
+    effectiveDateAdjustment: '',
     newRate: '',
     rateIncreasePercentages: [
       {
@@ -29,13 +29,13 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
   };
 
-  const handleNumbeRateChange = (event, index, key) => {
-    const newnumbeRateIncrease = [...numbeRateIncrease];
-    newnumbeRateIncrease[index][key] = event.target.value;
+  const handleNumberRateChange = (event, index, key) => {
+    const newNumbeRateIncrease = [...numbeRateIncrease];
+    newNumbeRateIncrease[index][key] = event.target.value;
 
     setRateIncrease({
       ...rateIncrease,
-      rateIncreasePercentages: newnumbeRateIncrease
+      rateIncreasePercentages: newNumbeRateIncrease
     });
   };
 
@@ -55,7 +55,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       });
     } else {
       handleNewMessage({
-        text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
+        text: 'Excelente! La Informacion de incremento de tarifa fue creada exitosamente',
         severity: 'success'
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -101,7 +101,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   value={Rate.number}
                   {...register(`number-${index}`, {
                     required: true,
-                    onChange: (event) => handleNumbeRateChange(event, index, 'number')
+                    onChange: (event) => handleNumberRateChange(event, index, 'number')
                   })}
                   error={errors[`number-${index}`]}
                   helperText={
@@ -141,7 +141,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
-                name="admissionDate"
+                name="effectiveDateAdjustment"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
@@ -158,16 +158,16 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                         size="small"
                         label={'Fecha de efectidad del ajuste'}
                         placeholder="DD/MM/YYYY"
-                        name="admissionDate"
-                        error={errors.admissionDate && true}
+                        name="effectiveDateAdjustment"
+                        error={errors.effectiveDateAdjustment && true}
                         helperText={
-                          errors.admissionDate && (
+                          errors.effectiveDateAdjustment && (
                             <Typography variant="caption" color="error">
                               Campo requerido
                             </Typography>
                           )
                         }
-                        {...register('admissionDate', { required: true })}
+                        {...register('effectiveDateAdjustment', { required: true })}
                       />
                     )}
                   />

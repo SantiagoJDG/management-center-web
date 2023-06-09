@@ -28,12 +28,22 @@ const CreateCollaboratorSteps = () => {
     return skipped.has(step);
   };
 
-  const isStepOptional = (step) => {
-    return step === 1;
+  const isStepOptionals = (step) => {
+    switch (step) {
+      case 5:
+        return true;
+      case 6:
+        return true;
+      case 7:
+        return true;
+      case 0:
+        return false;
+      default:
+        return false;
+    }
   };
-
   const handleSkip = () => {
-    if (!isStepOptional(activeStep)) {
+    if (!isStepOptionals(activeStep)) {
       throw new Error("You can't skip a step that isn't optional.");
     }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -102,7 +112,7 @@ const CreateCollaboratorSteps = () => {
       )
     },
     {
-      id: 6,
+      id: 1,
       title: 'Llena la información de incremento de tarifa',
       stepName: 'Información de incremento de tarifa',
       backgroungImg: '/pills-cyan.png',
@@ -127,7 +137,7 @@ const CreateCollaboratorSteps = () => {
   };
 
   const handleReset = () => {
-    setActiveStep(0);
+    setActiveStep(1);
   };
 
   const finishedStepsOptions = () => {
@@ -157,11 +167,15 @@ const CreateCollaboratorSteps = () => {
               Volver
             </Typography>
           </Button>
-          {isStepOptional(activeStep) && (
-            <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
-              <Typography sx={{ pl: 5, pr: 5 }} color="white">
-                Saltar paso
-              </Typography>
+
+          {isStepOptionals(activeStep) && (
+            <Button
+              onClick={handleSkip}
+              variant="outlined"
+              size={'small'}
+              sx={{ borderRadius: 8, mt: 1, ml: 1 }}
+            >
+              <Typography sx={{ pl: 5, pr: 5 }}>Saltar paso</Typography>
             </Button>
           )}
           <Button
