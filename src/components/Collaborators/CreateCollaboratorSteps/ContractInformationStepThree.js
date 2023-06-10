@@ -20,6 +20,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
+
   const [mounted, setMounted] = useState(false);
   const { handleNewMessage } = useMessage();
   const [contractInformation, setContractInformation] = useState({
@@ -394,4 +395,5 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   );
 });
 
+ContractInformationStepThree.displayName = 'ContractInformationStepThree';
 export default ContractInformationStepThree;
