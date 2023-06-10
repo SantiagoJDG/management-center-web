@@ -23,13 +23,12 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   const [mounted, setMounted] = useState(false);
   const { handleNewMessage } = useMessage();
   const [contractInformation, setContractInformation] = useState({
-    companyId: '',
+    companyId: 0,
     officeId: '',
-    typeId: undefined,
-    validityId: undefined,
+    typeId: '',
+    validityId: '',
     initialDate: '',
     endDate: '',
-    expireTime: '',
     currencyId: '',
     baseAmount: ''
   });
@@ -50,12 +49,16 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   const [offices, setOffices] = useState([]);
   const [contractType, setContractType] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [contractValidities, setContractValidities] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
   const [companyErrors, setCompanyErrors] = useState({});
 
-  const getResidenceData = async () => {
+  const getCatalogseData = async () => {
     getDataInformation('/api/hiring/offices', setOffices);
     getDataInformation('/api/hiring/types', setContractType);
     getDataInformation('/api/hiring/companies', setCompanies);
+    getDataInformation('/api/hiring/contract-validities', setContractValidities);
+    getDataInformation('/api/hiring/currencies', setCurrencies);
   };
 
   const getDataInformation = (path, callbackMethod) => {
@@ -103,17 +106,41 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     handleAutoCompleteValue(office, 'officeId', '/api/hiring/offices', setOffices, offices);
   }
 
-  function handleTypeOfContract(type) {
+  function handleContractType(type) {
     handleAutoCompleteValue(type, 'typeId', '/api/hiring/types', setContractType, contractType);
   }
+
   function handleCompanies(office) {
     handleAutoCompleteValue(office, 'companyId', '/api/hiring/companies', setCompanies, companies);
   }
 
-  const handleOnChangeInitialDate = (newValue) => {
-    setContractInformation({ ...contractInformation, initialDate: moment(newValue).format() });
+  function handleContractValidity(validity) {
+    handleAutoCompleteValue(
+      validity,
+      'validityId',
+      '/api/hiring/contract-validity',
+      setContractValidities,
+      contractValidities
+    );
+  }
+
+  function handleCurrency(currency) {
+    handleAutoCompleteValue(
+      currency,
+      'currencyId',
+      '/api/hiring/currency',
+      setCurrencies,
+      currencies
+    );
+  }
+
+  function handleOnChangeInitialDate(newValue) {
+    setContractInformation({
+      ...contractInformation,
+      initialDate: moment(newValue).format('YYYY-MM-DD')
+    });
     setInitialDate(moment(newValue).format());
-  };
+  }
 
   function handleOnChangeEndDate(newValue) {
     setContractInformation({ ...contractInformation, endDate: newValue.format('YYYY-MM-DD') });
@@ -126,7 +153,9 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     if (
       !contractInformation.companyId ||
       !contractInformation.officeId ||
-      !contractInformation.type
+      !contractInformation.typeId ||
+      !contractInformation.validityId ||
+      !contractInformation.currencyId
     ) {
       const newErrors = {
         ...companyErrors,
@@ -136,11 +165,32 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
         officeId: {
           ...(contractInformation.officeId ? {} : { error: true, description: 'Campo requerido' })
         },
-        type: {
-          ...(contractInformation.type ? {} : { error: true, description: 'Campo requerido' })
+        typeId: {
+          ...(contractInformation.typeId ? {} : { error: true, description: 'Campo requerido' })
+        },
+        validityId: {
+          ...(contractInformation.validityId ? {} : { error: true, description: 'Campo requerido' })
+        },
+        currencyId: {
+          ...(contractInformation.currencyId ? {} : { error: true, description: 'Campo requerido' })
         }
       };
       setCompanyErrors(newErrors);
+    }
+  };
+
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion de contratación fué creada exitosamente',
+        severity: 'success'
+      });
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
@@ -149,20 +199,15 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const error = await create();
-        if (error) return;
-        handleNewMessage({
-          text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
-          severity: 'success'
-        });
-        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        const response = await create();
+        afterExecution(response);
       })();
     }
   };
 
   useEffect(() => {
     if (!mounted) {
-      getResidenceData();
+      getCatalogseData();
       setMounted(true);
     }
     ref.current = validateForm;
@@ -184,7 +229,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
           </Grid>
           <Grid item>
             <CustomAutoComplete
-              formError={companyErrors.contractCofficeId}
+              formError={companyErrors.officeId}
               name="officeId"
               label="Oficina de contrato"
               optionList={offices}
@@ -194,37 +239,22 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
           </Grid>
           <Grid item>
             <CustomAutoComplete
-              formError={companyErrors.typeOfContract}
-              name="contractId"
+              formError={companyErrors.typeId}
+              name="typeId"
               label="Tipo de contrato"
               optionList={contractType}
-              elmentCallback={handleTypeOfContract}
+              elmentCallback={handleContractType}
               requiredField={true}
             />
           </Grid>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              required
-              name="contractValidity"
-              size="small"
+            <CustomAutoComplete
+              formError={companyErrors.validityId}
+              name="validityId"
               label="Vigencia del contrato"
-              {...register('contractValidity', {
-                required: true,
-                onChange: (event) =>
-                  setContractInformation({
-                    ...contractInformation,
-                    validityId: event.target.value
-                  })
-              })}
-              error={errors.contractValidity && true}
-              helperText={
-                errors.contractValidity && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
-                  </Typography>
-                )
-              }
+              optionList={contractValidities}
+              elmentCallback={handleContractValidity}
+              requiredField={true}
             />
           </Grid>
           <Grid item>
@@ -322,18 +352,17 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
             />
           </Grid>
           <Grid item sx={{ display: 'flex' }}>
-            <CssTextField
-              sx={{ width: '30%' }}
+            <CustomAutoComplete
+              formError={companyErrors.currencyId}
+              name="typeId"
               label="Moneda"
-              value={contractInformation.currencyId}
-              InputProps={{
-                readOnly: true
-              }}
-              size="small"
-              variant="outlined"
+              optionList={currencies}
+              elmentCallback={handleCurrency}
+              requiredField={true}
             />
+
             <CssTextField
-              sx={{ width: '65%', ml: 1 }}
+              sx={{ ml: 1 }}
               required
               type="number"
               size="small"
@@ -365,5 +394,4 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   );
 });
 
-ContractInformationStepThree.displayName = 'ContractInformationStepThree';
 export default ContractInformationStepThree;
