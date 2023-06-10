@@ -27,8 +27,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     accountNumber: undefined,
     commissionAmount: undefined,
     officePayerId: '',
-    extraterritoriality: false,
-    paymentPeriodicity: ''
+    frequencyId: ''
   });
 
   const [create] = useCreate(
@@ -40,14 +39,17 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       }
     }
   );
+
   const [offices, setOffices] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [frequencies, setFrequencies] = useState([]);
 
   const [paymentErrors, setPaymentErrors] = useState({});
 
   const getCatalogs = async () => {
     getDataInformation('/api/hiring/offices', setOffices);
     getDataInformation('/api/residence/countries', setCountries);
+    getDataInformation('/api/hiring/frequencies', setFrequencies);
   };
 
   async function saveNewItem(paths, newItem) {
@@ -89,6 +91,15 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     handleAutoCompleteValue(office, 'officePayerId', '/api/hiring/offices', setOffices, offices);
   }
 
+  function handleFrequency(frequency) {
+    handleAutoCompleteValue(
+      frequency,
+      'frequencyId',
+      '/api/hiring/frequency',
+      setFrequencies,
+      frequencies
+    );
+  }
   function handleBankCountry(country) {
     setPaymentInformation({
       ...paymentInformation,
@@ -123,19 +134,28 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     }
   };
 
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion de pago fué creada exitosamente',
+        severity: 'success'
+      });
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    }
+  };
+
   const validateForm = () => {
     handleDropdownErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        console.log(paymentInformation);
-        const error = await create();
-        if (error) return;
-        handleNewMessage({
-          text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
-          severity: 'success'
-        });
-        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        const response = await create();
+        afterExecution(response);
       })();
     }
   };
@@ -268,14 +288,13 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       <Grid item xs={5}>
         <Grid container spacing={3} p={2} direction={'column'}>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              size="small"
+            <CustomAutoComplete
+              formError={paymentErrors.frequencyId}
+              name="frequencyId"
               label="Periodicidad de pago"
-              InputProps={{
-                readOnly: true
-              }}
-              variant="outlined"
+              optionList={frequencies}
+              elmentCallback={handleFrequency}
+              requiredField={true}
             />
           </Grid>
         </Grid>
