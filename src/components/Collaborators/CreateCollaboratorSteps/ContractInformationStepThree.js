@@ -26,7 +26,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     companyId: '',
     officeId: '',
     typeId: undefined,
-    durability: undefined,
+    validityId: undefined,
     initialDate: '',
     endDate: '',
     expireTime: '',
@@ -206,20 +206,20 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '100%' }}
               required
-              name="contractDurability"
+              name="contractValidity"
               size="small"
               label="Vigencia del contrato"
-              {...register('contractDurability', {
+              {...register('contractValidity', {
                 required: true,
                 onChange: (event) =>
                   setContractInformation({
                     ...contractInformation,
-                    durability: event.target.value
+                    validityId: event.target.value
                   })
               })}
-              error={errors.contractDurability && true}
+              error={errors.contractValidity && true}
               helperText={
-                errors.contractDurability && (
+                errors.contractValidity && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
