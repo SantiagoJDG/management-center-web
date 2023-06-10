@@ -132,12 +132,12 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
       const newErrors = {
         ...companyErrors,
         companyId: {
-          ...(contractInformation.company ? {} : { error: true, description: 'Campo requerido' })
+          ...(contractInformation.companyId ? {} : { error: true, description: 'Campo requerido' })
         },
-        contractCofficeId: {
-          ...(contractInformation.offices ? {} : { error: true, description: 'Campo requerido' })
+        officeId: {
+          ...(contractInformation.officeId ? {} : { error: true, description: 'Campo requerido' })
         },
-        typeOfContract: {
+        type: {
           ...(contractInformation.type ? {} : { error: true, description: 'Campo requerido' })
         }
       };
@@ -366,5 +366,5 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   );
 });
 
-ContractInformationStepThree.displayName = 'PersonalInformation';
+ContractInformationStepThree.displayName = 'ContractInformationStepThree';
 export default ContractInformationStepThree;

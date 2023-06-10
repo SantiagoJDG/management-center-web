@@ -15,6 +15,7 @@ import PersonalInformationStepOne from '../components/Collaborators/CreateCollab
 import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
 import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
+import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
@@ -77,6 +78,19 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-cyan.png',
       component: (
         <PaymentInformationStepFour
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 5,
+      title: 'Compensación & Beneficios USD$',
+      stepName: 'Información de compensación & Beneficios',
+      backgroungImg: '/pills-cut-right.png',
+      component: (
+        <BillingInformationStepFive
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
@@ -183,7 +197,7 @@ const CreateCollaboratorSteps = () => {
                       return (
                         <Step key={label.id} {...stepProps}>
                           <StepLabel {...labelProps}>
-                            <Typography variant="body2">
+                            <Typography variant="caption">
                               {index === activeStep ? label.title : ''}
                             </Typography>
                           </StepLabel>
