@@ -83,6 +83,19 @@ const CreateCollaboratorSteps = () => {
           newCollaboratorId={newCollaboratorId}
         />
       )
+    },
+    {
+      id: 5,
+      title: 'Compensación & Beneficios USD$',
+      stepName: 'Información de compensación & Beneficios',
+      backgroungImg: '/pills-cut-right.png',
+      component: (
+        <BillingInformationStepFive
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
     }
   ];
 
