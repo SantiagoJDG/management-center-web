@@ -126,7 +126,7 @@ const CreateCollaboratorSteps = () => {
       )
     },
     {
-      id: 1,
+      id: 6,
       title: 'Llena la información de incremento de tarifa',
       stepName: 'Información de incremento de tarifa',
       backgroungImg: '/pills-cyan.png',
