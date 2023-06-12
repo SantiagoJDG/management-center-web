@@ -115,9 +115,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
   }
 
   const validateForm = () => {
-    console.log(organizationalStructureInformation);
     handleDropdownErrors();
-    console.log(formErrors);
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
@@ -127,8 +125,6 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
   };
 
   const handleDropdownErrors = () => {
-    console.log(organizationalStructureInformation);
-    console.log(!organizationalStructureInformation.technologies.length);
     if (
       !organizationalStructureInformation.supervisor ||
       !organizationalStructureInformation.profiles ||
