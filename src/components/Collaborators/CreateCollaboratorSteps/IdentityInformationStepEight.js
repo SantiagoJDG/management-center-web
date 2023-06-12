@@ -7,7 +7,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
-import moment from 'moment';
 import 'moment/locale/es';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -57,12 +56,10 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     }
   });
 
-  const [initialDate, setInitialDate] = useState();
   const [seniority, setSeniority] = useState([]);
   const [readliness, setReadliness] = useState([]);
   const [residencyErrors, setResidencyErrors] = useState({});
-  const [errorEmailMessage, setEmailErrorMessage] = useState('');
-  const [photo, setPhoto] = useState();
+  const [file, setFile] = useState();
   const secondTextFieldRef = useRef(null);
 
   const getResidenceData = async () => {
@@ -92,7 +89,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
 
   const handleFileChange = (newFile) => {
     setnewIdentity({ ...newIdentity, file: newFile });
-    setPhoto(newFile ? URL.createObjectURL(newFile) : '');
+    setFile(newFile ? URL.createObjectURL(newFile) : '');
   };
 
   async function handleAutoCompleteValue(
@@ -136,26 +133,6 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       readliness
     );
   }
-
-
-
-  const handleAddNationality = () => {
-    setNationalities([...nationalities, { docAdress: '', countryId: 1 }]);
-  };
-
-  const handleNationalityChange = (event, index) => {
-    const newNationalities = [...nationalities];
-    newNationalities[index] = {
-      ...newNationalities[index],
-      docAdress: event.target.value,
-      countryId: 1
-    };
-    setNationalities(newNationalities);
-    setnewIdentity({
-      ...newIdentity,
-      nationalities: newNationalities
-    });
-  };
 
   const handleResidencyErrors = () => {
     if (!newIdentity.residency.countryId || !newIdentity.residency.cityId) {
@@ -232,37 +209,36 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
               requiredField={true}
             />
           </Grid>
-
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
-                name="birthdate"
+                name="startSesiondate"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
-                    label="Fecha de nacimiento"
+                    label="Fecha de comienzo sesión"
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
-                      handleOnChangeDate(newValue);
                     }}
                     renderInput={(params) => (
                       <CssTextField
                         {...params}
-                        sx={{ width: '77%' }}
+                        sx={{ width: '100%' }}
                         required
-                        label={'Fecha de nacimiento'}
+                        size="small"
+                        label={'Fecha de comienzo sesión'}
                         placeholder="DD/MM/YYYY"
-                        name="birthdate"
-                        error={errors.birthdate && true}
+                        name="startSesiondate"
+                        error={errors.startSesiondate && true}
                         helperText={
-                          errors.birthdate && (
+                          errors.startSesiondate && (
                             <Typography variant="caption" color="error">
                               Campo requerido
                             </Typography>
                           )
                         }
-                        {...register('birthdate', { required: true })}
+                        {...register('startSesiondate', { required: true })}
                       />
                     )}
                   />
@@ -273,33 +249,33 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
-                name="birthdate"
+                name="endSesiondate"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
-                    label="Fecha de nacimiento"
+                    label="Fecha final de sesión"
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
-                      handleOnChangeDate(newValue);
                     }}
                     renderInput={(params) => (
                       <CssTextField
                         {...params}
-                        sx={{ width: '77%' }}
+                        sx={{ width: '100%' }}
                         required
-                        label={'Fecha de nacimiento'}
+                        size="small"
+                        label={'Fecha final de sesión'}
                         placeholder="DD/MM/YYYY"
-                        name="birthdate"
-                        error={errors.birthdate && true}
+                        name="endSesiondate"
+                        error={errors.endSesiondate && true}
                         helperText={
-                          errors.birthdate && (
+                          errors.endSesiondate && (
                             <Typography variant="caption" color="error">
                               Campo requerido
                             </Typography>
                           )
                         }
-                        {...register('birthdate', { required: true })}
+                        {...register('endSesiondate', { required: true })}
                       />
                     )}
                   />
@@ -317,32 +293,22 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               required
               size="small"
-              name="lastName"
-              placeholder="Apellido completo del Consultor"
-              label="Apellido del Consultor"
-              {...register('lastName', {
+              name="responsibleLeader"
+              placeholder="Lider Responsable"
+              label="Lider Responsable"
+              {...register('responsibleLeader', {
                 required: true,
                 onChange: (event) =>
-                  setnewIdentity({ ...newIdentity, lastName: event.target.value })
+                  setnewIdentity({ ...newIdentity, responsibleLeader: event.target.value })
               })}
-              error={errors.lastName && true}
+              error={errors.responsibleLeader && true}
               helperText={
-                errors.lastName && (
+                errors.responsibleLeader && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
                 )
               }
-            />
-          </Grid>
-          <Grid item sx={{ width: '100%' }}>
-            <CustomAutoComplete
-              formError={residencyErrors.cityId}
-              name="cityId"
-              label="Ciudad de residencia"
-              optionList={states}
-              elmentCallback={handleState}
-              requiredField={true}
             />
           </Grid>
         </Grid>
