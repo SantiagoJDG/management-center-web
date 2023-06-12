@@ -10,33 +10,26 @@ import { useRouter } from 'next/router';
 import useAuth from 'hooks/useAuth';
 
 export default function Home() {
-  const { userData, userToken, waitingUser } = useAuth();
+  const { userToken, waitingUser } = useAuth();
 
   const router = useRouter();
 
   const pagesList = [
-    { name: 'Home', path: '/', view: ['administrador'] },
+    {
+      name: 'Agregar nuevo colaborador',
+      path: '/create-collaborator-steps',
+      view: ['administrador']
+    },
     {
       name: 'Lista Consultores',
       path: '/collaborators',
       view: ['administrador']
     },
     {
-      name: 'Mi Ficha',
-      path: `/collaborator?id=${userData ? userData.id : ''}`,
-      view: ['administrador']
-    },
-    {
       name: 'Planificacion Estratégica',
       path: '/planner',
       view: ['administrador']
-    },
-    {
-      name: 'Agregar nuevo colaborador',
-      path: '/create-collaborator-steps',
-      view: ['administrador']
-    },
-    { name: 'Nueva Ficha', path: '/new-collaborator', view: ['administrador'] }
+    }
   ];
 
   const getIcon = (path) => {
@@ -54,21 +47,18 @@ export default function Home() {
             <GroupsIcon />
           </ListItemIcon>
         );
-
       case '/planner':
         return (
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
         );
-
       case '/create-collaborator':
         return (
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
         );
-
       default:
         return (
           <ListItemIcon>
@@ -90,7 +80,7 @@ export default function Home() {
     }
   }, [userToken, waitingUser]);
 
-  const menuOptions = (
+  return (
     <>
       <List data-testid="result">
         {pagesList.map((page, index) => (
@@ -104,6 +94,4 @@ export default function Home() {
       </List>
     </>
   );
-
-  return <>{menuOptions}</>;
 }
