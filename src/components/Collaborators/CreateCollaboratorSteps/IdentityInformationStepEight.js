@@ -193,7 +193,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
             <CustomAutoComplete
               formError={residencyErrors.countryId}
               name="countryId"
-              label="Antigüedad "
+              label="Seniority en la empresa"
               optionList={seniority}
               elmentCallback={handleSeniority}
               requiredField={true}
@@ -203,7 +203,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
             <CustomAutoComplete
               formError={residencyErrors.cityId}
               name="cityId"
-              label="Preparación"
+              label="Seleccione un readliness"
               optionList={readliness}
               elmentCallback={handleReadliness}
               requiredField={true}
@@ -282,6 +282,29 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
                 )}
               />
             </LocalizationProvider>
+          </Grid>
+          <Grid item>
+            <CssTextField
+              sx={{ width: '100%' }}
+              required
+              size="small"
+              name="responsibleLeader"
+              placeholder="Lider Responsable"
+              label="Lider Responsable"
+              {...register('responsibleLeader', {
+                required: true,
+                onChange: (event) =>
+                  setnewIdentity({ ...newIdentity, responsibleLeader: event.target.value })
+              })}
+              error={errors.responsibleLeader && true}
+              helperText={
+                errors.responsibleLeader && (
+                  <Typography variant="caption" color="error">
+                    Campo requerido
+                  </Typography>
+                )
+              }
+            />
           </Grid>
         </Grid>
       </Grid>
