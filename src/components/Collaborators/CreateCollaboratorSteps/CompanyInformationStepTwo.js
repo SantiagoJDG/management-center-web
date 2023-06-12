@@ -198,5 +198,5 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   );
 });
 
-CompanyInformationStepTwo.displayName = 'CompanyInformation';
+CompanyInformationStepTwo.displayName = 'CompanyInformationStepTwo';
 export default CompanyInformationStepTwo;

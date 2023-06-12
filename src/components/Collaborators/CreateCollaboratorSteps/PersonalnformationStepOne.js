@@ -231,6 +231,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const validateForm = () => {
     handleResidencyErrors();
     const isValid = trigger();
+    console.log(newCollaborator);
     if (isValid) {
       handleSubmit(async () => {
         const execution = await create();
@@ -570,7 +571,5 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     </Grid>
   );
 });
-
-PersonalInformationStepOne.displayName = 'PersonalInformation';
-
+PersonalInformationStepOne.displayName = 'PersonalInformationStepOne';
 export default PersonalInformationStepOne;
