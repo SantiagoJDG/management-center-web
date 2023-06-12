@@ -1,12 +1,14 @@
-import { Grid, Divider, Typography } from '@mui/material';
-import CustomAutoComplete from 'components/CustomAutoComplete';
-import { getAxiosInstance } from 'utils/axiosClient';
-import { useForm } from 'react-hook-form';
+import { Divider, Grid, Typography } from '@mui/material';
 import 'moment/locale/es';
-import { useState, useEffect, forwardRef } from 'react';
-import useEdit from 'hooks/useEdit';
+import { forwardRef, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { getAxiosInstance } from 'utils/axiosClient';
 import { CssTextField } from '../../../styles/formButton';
+import CustomAutoComplete from 'components/CustomAutoComplete';
+
+import { getDataInformation } from '../../../utils/dataUtils';
 import useMessage from 'hooks/useMessage';
+import useCreate from 'hooks/useCreate';
 
 const ContractInformationStepFour = forwardRef((props, ref) => {
   const {
@@ -15,38 +17,39 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
+
   const [mounted, setMounted] = useState(false);
   const { handleNewMessage } = useMessage();
+
   const [paymentInformation, setPaymentInformation] = useState({
-    bankName: '',
-    countryBank: '',
+    bankId: '',
+    bankCountryId: 0,
     accountNumber: undefined,
-    stimatedBankTransferBill: undefined,
-    officePayer: '',
-    extraterritoriality: '',
-    paymentPeriodicity: ''
+    commissionAmount: undefined,
+    officePayerId: '',
+    frequencyId: ''
   });
-  const [edit] = useEdit('/api/collaborator', paymentInformation);
+
+  const [create] = useCreate(
+    `/api/collaborator/${props.newCollaboratorId}/payment-information`,
+    paymentInformation,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  );
 
   const [offices, setOffices] = useState([]);
   const [countries, setCountries] = useState([]);
+  const [frequencies, setFrequencies] = useState([]);
 
   const [paymentErrors, setPaymentErrors] = useState({});
 
-  const getResidenceData = async () => {
+  const getCatalogs = async () => {
     getDataInformation('/api/hiring/offices', setOffices);
     getDataInformation('/api/residence/countries', setCountries);
-  };
-
-  const getDataInformation = (path, callbackMethod) => {
-    getAxiosInstance()
-      .get(path)
-      .then((response) => {
-        callbackMethod(response.data);
-      })
-      .catch((error) => {
-        console.error(`Error while get Data from ${path}`, error);
-      });
+    getDataInformation('/api/hiring/frequencies', setFrequencies);
   };
 
   async function saveNewItem(paths, newItem) {
@@ -80,37 +83,69 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleOffice(office) {
-    handleAutoCompleteValue(office, 'officePayer', '/api/hiring/offices', setOffices, offices);
     setPaymentInformation({
-      extraterritoriality:
-        paymentInformation.countryBank != paymentInformation.officePayer ? 'Si' : 'No'
+      ...paymentInformation,
+      extraterritoriality: paymentInformation.bankCountryId != office.id
     });
+
+    handleAutoCompleteValue(office, 'officePayerId', '/api/hiring/offices', setOffices, offices);
   }
-  function handleCountry(country) {
+
+  function handleFrequency(frequency) {
+    handleAutoCompleteValue(
+      frequency,
+      'frequencyId',
+      '/api/hiring/frequency',
+      setFrequencies,
+      frequencies
+    );
+  }
+  function handleBankCountry(country) {
+    setPaymentInformation({
+      ...paymentInformation,
+      extraterritoriality: country.id != paymentInformation.officePayerId
+    });
+
     handleAutoCompleteValue(
       country,
-      'countryBank',
+      'bankCountryId',
       '/api/residence/countries',
       setCountries,
       countries
     );
-    setPaymentInformation({
-      extraterritoriality: 'Si'
-    });
   }
 
   const handleDropdownErrors = () => {
     if (!paymentInformation.companyId || !paymentInformation.officeId || !paymentInformation.type) {
       const newErrors = {
         ...paymentErrors,
-        officePayer: {
-          ...(paymentInformation.officePayer ? {} : { error: true, description: 'Campo requerido' })
+        officePayerId: {
+          ...(paymentInformation.officePayerId
+            ? {}
+            : { error: true, description: 'Campo requerido' })
         },
-        countryBank: {
-          ...(paymentInformation.countryBank ? {} : { error: true, description: 'Campo requerido' })
+        bankCountryId: {
+          ...(paymentInformation.bankCountryId
+            ? {}
+            : { error: true, description: 'Campo requerido' })
         }
       };
       setPaymentErrors(newErrors);
+    }
+  };
+
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion de pago fué creada exitosamente',
+        severity: 'success'
+      });
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
   };
 
@@ -119,20 +154,15 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const error = await edit();
-        if (error) return;
-        handleNewMessage({
-          text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
-          severity: 'success'
-        });
-        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        const response = await create();
+        afterExecution(response);
       })();
     }
   };
 
   useEffect(() => {
     if (!mounted) {
-      getResidenceData();
+      getCatalogs();
       setMounted(true);
     }
     ref.current = validateForm;
@@ -146,21 +176,22 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '100%' }}
               required
-              name="bankName"
+              name="bankId"
               size="small"
               label="Banco / Medio de pago"
               placeholder="Escribe tu medio de pago"
-              {...register('bankName', {
+              {...register('bankId', {
                 required: true,
-                onChange: (event) =>
+                onChange: (event) => {
                   setPaymentInformation({
                     ...paymentInformation,
-                    bankName: event.target.value
-                  })
+                    bankId: event.target.value
+                  });
+                }
               })}
-              error={errors.bankName && true}
+              error={errors.bankId && true}
               helperText={
-                errors.bankName && (
+                errors.bankId && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
@@ -170,11 +201,11 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
           </Grid>
           <Grid item>
             <CustomAutoComplete
-              formError={paymentErrors.countryBank}
-              name="countryId"
+              formError={paymentErrors.bankCountryId}
+              name="bankCountryId"
               label="Pais de entidad bancaria"
               optionList={countries}
-              elmentCallback={handleCountry}
+              elmentCallback={handleBankCountry}
               requiredField={true}
             />
           </Grid>
@@ -207,21 +238,21 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '100%' }}
               required
-              name="stimatedBankTransferBill"
+              name="commissionAmount"
               size="small"
               type={'number'}
               label="Estimado comision bancaria USD$"
-              {...register('stimatedBankTransferBill', {
+              {...register('commissionAmount', {
                 required: true,
                 onChange: (event) =>
                   setPaymentInformation({
                     ...paymentInformation,
-                    stimatedBankTransferBill: event.target.value
+                    commissionAmount: event.target.value
                   })
               })}
-              error={errors.stimatedBankTransferBill && true}
+              error={errors.commissionAmount && true}
               helperText={
-                errors.stimatedBankTransferBill && (
+                errors.commissionAmount && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
@@ -231,7 +262,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
           </Grid>
           <Grid item>
             <CustomAutoComplete
-              formError={paymentErrors.officePayer}
+              formError={paymentErrors.officePayerId}
               name="officeId"
               label="Oficina que fondea al recurso"
               optionList={offices}
@@ -243,7 +274,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '100%' }}
               label="Extraterritorialidad"
-              value={paymentInformation.extraterritoriality}
+              value={paymentInformation.extraterritoriality ? 'Si' : 'No'}
               InputProps={{
                 readOnly: true
               }}
@@ -257,14 +288,13 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       <Grid item xs={5}>
         <Grid container spacing={3} p={2} direction={'column'}>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              size="small"
+            <CustomAutoComplete
+              formError={paymentErrors.frequencyId}
+              name="frequencyId"
               label="Periodicidad de pago"
-              InputProps={{
-                readOnly: true
-              }}
-              variant="outlined"
+              optionList={frequencies}
+              elmentCallback={handleFrequency}
+              requiredField={true}
             />
           </Grid>
         </Grid>
