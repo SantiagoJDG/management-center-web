@@ -231,7 +231,6 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const validateForm = () => {
     handleResidencyErrors();
     const isValid = trigger();
-    console.log(newCollaborator);
     if (isValid) {
       handleSubmit(async () => {
         const execution = await create();

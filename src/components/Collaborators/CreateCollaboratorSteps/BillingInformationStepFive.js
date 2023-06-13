@@ -122,7 +122,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
         const error = await edit();
         if (error) return;
         handleNewMessage({
-          text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
+          text: 'Excelente! La Informacion de pago fué creada exitosamente',
           severity: 'success'
         });
         props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
