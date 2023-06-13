@@ -36,7 +36,6 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     newNumbeRateIncrease[index][key] = parseInt(event.target.value);
     let sum = 0;
     newNumbeRateIncrease.forEach((item) => {
-      console.log(item);
       sum += item.number;
     });
 
@@ -47,9 +46,9 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       rateIncreasePercentages: newNumbeRateIncrease
     });
   };
-  const calculateIncrement = (porcentaje) => {
+  const calculateIncrement = (percentage) => {
     const response = NewNumberRate;
-    const newValue = (response * porcentaje) / 100;
+    const newValue = (response * percentage) / 100;
     const result = response + newValue;
     setNewNumberRate(result);
     return setRateIncrease({ ...rateIncrease, newRate: result });
@@ -87,7 +86,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       })();
     }
   };
-  const fetchTarifa = async () => {
+  const fetchRate = async () => {
     try {
       const response = await fetch('API_ENDPOINT');
       const data = await response.json();
@@ -98,7 +97,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     }
   };
   useEffect(() => {
-    fetchTarifa();
+    fetchRate();
     ref.current = validateForm;
   }, [rateIncrease]);
 
