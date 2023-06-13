@@ -146,12 +146,12 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-orange.png',
       component: (
         <OrganizationalStructureStepSeven
-        ref={formValidate}
-        setActiveStep={setActiveStep}
-        newCollaboratorId={newCollaboratorId}
-      />
-    )
-  },
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    }
   ];
 
   const handleNext = () => {
