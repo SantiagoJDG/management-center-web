@@ -21,8 +21,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       }
     ]
   });
+
   const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, rateIncrease);
   const [numbeRateIncrease, setNumberRateIncrease] = useState([{ rateIncreasePercentage: '' }]);
+  const [NewNumberRate, setNewNumberRate] = useState();
   const secondTextFieldRef = useRef(null);
 
   const handleAddNumberRateIncrease = () => {
@@ -31,12 +33,26 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
 
   const handleNumberRateChange = (event, index, key) => {
     const newNumbeRateIncrease = [...numbeRateIncrease];
-    newNumbeRateIncrease[index][key] = event.target.value;
+    newNumbeRateIncrease[index][key] = parseInt(event.target.value);
+    let sum = 0;
+    newNumbeRateIncrease.forEach((item) => {
+      console.log(item);
+      sum += item.number;
+    });
+
+    calculateIncrement(sum);
 
     setRateIncrease({
       ...rateIncrease,
       rateIncreasePercentages: newNumbeRateIncrease
     });
+  };
+  const calculateIncrement = (porcentaje) => {
+    const response = NewNumberRate;
+    const newValue = (response * porcentaje) / 100;
+    const result = response + newValue;
+    setNewNumberRate(result);
+    return setRateIncrease({ ...rateIncrease, newRate: result });
   };
 
   const {
@@ -71,8 +87,18 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       })();
     }
   };
-
+  const fetchTarifa = async () => {
+    try {
+      const response = await fetch('API_ENDPOINT');
+      const data = await response.json();
+      const rate = data.rate;
+      setNewNumberRate(rate);
+    } catch (error) {
+      console.log('Error al obtener la tarifa:', error);
+    }
+  };
   useEffect(() => {
+    fetchTarifa();
     ref.current = validateForm;
   }, [rateIncrease]);
 
@@ -101,7 +127,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   value={Rate.number}
                   {...register(`number-${index}`, {
                     required: true,
-                    onChange: (event) => handleNumberRateChange(event, index, 'number')
+                    onBlur: (event) => handleNumberRateChange(event, index, 'number')
                   })}
                   error={errors[`number-${index}`]}
                   helperText={
@@ -125,15 +151,8 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               placeholder="$0.00"
               fullWidth
               name="newRate"
-              {...register('newRate', {
-                required: true,
-                onChange: (event) => {
-                  setRateIncrease({
-                    ...rateIncrease,
-                    newRate: event.target.value
-                  });
-                }
-              })}
+              value={NewNumberRate}
+              readOnly
               error={errors.newRate}
               helperText={errors.newRate && 'Campo requerido'}
             />
