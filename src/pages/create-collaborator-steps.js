@@ -16,6 +16,7 @@ import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaborat
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
 import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
 import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
+import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
 import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
 import { useRef, useState } from 'react';
 
@@ -132,6 +133,19 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-cyan.png',
       component: (
         <RateIncreaseStepSix
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 7,
+      title: 'Estructura organizacional',
+      stepName: 'Informacion de estructura organizacional',
+      backgroungImg: '/pills-orange.png',
+      component: (
+        <OrganizationalStructureStepSeven
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
