@@ -1,17 +1,19 @@
-import { useState, forwardRef, useRef, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Grid, Typography, ListItemIcon, Divider, CardMedia } from '@mui/material';
-import useEdit from 'hooks/useEdit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { CardMedia, Divider, Grid, ListItemIcon, Typography } from '@mui/material';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { CssTextField } from '../../../styles/formButton';
+import useEdit from 'hooks/useEdit';
 import useMessage from 'hooks/useMessage';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import 'moment/locale/es';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { CssTextField } from '../../../styles/formButton';
+import { getDataInformation } from '../../../utils/dataUtils';
 
 const RateIncreaseStepSix = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
+
   const [rateIncrease, setRateIncrease] = useState({
     effectiveDateAdjustment: '',
     newRate: '',
@@ -22,9 +24,15 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     ]
   });
 
-  const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, rateIncrease);
+  const [create] = useEdit(
+    `/api/collaborator/${props.newCollaboratorId}/contract/fare_increase`,
+    rateIncrease
+  );
+
   const [numbeRateIncrease, setNumberRateIncrease] = useState([{ rateIncreasePercentage: '' }]);
-  const [NewNumberRate, setNewNumberRate] = useState();
+  const [newBaseAmount, setNewBaseAmount] = useState();
+  const [collaboratorContract, setCollaboratorContract] = useState();
+
   const secondTextFieldRef = useRef(null);
 
   const handleAddNumberRateIncrease = () => {
@@ -32,26 +40,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   };
 
   const handleNumberRateChange = (event, index, key) => {
-    const newNumbeRateIncrease = [...numbeRateIncrease];
-    newNumbeRateIncrease[index][key] = parseInt(event.target.value);
-    let sum = 0;
-    newNumbeRateIncrease.forEach((item) => {
-      sum += item.number;
-    });
+    const percentageValue = (collaboratorContract.baseAmount * parseInt(event.target.value)) / 100;
+    const newBaseAmount = collaboratorContract.baseAmount + percentageValue;
 
-    calculateIncrement(sum);
-
-    setRateIncrease({
-      ...rateIncrease,
-      rateIncreasePercentages: newNumbeRateIncrease
-    });
-  };
-  const calculateIncrement = (percentage) => {
-    const response = NewNumberRate;
-    const newValue = (response * percentage) / 100;
-    const result = response + newValue;
-    setNewNumberRate(result);
-    return setRateIncrease({ ...rateIncrease, newRate: result });
+    setNewBaseAmount(newBaseAmount);
   };
 
   const {
@@ -81,23 +73,21 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const execution = await edit();
+        const execution = await create();
         afterExecution(execution);
       })();
     }
   };
-  const fetchRate = async () => {
-    try {
-      const response = await fetch('API_ENDPOINT');
-      const data = await response.json();
-      const rate = data.rate;
-      setNewNumberRate(rate);
-    } catch (error) {
-      console.log('Error al obtener la tarifa:', error);
-    }
+
+  const getCollaboratorContract = async () => {
+    getDataInformation(
+      `/api/collaborator/${props.newCollaboratorId}/contract`,
+      setCollaboratorContract
+    );
   };
+
   useEffect(() => {
-    fetchRate();
+    getCollaboratorContract();
     ref.current = validateForm;
   }, [rateIncrease]);
 
@@ -150,10 +140,8 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               placeholder="$0.00"
               fullWidth
               name="newRate"
-              value={NewNumberRate}
+              value={newBaseAmount}
               readOnly
-              error={errors.newRate}
-              helperText={errors.newRate && 'Campo requerido'}
             />
           </Grid>
           <Grid item>
