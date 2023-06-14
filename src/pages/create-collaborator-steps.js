@@ -154,7 +154,7 @@ const CreateCollaboratorSteps = () => {
       )
     },
     {
-      id: 6,
+      id: 8,
       title: 'Identidad Consultec',
       stepName: 'Información de Identidad Consultec',
       backgroungImg: '/pills-cut-right.png',
