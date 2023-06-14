@@ -16,6 +16,8 @@ import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaborat
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
 import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
 import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
+import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
+import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
 import IdentityInformationStepEight from 'components/Collaborators/CreateCollaboratorSteps/IdentityInformationStepEight';
 import { useRef, useState } from 'react';
 
@@ -24,8 +26,35 @@ const CreateCollaboratorSteps = () => {
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(null);
+
   const isStepSkipped = (step) => {
     return skipped.has(step);
+  };
+
+  const isStepOptionals = (step) => {
+    switch (step) {
+      case 5:
+        return true;
+      case 6:
+        return true;
+      case 7:
+        return true;
+      case 0:
+        return false;
+      default:
+        return false;
+    }
+  };
+  const handleSkip = () => {
+    if (!isStepOptionals(activeStep)) {
+      throw new Error("You can't skip a step that isn't optional.");
+    }
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped((prevSkipped) => {
+      const newSkipped = new Set(prevSkipped.values());
+      newSkipped.add(activeStep);
+      return newSkipped;
+    });
   };
 
   const handleBack = () => {
@@ -100,6 +129,32 @@ const CreateCollaboratorSteps = () => {
     },
     {
       id: 6,
+      title: 'Llena la información de incremento de tarifa',
+      stepName: 'Información de incremento de tarifa',
+      backgroungImg: '/pills-cyan.png',
+      component: (
+        <RateIncreaseStepSix
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 7,
+      title: 'Estructura organizacional',
+      stepName: 'Informacion de estructura organizacional',
+      backgroungImg: '/pills-orange.png',
+      component: (
+        <OrganizationalStructureStepSeven
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 6,
       title: 'Identidad Consultec',
       stepName: 'Información de Identidad Consultec',
       backgroungImg: '/pills-cut-right.png',
@@ -124,7 +179,7 @@ const CreateCollaboratorSteps = () => {
   };
 
   const handleReset = () => {
-    setActiveStep(0);
+    setActiveStep(1);
   };
 
   const finishedStepsOptions = () => {
@@ -154,6 +209,17 @@ const CreateCollaboratorSteps = () => {
               Volver
             </Typography>
           </Button>
+
+          {isStepOptionals(activeStep) && (
+            <Button
+              onClick={handleSkip}
+              variant="outlined"
+              size={'small'}
+              sx={{ borderRadius: 8, mt: 1, ml: 1 }}
+            >
+              <Typography sx={{ pl: 5, pr: 5 }}>Saltar paso</Typography>
+            </Button>
+          )}
           <Button
             onClick={handleNext}
             variant="outlined"
