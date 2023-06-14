@@ -123,7 +123,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     const newSeniorities = { ...newIdentity.seniorities, [elementName]: selectedValue.id };
     setnewIdentity({
       ...newIdentity,
-      residency: newSeniorities
+      seniority: newSeniorities
     });
 
     setRolledUpErrors({ ...rolledUpErrors, [elementName]: { error: false, description: '' } });
