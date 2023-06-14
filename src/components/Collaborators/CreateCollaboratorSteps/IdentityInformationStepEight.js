@@ -1,6 +1,12 @@
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import HailRoundedIcon from '@mui/icons-material/HailRounded';
-import { Avatar, Divider, Grid, ListItemIcon, Typography } from '@mui/material';
+import {
+  Divider,
+  MenuItem,
+  FormHelperText,
+  FormControl,
+  InputLabel,
+  Grid,
+  Typography
+} from '@mui/material';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -8,10 +14,18 @@ import CustomAutoComplete from 'components/CustomAutoComplete';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
 import 'moment/locale/es';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getAxiosInstance } from 'utils/axiosClient';
-import { CssMuiFileInput, CssTextField } from '../../../styles/formButton';
+import { CssMuiFileInput, CssTextField, CssSelectInput } from '../../../styles/formButton';
+
+const listRollUp = [
+  { id: 1, name: 'Programa de pasantía' },
+  { id: 2, name: 'Facilitador AC' },
+  { id: 3, name: 'Programa de Consultor Senior' },
+  { id: 4, name: 'Evaluador técnico de talentos' },
+  { id: 5, name: 'Programa de referidos' }
+];
 
 const IdentityInformationStepEight = forwardRef((props, ref) => {
   const {
@@ -42,29 +56,23 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
         seniorityId: undefined
       }
     ],
-    rollingDevelopmentProgram: [
-      {
-        name: '',
-        seniorityId: undefined
-      }
-    ]
+    rollingDevelopmentProgram: ''
   });
 
-  const [create] = useCreate('/api/collaborator', newIdentity, {
+  const [create] = useCreate('/api/consultec-identity', newIdentity, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
   });
 
   const [seniority, setSeniority] = useState([]);
-  const [readliness, setReadliness] = useState([]);
-  const [residencyErrors, setResidencyErrors] = useState({});
-  const [file, setFile] = useState();
-  const secondTextFieldRef = useRef(null);
+  const [readiness, setReadiness] = useState([]);
+  const [rolledUp, setRolledUp] = useState('');
+  const [rolledUpErrors, setRolledUpErrors] = useState({});
 
-  const getResidenceData = async () => {
+  const getConsultecIdentityData = async () => {
     getDataInformation('/api/consultec-identity/seniorities', setSeniority);
-    getDataInformation('/api/consultec-identity/readiness', setReadliness);
+    getDataInformation('/api/consultec-identity/readiness', setReadiness);
   };
 
   const getDataInformation = (path, callbackMethod) => {
@@ -87,9 +95,16 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     }
   }
 
+  const handleSelectValue = (selectedValue, elementName) => {
+    if (!selectedValue) return;
+    setnewIdentity({
+      ...newIdentity,
+      rollingDevelopmentProgram: selectedValue[elementName]
+    });
+  };
+
   const handleFileChange = (newFile) => {
     setnewIdentity({ ...newIdentity, file: newFile });
-    setFile(newFile ? URL.createObjectURL(newFile) : '');
   };
 
   async function handleAutoCompleteValue(
@@ -105,18 +120,18 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       selectedValue.id = idReturned;
       callbackAfetedSaved([...previousElements, selectedValue]);
     }
-    const newResidency = { ...newIdentity.residency, [elementName]: selectedValue.id };
+    const newSeniorities = { ...newIdentity.seniorities, [elementName]: selectedValue.id };
     setnewIdentity({
       ...newIdentity,
-      residency: newResidency
+      residency: newSeniorities
     });
 
-    setResidencyErrors({ ...residencyErrors, [elementName]: { error: false, description: '' } });
+    setRolledUpErrors({ ...rolledUpErrors, [elementName]: { error: false, description: '' } });
   }
 
-  function handleSeniority(country) {
+  function handleSeniority(seniorities) {
     handleAutoCompleteValue(
-      country,
+      seniorities,
       'id',
       '/api/consultec-identity/seniorities',
       setSeniority,
@@ -124,28 +139,36 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     );
   }
 
-  function handleReadliness(readliness) {
+  function handleReadliness(readiness) {
     handleAutoCompleteValue(
-      readliness,
-      'cityId',
+      readiness,
+      'id',
       '/api/consultec-identity/readiness',
-      setReadliness,
-      readliness
+      setReadiness,
+      readiness
     );
   }
+  const handleRolledUp = (event) => {
+    const {
+      target: { value }
+    } = event;
+    const rollUp = value;
+    setRolledUp(value);
+    handleSelectValue(rollUp, 'id');
+  };
 
-  const handleResidencyErrors = () => {
-    if (!newIdentity.residency.countryId || !newIdentity.residency.cityId) {
+  const handlerolledUpErrors = () => {
+    if (!newIdentity.readliness.readlinesId || !newIdentity.seniority.seniorityId) {
       const newErrors = {
-        ...residencyErrors,
-        countryId: {
-          ...(newIdentity.countryId ? {} : { error: true, description: 'Campo requerido' })
+        ...rolledUpErrors,
+        readlinesId: {
+          ...(newIdentity.readlinesId ? {} : { error: true, description: 'Campo requerido' })
         },
-        cityId: {
-          ...(newIdentity.cityId ? {} : { error: true, description: 'Campo requerido' })
+        seniorityId: {
+          ...(newIdentity.seniorityId ? {} : { error: true, description: 'Campo requerido' })
         }
       };
-      setResidencyErrors(newErrors);
+      setRolledUpErrors(newErrors);
     }
   };
 
@@ -167,7 +190,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
-    handleResidencyErrors();
+    handlerolledUpErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
@@ -179,7 +202,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!isMounted) {
-      getResidenceData();
+      getConsultecIdentityData();
       setIsMounted(true);
     }
     ref.current = validateForm;
@@ -191,7 +214,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
         <Grid container direction={'column'} spacing={3} p={2}>
           <Grid item sx={{ width: '100%' }}>
             <CustomAutoComplete
-              formError={residencyErrors.countryId}
+              formError={rolledUpErrors.countryId}
               name="countryId"
               label="Seniority en la empresa"
               optionList={seniority}
@@ -201,10 +224,10 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
           </Grid>
           <Grid item sx={{ width: '100%' }}>
             <CustomAutoComplete
-              formError={residencyErrors.cityId}
+              formError={rolledUpErrors.cityId}
               name="cityId"
-              label="Seleccione un readliness"
-              optionList={readliness}
+              label="Seleccione  readiness"
+              optionList={readiness}
               elmentCallback={handleReadliness}
               requiredField={true}
             />
@@ -216,7 +239,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
-                    label="Fecha de comienzo sesión"
+                    label="Fecha de sesión"
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
@@ -224,10 +247,10 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
                     renderInput={(params) => (
                       <CssTextField
                         {...params}
-                        sx={{ width: '100%' }}
+                        sx={{ width: '62%' }}
                         required
                         size="small"
-                        label={'Fecha de comienzo sesión'}
+                        label={'Fecha de sesión'}
                         placeholder="DD/MM/YYYY"
                         name="startSesiondate"
                         error={errors.startSesiondate && true}
@@ -245,6 +268,32 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
                 )}
               />
             </LocalizationProvider>
+            <Controller
+              name="file"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <CssMuiFileInput
+                  sx={{ width: '35%', ml: 1 }}
+                  size="small"
+                  placeholder="file"
+                  label="Adjuntar archivo"
+                  value={field.value}
+                  onChange={(newValue) => {
+                    handleFileChange(newValue);
+                    field.onChange(newValue);
+                  }}
+                  error={errors.file}
+                  helperText={
+                    errors.file && (
+                      <Typography variant="caption" color="error" sx={{ boxSizing: 'content-box' }}>
+                        Campo requerido
+                      </Typography>
+                    )
+                  }
+                />
+              )}
+            />
           </Grid>
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -264,7 +313,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
                         sx={{ width: '100%' }}
                         required
                         size="small"
-                        label={'Fecha final de sesión'}
+                        label={'Fecha de proxima sesión'}
                         placeholder="DD/MM/YYYY"
                         name="endSesiondate"
                         error={errors.endSesiondate && true}
@@ -312,27 +361,37 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       <Grid item xs={5}>
         <Grid container spacing={3} p={2} direction={'column'}>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              required
-              size="small"
-              name="responsibleLeader"
-              placeholder="Lider Responsable"
-              label="Lider Responsable"
-              {...register('responsibleLeader', {
-                required: true,
-                onChange: (event) =>
-                  setnewIdentity({ ...newIdentity, responsibleLeader: event.target.value })
-              })}
-              error={errors.responsibleLeader && true}
-              helperText={
-                errors.responsibleLeader && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
-                  </Typography>
-                )
-              }
-            />
+            <FormControl size="small" sx={{ width: '100%' }}>
+              <InputLabel
+                id="rollingDevelopmentProgram"
+                error={errors.rollingDevelopmentProgram && !rolledUp}
+              >
+                Programa de desarrollo enrollados
+              </InputLabel>
+              <CssSelectInput
+                labelId="rollingDevelopmentProgram"
+                label="programa de desarrollo enrollados"
+                id="rollingDevelopmentProgram"
+                value={rolledUp}
+                onChange={handleRolledUp}
+                error={errors.rollingDevelopmentProgram && !rolledUp}
+                {...register('rollingDevelopmentProgram', {
+                  required: true,
+                  onChange: handleRolledUp
+                })}
+              >
+                {listRollUp.map((type, index) => {
+                  return (
+                    <MenuItem key={index} value={type}>
+                      {type.name}
+                    </MenuItem>
+                  );
+                })}
+              </CssSelectInput>
+              {errors.rollingDevelopmentProgram && !rolledUp && (
+                <FormHelperText error>Campo requerido</FormHelperText>
+              )}
+            </FormControl>
           </Grid>
         </Grid>
       </Grid>
@@ -340,6 +399,6 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
   );
 });
 
-IdentityInformationStepEight.displayName = 'Identity Information';
+IdentityInformationStepEight.displayName = 'Identity Consultec';
 
 export default IdentityInformationStepEight;
