@@ -1,6 +1,6 @@
 import { forwardRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Grid, Divider } from '@mui/material';
+import { Grid, Divider, CardMedia } from '@mui/material';
 import useEdit from 'hooks/useEdit';
 import useMessage from 'hooks/useMessage';
 import 'moment/locale/es';
@@ -45,12 +45,24 @@ const FinalContractStepNine = forwardRef((props, ref) => {
         <Grid container direction={'column'} spacing={4} p={2}>
           <Grid item>
             <div style={{ textAlign: 'center', color: 'green' }}>
-              <p>El proceso se ha completado.</p>
+              <p style={{ fontSize: '30px' }}>El proceso se ha completado.</p>
             </div>
           </Grid>
         </Grid>
       </Grid>
       <Divider orientation="vertical" flexItem></Divider>
+      <Grid item xs={5}>
+        <Grid container spacing={3} p={2} direction={'column'}>
+          <CardMedia
+            sx={{
+              width: 400,
+              height: 400,
+              margin: 1
+            }}
+            image="prop-0.png"
+          />
+        </Grid>
+      </Grid>
     </Grid>
   );
 });

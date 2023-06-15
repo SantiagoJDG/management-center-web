@@ -22,7 +22,7 @@ import FinalContractStepNine from 'components/Collaborators/CreateCollaboratorSt
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(8);
+  const [activeStep, setActiveStep] = useState(7);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(null);
@@ -35,9 +35,7 @@ const CreateCollaboratorSteps = () => {
     switch (step) {
       case 5:
         return true;
-      case 6:
-        return true;
-      case 7:
+      case 8:
         return true;
       case 0:
         return false;
@@ -156,7 +154,7 @@ const CreateCollaboratorSteps = () => {
     {
       id: 8,
       title: 'Final de contratación',
-      stepName: 'Informacion de Final de contratación',
+      stepName: 'Información final de contratación',
       backgroungImg: '/pills-orange.png',
       component: (
         <FinalContractStepNine
