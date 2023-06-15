@@ -18,10 +18,11 @@ import PaymentInformationStepFour from 'components/Collaborators/CreateCollabora
 import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
 import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
 import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
+import FinalContractStepNine from 'components/Collaborators/CreateCollaboratorSteps/FinalContractStepNine';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(8);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(null);
@@ -146,6 +147,19 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-orange.png',
       component: (
         <OrganizationalStructureStepSeven
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 8,
+      title: 'Final de contratación',
+      stepName: 'Informacion de Final de contratación',
+      backgroungImg: '/pills-orange.png',
+      component: (
+        <FinalContractStepNine
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
