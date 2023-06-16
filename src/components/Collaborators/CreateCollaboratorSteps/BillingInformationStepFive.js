@@ -19,20 +19,20 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
 
   const [mounted, setMounted] = useState(false);
-  const [calculationFeeDisplay, setCalculationFeeDisplay] = useState(1);
   const [calculationRegimes, setCalculationRegimes] = useState([]);
   const [frequencies, setFrequencies] = useState([]);
   const [collaboratorContract, setCollaboratorContract] = useState({});
   const [currency, setCurrency] = useState({ name: 'USD', valueAmount: 1 });
+  const [anualFee, setAnualFee] = useState(0);
 
   const [edit] = useEdit('/api/collaborator');
 
-  const [item, setItem] = useState('');
+  const [calculationRegime, setCalculationRegime] = useState('');
   const [periodicityValue, setPeriodicityValue] = useState('');
   const [durationValue, setDurationValue] = useState('');
 
   const [billingInformation, setBillingInformation] = useState({
-    usdBaseFee: '',
+    baseFeeUSD: '',
     calculatation: '',
     calculationFee: '',
     complementFee: '0.00$',
@@ -65,7 +65,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   const calculateBaseAmountUSD = (collaboratorContract) => {
     setCollaboratorContract(collaboratorContract);
     const { baseAmount } = collaboratorContract;
-    billingInformation.usdBaseFee = baseAmount * currency.valueAmount;
+    billingInformation.baseFeeUSD = baseAmount * currency.valueAmount;
   };
 
   const handleSelectValue = (selectedValue, elementName) => {
@@ -89,18 +89,19 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     });
   };
 
-  const handleCalculation = (event) => {
+  const handleCalculationRegimeId = (event) => {
     const {
       target: { value }
     } = event;
-    setItem(value);
-    const calculatationType = value;
+    console.log(value);
+    setCalculationRegime(value);
+
     setBillingInformation({
       ...billingInformation,
-      calculatation: calculatationType.id
+      calculationRegimeId: value.id
     });
-    setCalculationFeeDisplay(calculatationType.id);
-    calculateFee(calculatationType.id, billingInformation.usdBaseFee);
+
+    setAnualFee(value.compensationFactor * billingInformation.baseFeeUSD);
   };
 
   const handlePeriodicity = (event) => {
@@ -150,29 +151,16 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
         <Grid container direction={'column'} spacing={3} p={2}>
           <Grid item>
             <CssTextField
-              required
               label="Tarifa base en USD$"
-              placeholder="Escribe la tarifa base en USD$"
               type="number"
-              name={'usdBaseFee'}
+              name={'baseFeeUSD'}
               sx={{ width: '100%' }}
               variant="outlined"
               size="small"
-              value={billingInformation.usdBaseFee}
-              error={errors.usdBaseFee}
-              {...register('usdBaseFee', {
-                required: true,
-                onChange: (event) => {
-                  setBillingInformation({ ...billingInformation, usdBaseFee: event.target.value });
-                }
-              })}
-              helperText={
-                errors.usdBaseFee && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
-                  </Typography>
-                )
-              }
+              value={billingInformation.baseFeeUSD}
+              InputProps={{
+                readOnly: true
+              }}
             />
           </Grid>
           <Grid item>
@@ -181,12 +169,15 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
                 Regimen de calculo
               </InputLabel>
               <CssSelectInput
-                value={item}
-                labelId="calculatation"
-                id="calculatation"
+                value={calculationRegime}
+                labelId="calculationRegimeId"
+                id="calculationRegimeId"
                 label="Regimen de calculo"
                 error={errors.calculatation && !item}
-                {...register('calculatation', { required: true, onChange: handleCalculation })}
+                {...register('calculationRegimeId', {
+                  required: true,
+                  onChange: handleCalculationRegimeId
+                })}
               >
                 {calculationRegimes.map((type, index) => {
                   return (
@@ -196,7 +187,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
                   );
                 })}
               </CssSelectInput>
-              {errors.calculatation && !item && (
+              {errors.calculationRegimeId && !item && (
                 <FormHelperText error>Campo requerido</FormHelperText>
               )}
             </FormControl>
@@ -205,7 +196,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
             <InputLabel id="calculatation">Factor de compensacion</InputLabel>
             <CssTextField
               sx={{ width: '20%' }}
-              value={calculationFeeDisplay}
+              value={calculationRegime.compensationFactor}
               size="small"
               InputProps={{
                 readOnly: true
@@ -218,7 +209,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               label="Tarifa con factor de compensacion. Anual"
               size="small"
-              value={billingInformation.calculationFee + '$'}
+              value={anualFee + '$'}
               InputProps={{
                 readOnly: true
               }}
@@ -231,9 +222,6 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               size="small"
               label="Compensacion complementaria"
               value={billingInformation.complementFee}
-              InputProps={{
-                readOnly: true
-              }}
               variant="outlined"
             />
           </Grid>
