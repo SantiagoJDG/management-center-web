@@ -20,6 +20,7 @@ import BillingInformationStepFive from 'components/Collaborators/CreateCollabora
 import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
 import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
 import FinalContractStepNine from 'components/Collaborators/CreateCollaboratorSteps/FinalContractStepNine';
+import IdentityInformationStepEight from 'components/Collaborators/CreateCollaboratorSteps/IdentityInformationStepEight';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
@@ -27,7 +28,7 @@ const CreateCollaboratorSteps = () => {
   const [activeStep, setActiveStep] = useState(7);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
-  const [newCollaboratorId, setNewCollaboratorId] = useState(null);
+  const [newCollaboratorId, setNewCollaboratorId] = useState(1);
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -160,6 +161,19 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-orange.png',
       component: (
         <FinalContractStepNine
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 8,
+      title: 'Identidad Consultec',
+      stepName: 'Información de Identidad Consultec',
+      backgroungImg: '/pills-cut-right.png',
+      component: (
+        <IdentityInformationStepEight
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
