@@ -25,7 +25,7 @@ import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
   const router = useRouter();
-  const [activeStep, setActiveStep] = useState(7);
+  const [activeStep, setActiveStep] = useState(8);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(1);
@@ -38,7 +38,7 @@ const CreateCollaboratorSteps = () => {
     switch (step) {
       case 5:
         return true;
-      case 8:
+      case 7:
         return true;
       case 0:
         return false;
@@ -156,11 +156,11 @@ const CreateCollaboratorSteps = () => {
     },
     {
       id: 8,
-      title: 'Final de contratación',
-      stepName: 'Información final de contratación',
-      backgroungImg: '/pills-orange.png',
+      title: 'Identidad Consultec',
+      stepName: 'Información de Identidad Consultec',
+      backgroungImg: '/pills-cut-right.png',
       component: (
-        <FinalContractStepNine
+        <IdentityInformationStepEight
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
@@ -168,12 +168,12 @@ const CreateCollaboratorSteps = () => {
       )
     },
     {
-      id: 8,
-      title: 'Identidad Consultec',
-      stepName: 'Información de Identidad Consultec',
-      backgroungImg: '/pills-cut-right.png',
+      id: 9,
+      title: 'Final de contratación',
+      stepName: 'Información final de contratación',
+      backgroungImg: '/pills-orange.png',
       component: (
-        <IdentityInformationStepEight
+        <FinalContractStepNine
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
