@@ -25,7 +25,7 @@ import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
   const router = useRouter();
-  const [activeStep, setActiveStep] = useState(8);
+  const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(1);
