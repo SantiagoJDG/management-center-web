@@ -18,6 +18,7 @@ import PaymentInformationStepFour from 'components/Collaborators/CreateCollabora
 import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
 import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
 import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
+import IdentityInformationStepEight from 'components/Collaborators/CreateCollaboratorSteps/IdentityInformationStepEight';
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
@@ -146,6 +147,19 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-orange.png',
       component: (
         <OrganizationalStructureStepSeven
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+        />
+      )
+    },
+    {
+      id: 8,
+      title: 'Identidad Consultec',
+      stepName: 'Información de Identidad Consultec',
+      backgroungImg: '/pills-cut-right.png',
+      component: (
+        <IdentityInformationStepEight
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
