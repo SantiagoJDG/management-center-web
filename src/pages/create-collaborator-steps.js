@@ -9,6 +9,7 @@ import {
   Button,
   Paper
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
@@ -22,6 +23,7 @@ import FinalContractStepNine from 'components/Collaborators/CreateCollaboratorSt
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
+  const router = useRouter();
   const [activeStep, setActiveStep] = useState(7);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
@@ -167,13 +169,16 @@ const CreateCollaboratorSteps = () => {
   ];
 
   const handleNext = () => {
-    formValidate.current();
     let newSkipped = skipped;
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
     setSkipped(newSkipped);
+
+    if (activeStep === steps.length - 1) {
+      router.push('/');
+    }
   };
 
   const handleReset = () => {
