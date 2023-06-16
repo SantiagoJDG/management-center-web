@@ -1,39 +1,30 @@
 import {
-  Grid,
   Divider,
-  MenuItem,
   FormControl,
-  InputLabel,
   FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
   Typography
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import useEdit from 'hooks/useEdit';
+import useMessage from 'hooks/useMessage';
 import 'moment/locale/es';
 import { forwardRef, useEffect, useState } from 'react';
-import useEdit from 'hooks/useEdit';
-import { CssTextField, CssSelectInput } from '../../../styles/formButton';
-import useMessage from 'hooks/useMessage';
-
-const calculationTypes = [
-  { id: 1, name: 'HP' },
-  { id: 2, name: 'Pasantias' },
-  { id: 3, name: 'Laboral' },
-  { id: 4, name: 'PTY' },
-  { id: 5, name: 'HP Temporal' },
-  { id: 6, name: 'Confidencial' },
-  { id: 7, name: 'Lideres' }
-];
-
-const periodicityTypes = [
-  { id: 1, name: 'Mensual' },
-  { id: 2, name: 'Trimestral' },
-  { id: 3, name: 'Anual' }
-];
+import { useForm } from 'react-hook-form';
+import { CssSelectInput, CssTextField } from '../../../styles/formButton';
+import { getDataInformation } from '../../../utils/dataUtils';
 
 const BillingInformationStepFive = forwardRef((props, ref) => {
-  const [mounted, setMounted] = useState(false);
   const { handleNewMessage } = useMessage();
+
+  const [mounted, setMounted] = useState(false);
   const [calculationFeeDisplay, setCalculationFeeDisplay] = useState(1);
+  const [calculationRegimes, setCalculationRegimes] = useState([]);
+  const [frequencies, setFrequencies] = useState([]);
+  const [collaboratorContract, setCollaboratorContract] = useState({});
+  const [currency, setCurrency] = useState({ name: 'USD', valueAmount: 1 });
+
   const [edit] = useEdit('/api/collaborator');
 
   const [item, setItem] = useState('');
@@ -61,6 +52,21 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     trigger,
     formState: { errors }
   } = useForm();
+
+  const getInitialData = () => {
+    getDataInformation('/api/hiring/calculation-regimes', setCalculationRegimes);
+    getDataInformation('/api/hiring/frequencies', setFrequencies);
+    getDataInformation(
+      `/api/collaborator/${props.newCollaboratorId}/contract`,
+      calculateBaseAmountUSD
+    );
+  };
+
+  const calculateBaseAmountUSD = (collaboratorContract) => {
+    setCollaboratorContract(collaboratorContract);
+    const { baseAmount } = collaboratorContract;
+    billingInformation.usdBaseFee = baseAmount * currency.valueAmount;
+  };
 
   const handleSelectValue = (selectedValue, elementName) => {
     if (!selectedValue) return;
@@ -132,6 +138,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!mounted) {
+      getInitialData();
       setMounted(true);
     }
     ref.current = validateForm;
@@ -181,7 +188,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
                 error={errors.calculatation && !item}
                 {...register('calculatation', { required: true, onChange: handleCalculation })}
               >
-                {calculationTypes.map((type, index) => {
+                {calculationRegimes.map((type, index) => {
                   return (
                     <MenuItem key={index} value={type}>
                       {type.name}
@@ -278,7 +285,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
                 error={errors.periodicity && !periodicityValue}
                 {...register('periodicity', { required: true, onChange: handlePeriodicity })}
               >
-                {periodicityTypes.map((type, index) => {
+                {frequencies.map((type, index) => {
                   return (
                     <MenuItem key={index} value={type}>
                       {type.name}
