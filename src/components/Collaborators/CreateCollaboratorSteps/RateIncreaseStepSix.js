@@ -39,7 +39,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
   };
 
-  const handleNumberRateChange = (event, index, key) => {
+  const handleNumberRateChange = (event) => {
     const percentageValue = (collaboratorContract.baseAmount * parseInt(event.target.value)) / 100;
     const newBaseAmount = collaboratorContract.baseAmount + percentageValue;
 
