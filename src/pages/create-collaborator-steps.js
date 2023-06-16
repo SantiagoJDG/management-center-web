@@ -21,10 +21,10 @@ import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorStep
 import { useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(4);
   const [skipped, setSkipped] = useState(new Set());
   const formValidate = useRef(null);
-  const [newCollaboratorId, setNewCollaboratorId] = useState(null);
+  const [newCollaboratorId, setNewCollaboratorId] = useState(1);
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
