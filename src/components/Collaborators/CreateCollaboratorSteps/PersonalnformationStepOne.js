@@ -522,8 +522,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               required
               size="small"
               name="address"
-              placeholder="Escribe tu direccion residencial"
-              label="Direccion residencial"
+              placeholder="Escriba la dirección residencial"
+              label="Dirección residencial"
               {...register('address', {
                 required: true,
                 onChange: (event) => {
