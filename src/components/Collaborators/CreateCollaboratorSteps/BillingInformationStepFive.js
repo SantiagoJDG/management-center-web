@@ -59,8 +59,10 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     register,
     handleSubmit,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
 
   const handleSelectValue = (selectedValue, elementName) => {
     if (!selectedValue) return;
@@ -126,6 +128,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
           severity: 'success'
         });
         props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        props.setFormCompleted(false);
       })();
     }
   };
@@ -133,6 +136,10 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   useEffect(() => {
     if (!mounted) {
       setMounted(true);
+    }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
     }
     ref.current = validateForm;
   }, [billingInformation]);

@@ -26,8 +26,12 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
     handleSubmit,
     control,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+
+  const [isMounted, setIsMounted] = useState(false);
+  const watchAllFields = watch();
 
   const calculateAge = (date) => {
     const today = new Date();
@@ -67,6 +71,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
         severity: 'success'
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
@@ -81,6 +86,13 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
+    if (!isMounted) {
+      setIsMounted(true);
+    }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
+    }
     ref.current = validateForm;
   }, [companyInformation]);
 
@@ -149,7 +161,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
           <Grid item>
             <CssTextField
               label="Antiguedad"
-              value={age}
+              value={age ? age + ' años corporativos' : 0}
               size={'small'}
               InputProps={{ readOnly: true }}
               fullWidth

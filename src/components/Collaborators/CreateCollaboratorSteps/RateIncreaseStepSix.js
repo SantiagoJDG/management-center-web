@@ -44,8 +44,12 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     handleSubmit,
     control,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
+
+  const [isMounted, setIsMounted] = useState(false);
 
   const afterExecution = (execution) => {
     if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
@@ -59,6 +63,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
         severity: 'success'
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
@@ -73,6 +78,13 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
+    if (!isMounted) {
+      setIsMounted(true);
+    }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
+    }
     ref.current = validateForm;
   }, [rateIncrease]);
 

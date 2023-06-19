@@ -18,8 +18,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     handleSubmit,
     control,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
 
   const [mounted, setMounted] = useState(false);
   const { handleNewMessage } = useMessage();
@@ -33,7 +35,6 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     currencyId: '',
     baseAmount: ''
   });
-  // file,
 
   const [create] = useCreate(
     `/api/collaborator/${props.newCollaboratorId}/contract`,
@@ -192,6 +193,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
         severity: 'success'
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
@@ -211,6 +213,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
       getCatalogseData();
       setMounted(true);
     }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
+    }
     ref.current = validateForm;
   }, [contractInformation, mounted]);
 
@@ -218,7 +224,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
       <Grid item xs={5} mt={1}>
         <Grid container direction={'column'} spacing={3} p={2}>
-          <Grid item>
+          <Grid item sx={{ width: '23vw' }}>
             <CustomAutoComplete
               formError={companyErrors.companyId}
               name="companyId"
@@ -226,9 +232,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               optionList={companies}
               elmentCallback={handleCompanies}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
-          <Grid item>
+          <Grid item sx={{ width: '100%' }}>
             <CustomAutoComplete
               formError={companyErrors.officeId}
               name="officeId"
@@ -236,9 +243,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               optionList={offices}
               elmentCallback={handleOffice}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
-          <Grid item>
+          <Grid item sx={{ width: '100%' }}>
             <CustomAutoComplete
               formError={companyErrors.typeId}
               name="typeId"
@@ -246,9 +254,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               optionList={contractType}
               elmentCallback={handleContractType}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
-          <Grid item>
+          <Grid item sx={{ width: '100%' }}>
             <CustomAutoComplete
               formError={companyErrors.validityId}
               name="validityId"
@@ -256,9 +265,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               optionList={contractValidities}
               elmentCallback={handleContractValidity}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
-          <Grid item>
+          <Grid item sx={{ width: '100%' }}>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
                 name="initialDate"
@@ -297,7 +307,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item>
+          <Grid item sx={{ width: '100%' }}>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
                 name="endDate"
@@ -360,6 +370,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               optionList={currencies}
               elmentCallback={handleCurrency}
               requiredField={true}
+              canCreateNew={false}
             />
 
             <CssTextField
