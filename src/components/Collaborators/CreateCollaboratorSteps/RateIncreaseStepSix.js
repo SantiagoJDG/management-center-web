@@ -1,17 +1,19 @@
-import { useState, forwardRef, useRef, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Grid, Typography, ListItemIcon, Divider, CardMedia } from '@mui/material';
-import useEdit from 'hooks/useEdit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { CardMedia, Divider, Grid, ListItemIcon, Typography } from '@mui/material';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
-import { CssTextField } from '../../../styles/formButton';
+import useEdit from 'hooks/useEdit';
 import useMessage from 'hooks/useMessage';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import 'moment/locale/es';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { CssTextField } from '../../../styles/formButton';
+import { getDataInformation } from '../../../utils/dataUtils';
 
 const RateIncreaseStepSix = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
+
   const [rateIncrease, setRateIncrease] = useState({
     effectiveDateAdjustment: '',
     newRate: '',
@@ -21,22 +23,27 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       }
     ]
   });
-  const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, rateIncrease);
+
+  const [create] = useEdit(
+    `/api/collaborator/${props.newCollaboratorId}/contract/fare_increase`,
+    rateIncrease
+  );
+
   const [numbeRateIncrease, setNumberRateIncrease] = useState([{ rateIncreasePercentage: '' }]);
+  const [newBaseAmount, setNewBaseAmount] = useState();
+  const [collaboratorContract, setCollaboratorContract] = useState();
+
   const secondTextFieldRef = useRef(null);
 
   const handleAddNumberRateIncrease = () => {
     setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
   };
 
-  const handleNumberRateChange = (event, index, key) => {
-    const newNumbeRateIncrease = [...numbeRateIncrease];
-    newNumbeRateIncrease[index][key] = event.target.value;
+  const handleNumberRateChange = (event) => {
+    const percentageValue = (collaboratorContract.baseAmount * parseInt(event.target.value)) / 100;
+    const newBaseAmount = collaboratorContract.baseAmount + percentageValue;
 
-    setRateIncrease({
-      ...rateIncrease,
-      rateIncreasePercentages: newNumbeRateIncrease
-    });
+    setNewBaseAmount(newBaseAmount);
   };
 
   const {
@@ -71,15 +78,23 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const execution = await edit();
+        const execution = await create();
         afterExecution(execution);
       })();
     }
   };
 
+  const getCollaboratorContract = async () => {
+    getDataInformation(
+      `/api/collaborator/${props.newCollaboratorId}/contract`,
+      setCollaboratorContract
+    );
+  };
+
   useEffect(() => {
     if (!isMounted) {
       setIsMounted(true);
+      getCollaboratorContract();
     }
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
@@ -113,7 +128,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   value={Rate.number}
                   {...register(`number-${index}`, {
                     required: true,
-                    onChange: (event) => handleNumberRateChange(event, index, 'number')
+                    onBlur: (event) => handleNumberRateChange(event, index, 'number')
                   })}
                   error={errors[`number-${index}`]}
                   helperText={
@@ -137,17 +152,8 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               placeholder="$0.00"
               fullWidth
               name="newRate"
-              {...register('newRate', {
-                required: true,
-                onChange: (event) => {
-                  setRateIncrease({
-                    ...rateIncrease,
-                    newRate: event.target.value
-                  });
-                }
-              })}
-              error={errors.newRate}
-              helperText={errors.newRate && 'Campo requerido'}
+              value={newBaseAmount}
+              readOnly
             />
           </Grid>
           <Grid item>

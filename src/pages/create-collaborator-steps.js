@@ -18,6 +18,7 @@ import PaymentInformationStepFour from 'components/Collaborators/CreateCollabora
 import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
 import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
 import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
+import IdentityInformationStepEight from 'components/Collaborators/CreateCollaboratorSteps/IdentityInformationStepEight';
 import { useRef, useState, useEffect } from 'react';
 import useAuth from 'hooks/useAuth';
 import { useRouter } from 'next/router';
@@ -162,6 +163,19 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+        />
+      )
+    },
+    {
+      id: 8,
+      title: 'Identidad Consultec',
+      stepName: 'Información de Identidad Consultec',
+      backgroungImg: '/pills-cut-right.png',
+      component: (
+        <IdentityInformationStepEight
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
         />
       )
     }
