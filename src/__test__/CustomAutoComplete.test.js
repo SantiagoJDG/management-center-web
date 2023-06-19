@@ -39,6 +39,7 @@ describe('CustomAutoComplete', () => {
         elmentCallback={handleTest}
         requiredField={true}
         prechargedValue={null}
+        canCreateNew={true}
       />
     );
 
@@ -64,6 +65,7 @@ describe('CustomAutoComplete', () => {
         elmentCallback={handleTest}
         requiredField={true}
         prechargedValue={null}
+        canCreateNew={true}
       />
     );
     const combobox = screen.getByRole('combobox');
@@ -89,6 +91,7 @@ describe('CustomAutoComplete', () => {
         elmentCallback={handleTest}
         requiredField={true}
         prechargedValue={null}
+        canCreateNew={true}
       />
     );
     const combobox = screen.getByRole('combobox');
