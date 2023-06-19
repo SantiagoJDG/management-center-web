@@ -22,7 +22,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   const [calculationRegimes, setCalculationRegimes] = useState([]);
   const [periodicities, setPeriodicities] = useState([]);
   const [compensationTypes, setCompensationTypes] = useState([]);
-  const [currency, setCurrency] = useState({ name: 'USD', valueAmount: 1 });
+  const [currency] = useState({ name: 'USD', valueAmount: 1 });
 
   const [billingInformation, setBillingInformation] = useState({
     calculationRegimeId: '',
@@ -52,8 +52,10 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     register,
     handleSubmit,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
 
   const getInitialData = () => {
     getDataInformation('/api/hiring/calculation-regimes', setCalculationRegimes);
@@ -68,19 +70,6 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   const calculateBaseAmountUSD = (collaboratorContract) => {
     const { baseAmount } = collaboratorContract;
     informationForm.baseFeeUSD = baseAmount * currency.valueAmount;
-  };
-
-  const calculateFee = (calculationType, usdBaseFee) => {
-    const anualFee = calculationType * usdBaseFee;
-    return setBillingInformation({ ...billingInformation, calculationFee: anualFee });
-  };
-
-  const calculateComplementFee = (usdMonthlyFee, periodicity, duration) => {
-    const anualComplementFee = usdMonthlyFee * periodicity * duration;
-    return setBillingInformation({
-      ...billingInformation,
-      usdAnualComplementFee: anualComplementFee
-    });
   };
 
   const handleCompensationTypeId = (event) => {
@@ -160,6 +149,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
         severity: 'success'
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
@@ -203,6 +193,10 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
       getInitialData();
       setMounted(true);
     }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
+    }
     ref.current = validateForm;
   }, [billingInformation]);
 
@@ -239,7 +233,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
                   onChange: handleCalculationRegimeId
                 })}
               >
-                {calculationRegimes.map((type, index) => {
+                {calculationRegimes.map((type) => {
                   return (
                     <MenuItem key={type.id} value={type}>
                       {type.name}

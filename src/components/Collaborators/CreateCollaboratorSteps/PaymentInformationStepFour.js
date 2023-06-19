@@ -15,12 +15,13 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     register,
     handleSubmit,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
-
+  const watchAllFields = watch();
   const [mounted, setMounted] = useState(false);
   const { handleNewMessage } = useMessage();
-
+  const [extraterritoriality, setExtraterritoriality] = useState(false);
   const [paymentInformation, setPaymentInformation] = useState({
     bankId: '',
     bankCountryId: 0,
@@ -83,10 +84,9 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleOffice(office) {
-    setPaymentInformation({
-      ...paymentInformation,
-      extraterritoriality: paymentInformation.bankCountryId != office.id
-    });
+    if (paymentInformation.bankCountryId != office.id) {
+      setExtraterritoriality(true);
+    }
 
     handleAutoCompleteValue(office, 'officePayerId', '/api/hiring/offices', setOffices, offices);
   }
@@ -146,6 +146,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
         severity: 'success'
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
@@ -164,6 +165,10 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     if (!mounted) {
       getCatalogs();
       setMounted(true);
+    }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
     }
     ref.current = validateForm;
   }, [paymentInformation, mounted]);
@@ -207,6 +212,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               optionList={countries}
               elmentCallback={handleBankCountry}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
           <Grid item>
@@ -268,13 +274,14 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               optionList={offices}
               elmentCallback={handleOffice}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
           <Grid item>
             <CssTextField
               sx={{ width: '100%' }}
               label="Extraterritorialidad"
-              value={paymentInformation.extraterritoriality ? 'Si' : 'No'}
+              value={extraterritoriality ? 'Si' : 'No'}
               InputProps={{
                 readOnly: true
               }}
@@ -295,6 +302,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               optionList={frequencies}
               elmentCallback={handleFrequency}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
         </Grid>

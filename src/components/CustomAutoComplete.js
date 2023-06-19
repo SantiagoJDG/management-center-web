@@ -17,7 +17,8 @@ const CustomAutoComplete = ({
   multiple,
   requiredField,
   formError,
-  prechargedValue
+  prechargedValue,
+  canCreateNew
 }) => {
   const [value, setValue] = useState(multiple ? [] : '');
   const [inputValue, setInputValue] = useState('');
@@ -77,7 +78,7 @@ const CustomAutoComplete = ({
           const { inputValue } = params;
           // Suggest the creation of a new value
           const isExisting = optionList.some((option) => inputValue === option.name);
-          if (inputValue !== '' && !isExisting) {
+          if (inputValue !== '' && !isExisting && !!canCreateNew) {
             filtered.push({
               inputValue,
               name: `Crear nuevo "${inputValue}"`
