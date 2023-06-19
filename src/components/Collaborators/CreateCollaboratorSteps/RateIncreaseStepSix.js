@@ -14,7 +14,7 @@ import { getDataInformation } from '../../../utils/dataUtils';
 const RateIncreaseStepSix = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
 
-  const [rateIncrease, setRateIncrease] = useState({
+  const [rateIncrease] = useState({
     effectiveDateAdjustment: '',
     newRate: '',
     rateIncreasePercentages: [
