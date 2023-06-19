@@ -1,34 +1,38 @@
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import {
-  Grid,
-  Stepper,
-  Step,
-  StepLabel,
-  ListItemIcon,
-  Typography,
   Box,
   Button,
-  Paper
+  Grid,
+  ListItemIcon,
+  Paper,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography
 } from '@mui/material';
-import { useRouter } from 'next/router';
-import HailRoundedIcon from '@mui/icons-material/HailRounded';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
+import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
 import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
-import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
-import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
-import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
-import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
 import FinalContractStepNine from 'components/Collaborators/CreateCollaboratorSteps/FinalContractStepNine';
 import IdentityInformationStepEight from 'components/Collaborators/CreateCollaboratorSteps/IdentityInformationStepEight';
-import { useRef, useState } from 'react';
+import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
+import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
+import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
+import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
+import useAuth from 'hooks/useAuth';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
-  const router = useRouter();
+  const { userToken, waitingUser } = useAuth();
+
   const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
+  const [formCompleted, setFormCompleted] = useState(false);
   const formValidate = useRef(null);
-  const [newCollaboratorId, setNewCollaboratorId] = useState(1);
+  const [newCollaboratorId, setNewCollaboratorId] = useState(null);
+  const router = useRouter();
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -73,6 +77,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           setNewCollaboratorId={setNewCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -86,6 +91,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -99,6 +105,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -112,6 +119,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -125,6 +133,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -138,6 +147,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -151,6 +161,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -216,17 +227,25 @@ const CreateCollaboratorSteps = () => {
       <Grid item>
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <Button
-            color="inherit"
-            disabled={activeStep === 0}
-            onClick={handleBack}
+            onClick={handleNext}
             size={'small'}
-            sx={{ borderRadius: 8, mt: 1, backgroundColor: '#D3D3D3' }}
+            variant="contained"
+            color={formCompleted ? 'primary' : 'inherit'}
+            disabled={!formCompleted}
+            sx={{
+              borderRadius: 8,
+              mt: 1,
+              mr: 1,
+              boxShadow: 'none',
+              '&:hover': {
+                boxShadow: 'none'
+              }
+            }}
           >
             <Typography sx={{ pl: 5, pr: 5 }} color="white">
-              Volver
+              {activeStep === steps.length - 1 ? 'Finalizar' : 'Continuar'}
             </Typography>
           </Button>
-
           {isStepOptionals(activeStep) && (
             <Button
               onClick={handleSkip}
@@ -238,19 +257,24 @@ const CreateCollaboratorSteps = () => {
             </Button>
           )}
           <Button
-            onClick={handleNext}
             variant="outlined"
+            onClick={handleBack}
             size={'small'}
-            sx={{ borderRadius: 8, mt: 1, ml: 1 }}
+            sx={{ borderRadius: 8, mt: 1, mr: 1 }}
           >
-            <Typography sx={{ pl: 5, pr: 5 }}>
-              {activeStep === steps.length - 1 ? 'Finalizar' : 'Continuar'}
-            </Typography>
+            <Typography sx={{ pl: 5, pr: 5 }}>Volver</Typography>
           </Button>
         </Box>
       </Grid>
     );
   };
+
+  useEffect(() => {
+    if (waitingUser) return;
+    if (!userToken) {
+      router.replace('/login');
+    }
+  }, [userToken, waitingUser]);
 
   return (
     <>

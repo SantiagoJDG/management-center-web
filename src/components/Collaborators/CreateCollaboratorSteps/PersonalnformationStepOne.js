@@ -1,6 +1,16 @@
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import HailRoundedIcon from '@mui/icons-material/HailRounded';
-import { Avatar, Divider, Grid, ListItemIcon, Typography } from '@mui/material';
+import {
+  Avatar,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  ListItemIcon,
+  MenuItem,
+  Typography,
+  FormHelperText
+} from '@mui/material';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -12,7 +22,7 @@ import 'moment/locale/es';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getAxiosInstance } from 'utils/axiosClient';
-import { CssMuiFileInput, CssTextField } from '../../../styles/formButton';
+import { CssMuiFileInput, CssTextField, CssSelectInput } from '../../../styles/formButton';
 
 const PersonalInformationStepOne = forwardRef((props, ref) => {
   const {
@@ -20,8 +30,10 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     handleSubmit,
     control,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
 
   const [isMounted, setIsMounted] = useState(false);
   const { handleNewMessage } = useMessage();
@@ -225,6 +237,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
       const idNewCollaborator = execution.data;
       props.setNewCollaboratorId(idNewCollaborator);
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
@@ -243,6 +256,10 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     if (!isMounted) {
       getResidenceData();
       setIsMounted(true);
+    }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
     }
     ref.current = validateForm;
   }, [age, newCollaborator, isMounted]);
@@ -468,7 +485,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
                 variant="h9"
                 sx={{ color: 'info.main', fontSize: 'small' }}
               >
-                Agregar informacion personal
+                Agregar campo telefónico
               </Typography>
             </ListItemIcon>
           </Grid>
@@ -485,6 +502,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               optionList={countries}
               elmentCallback={handleCountry}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
@@ -495,16 +513,17 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               optionList={states}
               elmentCallback={handleState}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
           <Grid item>
             <CssTextField
-              sx={{ width: '100%' }}
+              sx={{ width: '25vw' }}
               required
               size="small"
               name="address"
-              placeholder="Escribe tu direccion residencial"
-              label="Direcion residencial"
+              placeholder="Escriba la dirección residencial"
+              label="Dirección residencial"
               {...register('address', {
                 required: true,
                 onChange: (event) => {
@@ -529,28 +548,46 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
             />
           </Grid>
           {nationalities.map((value, index) => (
-            <Grid item key={index}>
-              <CssTextField
-                required
-                size="small"
-                name={`nationalities-${index}`}
-                label="Nacionalidades"
-                variant="outlined"
-                sx={{ width: '100%' }}
-                value={value.docAdress}
-                {...register(`nationalities-${index}`, {
-                  required: true,
-                  onChange: (event) => handleNationalityChange(event, index)
-                })}
-                error={errors[`nationalities-${index}`]}
-                helperText={
-                  errors[`nationalities-${index}`] && (
-                    <Typography variant="caption" color="error">
-                      Campo requerido
-                    </Typography>
-                  )
-                }
-              />
+            <Grid item key={index} sx={{ width: '100%' }}>
+              <FormControl size="small" sx={{ width: '100%' }}>
+                <InputLabel
+                  id="nationalities"
+                  error={errors[`nationalities-${index}`] && !value.docAdress}
+                >
+                  Nacionalidades
+                </InputLabel>
+                <CssSelectInput
+                  labelId="nationalities"
+                  label="Nacionalidades"
+                  required
+                  size="small"
+                  name={`nationalities-${index}`}
+                  value={value.docAdress}
+                  {...register(`nationalities-${index}`, {
+                    required: true,
+                    onChange: (event) => handleNationalityChange(event, index)
+                  })}
+                  error={errors[`nationalities-${index}`] && !value.docAdress}
+                  helperText={
+                    errors[`nationalities-${index}`] && (
+                      <Typography variant="caption" color="error">
+                        Campo requerido
+                      </Typography>
+                    )
+                  }
+                >
+                  {countries.map((country, index) => {
+                    return (
+                      <MenuItem value={country} key={index}>
+                        {country.name}
+                      </MenuItem>
+                    );
+                  })}
+                </CssSelectInput>
+                {errors[`nationalities-${index}`] && !value.docAdress && (
+                  <FormHelperText error>Campo requerido</FormHelperText>
+                )}
+              </FormControl>
             </Grid>
           ))}
           <Grid sx={{ pl: 2, pt: 1 }}>

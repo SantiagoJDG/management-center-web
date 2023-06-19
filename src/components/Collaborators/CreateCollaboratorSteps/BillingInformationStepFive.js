@@ -7,7 +7,7 @@ import {
   MenuItem,
   Typography
 } from '@mui/material';
-import useEdit from 'hooks/useEdit';
+import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
 import 'moment/locale/es';
 import { forwardRef, useEffect, useState } from 'react';
@@ -20,42 +20,47 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
 
   const [mounted, setMounted] = useState(false);
   const [calculationRegimes, setCalculationRegimes] = useState([]);
-  const [frequencies, setFrequencies] = useState([]);
-  const [collaboratorContract, setCollaboratorContract] = useState({});
-  const [currency, setCurrency] = useState({ name: 'USD', valueAmount: 1 });
-  const [anualFee, setAnualFee] = useState(0);
-
-  const [edit] = useEdit('/api/collaborator');
-
-  const [calculationRegime, setCalculationRegime] = useState('');
-  const [periodicityValue, setPeriodicityValue] = useState('');
-  const [durationValue, setDurationValue] = useState('');
+  const [periodicities, setPeriodicities] = useState([]);
+  const [compensationTypes, setCompensationTypes] = useState([]);
+  const [currency] = useState({ name: 'USD', valueAmount: 1 });
 
   const [billingInformation, setBillingInformation] = useState({
-    baseFeeUSD: '',
-    calculatation: '',
-    calculationFee: '',
-    complementFee: '0.00$',
-    usdMonthlyFee: '',
-    periodicity: '',
-    duration: '',
-    usdAnualComplementFee: '0.00',
-    insurance: '',
-    insuranceFee: '',
-    anualTotal: '',
-    hourFee: ''
+    calculationRegimeId: '',
+    healthInsurance: false,
+    healthInsuranceAmount: 0,
+    compensationTypeId: '',
+    compensationAmount: '',
+    compensationPeriodicityId: '',
+    compensationDuration: ''
   });
+
+  const [informationForm, setInformationForm] = useState({
+    baseFeeUSD: '',
+    calculationRegime: '',
+    anualCalculatedRegimeBase: '',
+    compensationType: '',
+    compensationPeriodicity: '',
+    anualCalculatedCompensation: ''
+  });
+
+  const [create] = useCreate(
+    `/api/collaborator/${props.newCollaboratorId}/compensation-information`,
+    billingInformation
+  );
 
   const {
     register,
     handleSubmit,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
 
   const getInitialData = () => {
     getDataInformation('/api/hiring/calculation-regimes', setCalculationRegimes);
-    getDataInformation('/api/hiring/frequencies', setFrequencies);
+    getDataInformation('/api/hiring/periodicities', setPeriodicities);
+    getDataInformation('/api/hiring/compensation-types', setCompensationTypes);
     getDataInformation(
       `/api/collaborator/${props.newCollaboratorId}/contract`,
       calculateBaseAmountUSD
@@ -63,29 +68,22 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   };
 
   const calculateBaseAmountUSD = (collaboratorContract) => {
-    setCollaboratorContract(collaboratorContract);
     const { baseAmount } = collaboratorContract;
-    billingInformation.baseFeeUSD = baseAmount * currency.valueAmount;
+    informationForm.baseFeeUSD = baseAmount * currency.valueAmount;
   };
 
-  const handleSelectValue = (selectedValue, elementName) => {
-    if (!selectedValue) return;
+  const handleCompensationTypeId = (event) => {
+    const {
+      target: { value }
+    } = event;
+    setInformationForm({
+      ...informationForm,
+      compensationType: value
+    });
+
     setBillingInformation({
       ...billingInformation,
-      periodicity: selectedValue[elementName]
-    });
-  };
-
-  const calculateFee = (calculationType, usdBaseFee) => {
-    const anualFee = calculationType * usdBaseFee;
-    return setBillingInformation({ ...billingInformation, calculationFee: anualFee });
-  };
-
-  const calculateComplementFee = (usdMonthlyFee, periodicity, duration) => {
-    const anualComplementFee = usdMonthlyFee * periodicity * duration;
-    return setBillingInformation({
-      ...billingInformation,
-      usdAnualComplementFee: anualComplementFee
+      compensationTypeId: value.id
     });
   };
 
@@ -93,54 +91,111 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     const {
       target: { value }
     } = event;
-    console.log(value);
-    setCalculationRegime(value);
+
+    setInformationForm({
+      ...informationForm,
+      calculationRegime: value,
+      anualCalculatedRegimeBase: value.compensationFactor * informationForm.baseFeeUSD
+    });
 
     setBillingInformation({
       ...billingInformation,
       calculationRegimeId: value.id
     });
-
-    setAnualFee(value.compensationFactor * billingInformation.baseFeeUSD);
   };
 
-  const handlePeriodicity = (event) => {
+  const handlePeriodicityId = (event) => {
     const {
       target: { value }
     } = event;
-    const periodicityType = value;
-    setPeriodicityValue(value);
-    handleSelectValue(periodicityType, 'id');
+
+    console.log(value);
+
+    setInformationForm({
+      ...informationForm,
+      compensationPeriodicity: value
+    });
+
+    setBillingInformation({
+      ...billingInformation,
+      compensationPeriodicityId: value.id
+    });
   };
 
   const handleDuration = (event) => {
-    setDurationValue(event.target.value);
-    calculateComplementFee(
-      billingInformation.usdMonthlyFee,
-      billingInformation.periodicity,
-      event.target.value
-    );
+    setBillingInformation({
+      ...billingInformation,
+      compensationDuration: Number(event.target.value)
+    });
+
+    setInformationForm({
+      ...informationForm,
+      anualCalculatedCompensation:
+        billingInformation.compensationAmount *
+        informationForm.compensationPeriodicity.value *
+        Number(event.target.value)
+    });
+  };
+
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion de pago fué creada exitosamente',
+        severity: 'success'
+      });
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
+    }
   };
 
   const validateForm = () => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const error = await edit();
-        if (error) return;
-        handleNewMessage({
-          text: 'Excelente! La Informacion de pago fué creada exitosamente',
-          severity: 'success'
-        });
-        props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        const response = await create();
+        afterExecution(response);
       })();
     }
   };
+
+  function getTotalAnualFee() {
+    let response = 0;
+
+    if (informationForm.anualCalculatedRegimeBase) {
+      response = response + Number(informationForm.anualCalculatedRegimeBase);
+    }
+
+    if (informationForm.anualCalculatedCompensation) {
+      response = response + Number(informationForm.anualCalculatedCompensation);
+    }
+
+    if (billingInformation.healthInsuranceAmount) {
+      response = response + Number(billingInformation.healthInsuranceAmount);
+    }
+
+    return Math.round(response, 3);
+  }
+
+  function getTotalAnualyHourFee() {
+    let response = getTotalAnualFee();
+    response = response / 12;
+    response = response / 160;
+    return Math.round(response, 3);
+  }
 
   useEffect(() => {
     if (!mounted) {
       getInitialData();
       setMounted(true);
+    }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
     }
     ref.current = validateForm;
   }, [billingInformation]);
@@ -157,7 +212,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               variant="outlined"
               size="small"
-              value={billingInformation.baseFeeUSD}
+              value={informationForm.baseFeeUSD}
               InputProps={{
                 readOnly: true
               }}
@@ -165,38 +220,35 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
           </Grid>
           <Grid item>
             <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
-              <InputLabel id="calculatation" error={errors.calculatation && !item}>
+              <InputLabel id="calculationRegimeLabel" error={errors.calculationRegimeId}>
                 Regimen de calculo
               </InputLabel>
               <CssSelectInput
-                value={calculationRegime}
-                labelId="calculationRegimeId"
+                value={informationForm.calculationRegime}
                 id="calculationRegimeId"
                 label="Regimen de calculo"
-                error={errors.calculatation && !item}
+                error={errors.calculationRegimeId}
                 {...register('calculationRegimeId', {
                   required: true,
                   onChange: handleCalculationRegimeId
                 })}
               >
-                {calculationRegimes.map((type, index) => {
+                {calculationRegimes.map((type) => {
                   return (
-                    <MenuItem key={index} value={type}>
+                    <MenuItem key={type.id} value={type}>
                       {type.name}
                     </MenuItem>
                   );
                 })}
               </CssSelectInput>
-              {errors.calculationRegimeId && !item && (
-                <FormHelperText error>Campo requerido</FormHelperText>
-              )}
+              {errors.calculationRegimeId && <FormHelperText error>Campo requerido</FormHelperText>}
             </FormControl>
           </Grid>
           <Grid item>
             <InputLabel id="calculatation">Factor de compensacion</InputLabel>
             <CssTextField
               sx={{ width: '20%' }}
-              value={calculationRegime.compensationFactor}
+              value={informationForm.calculationRegime.compensationFactor}
               size="small"
               InputProps={{
                 readOnly: true
@@ -209,7 +261,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               label="Tarifa con factor de compensacion. Anual"
               size="small"
-              value={anualFee + '$'}
+              value={informationForm.anualCalculatedRegimeBase + '$'}
               InputProps={{
                 readOnly: true
               }}
@@ -217,13 +269,30 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
             />
           </Grid>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              size="small"
-              label="Compensacion complementaria"
-              value={billingInformation.complementFee}
-              variant="outlined"
-            />
+            <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
+              <InputLabel id="compensationTypeIdLabel" error={errors.compensationTypeId}>
+                Compensacion complementaria
+              </InputLabel>
+              <CssSelectInput
+                value={informationForm.compensationType}
+                id="compensationTypeId"
+                label="Compensacion complementaria"
+                error={errors.compensationTypeId}
+                {...register('compensationTypeId', {
+                  required: true,
+                  onChange: handleCompensationTypeId
+                })}
+              >
+                {compensationTypes.map((type) => {
+                  return (
+                    <MenuItem key={type.id} value={type}>
+                      {type.name}
+                    </MenuItem>
+                  );
+                })}
+              </CssSelectInput>
+              {errors.compensationTypeId && <FormHelperText error>Campo requerido</FormHelperText>}
+            </FormControl>
           </Grid>
           <Grid item>
             <CssTextField
@@ -232,21 +301,21 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               placeholder="0.00$"
               sx={{ width: '85%' }}
               type="number"
-              name={'usdMonthlyFee'}
+              name={'compensationAmount'}
               variant="outlined"
               size="small"
-              value={billingInformation.usdMonthlyFee}
-              {...register('usdMonthlyFee', {
+              value={billingInformation.compensationAmount}
+              {...register('compensationAmount', {
                 required: true,
                 onChange: (event) =>
                   setBillingInformation({
                     ...billingInformation,
-                    usdMonthlyFee: event.target.value
+                    compensationAmount: Number(event.target.value)
                   })
               })}
-              error={errors.usdMonthlyFee}
+              error={errors.compensationAmount}
               helperText={
-                errors.usdMonthlyFee && (
+                errors.compensationAmount && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
@@ -261,19 +330,24 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
         <Grid container spacing={3} p={2} direction={'column'}>
           <Grid item>
             <FormControl size="small" sx={{ width: '100%' }}>
-              <InputLabel id="periodicity" error={errors.periodicity && !periodicityValue}>
+              <InputLabel
+                id="periodicity"
+                error={errors.periodicity && !informationForm.compensationPeriodicity}
+              >
                 Periodicidad
               </InputLabel>
               <CssSelectInput
                 labelId="periodicity"
                 label="Periodicidad"
                 id="periodicity"
-                value={periodicityValue}
-                onChange={handlePeriodicity}
-                error={errors.periodicity && !periodicityValue}
-                {...register('periodicity', { required: true, onChange: handlePeriodicity })}
+                value={informationForm.compensationPeriodicity}
+                error={errors.compensationPeriodicityId && !informationForm.compensationPeriodicity}
+                {...register('compensationPeriodicityId', {
+                  required: true,
+                  onChange: handlePeriodicityId
+                })}
               >
-                {frequencies.map((type, index) => {
+                {periodicities.map((type, index) => {
                   return (
                     <MenuItem key={index} value={type}>
                       {type.name}
@@ -281,7 +355,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
                   );
                 })}
               </CssSelectInput>
-              {errors.periodicity && !periodicityValue && (
+              {errors.compensationPeriodicityId && !informationForm.compensationPeriodicity && (
                 <FormHelperText error>Campo requerido</FormHelperText>
               )}
             </FormControl>
@@ -293,14 +367,14 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               placeholder="Duracion de compensacion"
               type="number"
-              name={'duration'}
+              name={'compensationDuration'}
               variant="outlined"
               size="small"
-              value={durationValue}
+              value={billingInformation.compensationDuration}
               onChange={handleDuration}
-              error={errors.duration}
+              error={errors.compensationDuration}
               helperText={
-                errors.duration && (
+                errors.compensationDuration && (
                   <Typography variant="caption" color="error">
                     Campo requerido
                   </Typography>
@@ -313,7 +387,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '80%' }}
               size="small"
-              value={billingInformation.usdAnualComplementFee + ' $'}
+              value={informationForm.anualCalculatedCompensation + ' $'}
               InputProps={{
                 readOnly: true
               }}
@@ -334,52 +408,42 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
                     labelId="insurance"
                     id="insurance"
                     label="Seguro Medico"
-                    value={billingInformation.insurance}
-                    error={errors.insurance && !billingInformation.insurance}
-                    {...register('insurance', {
+                    value={billingInformation.healthInsurance}
+                    error={errors.insurance && !billingInformation.healthInsurance}
+                    {...register('healthInsurance', {
                       required: true,
                       onChange: (event) =>
                         setBillingInformation({
                           ...billingInformation,
-                          insurance: event.target.value
+                          healthInsurance: event.target.value
                         })
                     })}
                   >
-                    <MenuItem value={'Si'}>Si</MenuItem>
-                    <MenuItem value={'No'}>No</MenuItem>
+                    <MenuItem value={true}>Si</MenuItem>
+                    <MenuItem value={false}>No</MenuItem>
                   </CssSelectInput>
-                  {errors.insurance && !billingInformation.insurance && (
+                  {errors.healthInsurance && !billingInformation.healthInsurance && (
                     <FormHelperText error>Campo requerido</FormHelperText>
                   )}
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
                 <CssTextField
-                  required
                   sx={{ width: '100%' }}
                   label="Monto de subsidio SM. Anual"
                   placeholder="0.00$"
                   type="number"
-                  name={'insuranceFee'}
+                  name={'healthInsuranceAmount'}
                   variant="outlined"
                   size="small"
-                  value={billingInformation.insuranceFee}
-                  error={errors.insuranceFee}
-                  {...register('insuranceFee', {
-                    required: true,
+                  value={billingInformation.healthInsuranceAmount}
+                  {...register('healthInsuranceAmount', {
                     onChange: (event) =>
                       setBillingInformation({
                         ...billingInformation,
-                        insuranceFee: event.target.value
+                        healthInsuranceAmount: event.target.value
                       })
                   })}
-                  helperText={
-                    errors.insuranceFee && (
-                      <Typography variant="caption" color="error">
-                        Campo requerido
-                      </Typography>
-                    )
-                  }
                 />
               </Grid>
             </Grid>
@@ -389,7 +453,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               label="Tarifa total Anual"
               size="small"
-              value={billingInformation.insuranceFee + billingInformation.usdMonthlyFee + ' $'}
+              value={getTotalAnualFee()}
               InputProps={{
                 readOnly: true
               }}
@@ -401,11 +465,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               label="Trifa por Hora"
               size="small"
-              value={
-                Math.round(
-                  ((billingInformation.insuranceFee + billingInformation.anualTotal) / 52) * 40
-                ) + ' $'
-              }
+              value={getTotalAnualyHourFee()}
               InputProps={{
                 readOnly: true
               }}

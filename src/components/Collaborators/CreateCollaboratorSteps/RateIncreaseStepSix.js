@@ -14,7 +14,7 @@ import { getDataInformation } from '../../../utils/dataUtils';
 const RateIncreaseStepSix = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
 
-  const [rateIncrease, setRateIncrease] = useState({
+  const [rateIncrease] = useState({
     effectiveDateAdjustment: '',
     newRate: '',
     rateIncreasePercentages: [
@@ -51,8 +51,12 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     handleSubmit,
     control,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
+
+  const [isMounted, setIsMounted] = useState(false);
 
   const afterExecution = (execution) => {
     if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
@@ -66,6 +70,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
         severity: 'success'
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
@@ -87,7 +92,14 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
-    getCollaboratorContract();
+    if (!isMounted) {
+      setIsMounted(true);
+      getCollaboratorContract();
+    }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
+    }
     ref.current = validateForm;
   }, [rateIncrease]);
 

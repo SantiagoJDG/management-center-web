@@ -10,8 +10,10 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
     register,
     handleSubmit,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
 
   const [organizationalStructureInformation, setOrganizationalStructureInformation] = useState({
     reportDirection: '',
@@ -163,6 +165,10 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       getOperationData();
       setIsMounted(true);
     }
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
+    }
     ref.current = validateForm;
   }, [isMounted, organizationalStructureInformation]);
 
@@ -204,6 +210,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
               optionList={supervisors}
               elmentCallback={handleSupervisor}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
           <Grid item>
@@ -216,6 +223,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
                 elmentCallback={handleProfiles}
                 multiple={true}
                 requiredField={true}
+                canCreateNew={false}
               />
             </Grid>
           </Grid>
@@ -228,6 +236,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
               elmentCallback={handleKnowledges}
               multiple={true}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
           <Grid item>
@@ -239,6 +248,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
               elmentCallback={handleTechnologies}
               multiple={true}
               requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
         </Grid>
