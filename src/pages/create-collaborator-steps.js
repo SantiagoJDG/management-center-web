@@ -1,27 +1,28 @@
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HailRoundedIcon from '@mui/icons-material/HailRounded';
 import {
-  Grid,
-  Stepper,
-  Step,
-  StepLabel,
-  ListItemIcon,
-  Typography,
   Box,
   Button,
-  Paper
+  Grid,
+  ListItemIcon,
+  Paper,
+  Step,
+  StepLabel,
+  Stepper,
+  Typography
 } from '@mui/material';
-import HailRoundedIcon from '@mui/icons-material/HailRounded';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
+import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
 import CompanyInformationStepTwo from 'components/Collaborators/CreateCollaboratorSteps/CompanyInformationStepTwo';
 import ContractInformationStepThree from 'components/Collaborators/CreateCollaboratorSteps/ContractInformationStepThree';
-import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
-import BillingInformationStepFive from 'components/Collaborators/CreateCollaboratorSteps/BillingInformationStepFive';
-import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
-import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
+import FinalContractStepNine from 'components/Collaborators/CreateCollaboratorSteps/FinalContractStepNine';
 import IdentityInformationStepEight from 'components/Collaborators/CreateCollaboratorSteps/IdentityInformationStepEight';
-import { useRef, useState, useEffect } from 'react';
+import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCollaboratorSteps/OrganizationalStructureStepSeven';
+import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
+import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
+import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
 import useAuth from 'hooks/useAuth';
 import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
 
 const CreateCollaboratorSteps = () => {
   const { userToken, waitingUser } = useAuth();
@@ -40,8 +41,6 @@ const CreateCollaboratorSteps = () => {
   const isStepOptionals = (step) => {
     switch (step) {
       case 5:
-        return true;
-      case 6:
         return true;
       case 7:
         return true;
@@ -176,6 +175,21 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
+        />
+      )
+    },
+    {
+      id: 9,
+      title: 'Final de contratación',
+      stepName: 'Información final de contratación',
+      backgroungImg: '/pills-orange.png',
+      component: (
+        <FinalContractStepNine
+          ref={formValidate}
+          setActiveStep={setActiveStep}
+          newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     }
@@ -183,12 +197,19 @@ const CreateCollaboratorSteps = () => {
 
   const handleNext = () => {
     formValidate.current();
+
     let newSkipped = skipped;
+
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
+
     setSkipped(newSkipped);
+
+    if (activeStep === steps.length - 1) {
+      router.push('/');
+    }
   };
 
   const handleReset = () => {
@@ -258,7 +279,6 @@ const CreateCollaboratorSteps = () => {
     if (waitingUser) return;
     if (!userToken) {
       router.replace('/login');
-      return;
     }
   }, [userToken, waitingUser]);
 
