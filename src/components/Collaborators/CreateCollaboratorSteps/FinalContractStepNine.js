@@ -1,42 +1,11 @@
-import { forwardRef, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Grid, Divider, CardMedia } from '@mui/material';
-import useEdit from 'hooks/useEdit';
-import useMessage from 'hooks/useMessage';
+import { CardMedia, Divider, Grid } from '@mui/material';
 import 'moment/locale/es';
+import { forwardRef, useEffect } from 'react';
 
 const FinalContractStepNine = forwardRef((props, ref) => {
-  const { handleNewMessage } = useMessage();
-
-  const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`);
-
-  const { handleSubmit, trigger } = useForm();
-
-  const validateForm = () => {
-    const isValid = trigger();
-    if (isValid) {
-      handleSubmit(async () => {
-        const execution = await edit();
-        afterExecution(execution);
-      })();
-    }
-  };
-  const afterExecution = (execution) => {
-    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
-      handleNewMessage({
-        text: 'Por favor revisar los campos que deben ser unicos',
-        severity: 'error'
-      });
-    } else {
-      handleNewMessage({
-        text: 'Excelente! La Informacion de incremento de tarifa fue creada exitosamente',
-        severity: 'success'
-      });
-      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    }
-  };
   useEffect(() => {
-    ref.current = validateForm;
+    ref.current = () => {};
+    props.setFormCompleted(true);
   }, []);
 
   return (

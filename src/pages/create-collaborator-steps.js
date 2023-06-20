@@ -175,6 +175,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     },
@@ -188,6 +189,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
+          setFormCompleted={setFormCompleted}
         />
       )
     }
@@ -195,11 +197,14 @@ const CreateCollaboratorSteps = () => {
 
   const handleNext = () => {
     formValidate.current();
+
     let newSkipped = skipped;
+
     if (isStepSkipped(activeStep)) {
       newSkipped = new Set(newSkipped.values());
       newSkipped.delete(activeStep);
     }
+
     setSkipped(newSkipped);
 
     if (activeStep === steps.length - 1) {
