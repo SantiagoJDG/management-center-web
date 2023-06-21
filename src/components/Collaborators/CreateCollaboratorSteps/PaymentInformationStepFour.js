@@ -44,6 +44,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   const [offices, setOffices] = useState([]);
   const [countries, setCountries] = useState([]);
   const [frequencies, setFrequencies] = useState([]);
+  const [banks, setBanks] = useState([]);
 
   const [paymentErrors, setPaymentErrors] = useState({});
 
@@ -51,6 +52,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     getDataInformation('/api/hiring/offices', setOffices);
     getDataInformation('/api/residence/countries', setCountries);
     getDataInformation('/api/hiring/frequencies', setFrequencies);
+    getDataInformation('/api/hiring/banks', setBanks);
   };
 
   async function saveNewItem(paths, newItem) {
@@ -100,6 +102,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       frequencies
     );
   }
+
   function handleBankCountry(country) {
     setPaymentInformation({
       ...paymentInformation,
@@ -113,6 +116,10 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       setCountries,
       countries
     );
+  }
+
+  function handleBank(bank) {
+    handleAutoCompleteValue(bank, 'bankId', '/api/hiring/bank', setBanks, banks);
   }
 
   const handleDropdownErrors = () => {
@@ -178,30 +185,14 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       <Grid item xs={5} mt={1}>
         <Grid container direction={'column'} spacing={3} p={2}>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              required
+            <CustomAutoComplete
+              formError={paymentErrors.bankId}
               name="bankId"
-              size="small"
               label="Banco / Medio de pago"
-              placeholder="Escribe tu medio de pago"
-              {...register('bankId', {
-                required: true,
-                onChange: (event) => {
-                  setPaymentInformation({
-                    ...paymentInformation,
-                    bankId: event.target.value
-                  });
-                }
-              })}
-              error={errors.bankId && true}
-              helperText={
-                errors.bankId && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
-                  </Typography>
-                )
-              }
+              optionList={banks}
+              elmentCallback={handleBank}
+              requiredField={true}
+              canCreateNew={true}
             />
           </Grid>
           <Grid item>
