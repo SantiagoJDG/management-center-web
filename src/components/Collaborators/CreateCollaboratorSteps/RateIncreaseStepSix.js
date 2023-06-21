@@ -3,7 +3,7 @@ import { CardMedia, Divider, Grid, ListItemIcon, Typography } from '@mui/materia
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import useEdit from 'hooks/useEdit';
+import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
 import 'moment/locale/es';
 import { forwardRef, useEffect, useRef, useState } from 'react';
@@ -14,37 +14,16 @@ import { getDataInformation } from '../../../utils/dataUtils';
 const RateIncreaseStepSix = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
 
-  const [rateIncrease] = useState({
-    effectiveDateAdjustment: '',
-    newRate: '',
-    rateIncreasePercentages: [
-      {
-        rateIncreasePercentage: ''
-      }
-    ]
+  const [rateIncrease, setRateIncrease] = useState({
+    effectiveDate: '',
+    amount: ''
   });
-
-  const [create] = useEdit(
-    `/api/collaborator/${props.newCollaboratorId}/contract/fare_increase`,
-    rateIncrease
-  );
-
+  const [isMounted, setIsMounted] = useState(false);
   const [numbeRateIncrease, setNumberRateIncrease] = useState([{ rateIncreasePercentage: '' }]);
   const [newBaseAmount, setNewBaseAmount] = useState();
-  const [collaboratorContract, setCollaboratorContract] = useState();
+  const [collaboratorContract, setCollaboratorContract] = useState({ id: 0 });
 
   const secondTextFieldRef = useRef(null);
-
-  const handleAddNumberRateIncrease = () => {
-    setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
-  };
-
-  const handleNumberRateChange = (event) => {
-    const percentageValue = (collaboratorContract.baseAmount * parseInt(event.target.value)) / 100;
-    const newBaseAmount = collaboratorContract.baseAmount + percentageValue;
-
-    setNewBaseAmount(newBaseAmount);
-  };
 
   const {
     register,
@@ -56,7 +35,33 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   } = useForm();
   const watchAllFields = watch();
 
-  const [isMounted, setIsMounted] = useState(false);
+  const [create] = useCreate(
+    `/api/collaborator/${props.newCollaboratorId}/contract/${collaboratorContract.id}/fare-increase`,
+    rateIncrease
+  );
+
+  const handleAddNumberRateIncrease = () => {
+    setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
+  };
+
+  const handleNumberRateChange = (event) => {
+    const percentageValue = (collaboratorContract.baseAmount * event.target.value) / 100;
+    const newBaseAmount = collaboratorContract.baseAmount + percentageValue;
+
+    setNewBaseAmount(newBaseAmount);
+
+    setRateIncrease({
+      ...rateIncrease,
+      amount: event.target.value
+    });
+  };
+
+  const handleNEffectiveDate = (date) => {
+    setRateIncrease({
+      ...rateIncrease,
+      effectiveDate: date
+    });
+  };
 
   const afterExecution = (execution) => {
     if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
@@ -96,6 +101,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       setIsMounted(true);
       getCollaboratorContract();
     }
+
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
@@ -109,7 +115,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
         <Grid container direction={'column'} spacing={4} p={2}>
           <Grid item>
             {numbeRateIncrease.map((Rate, index) => (
-              <Grid item key={index}>
+              <Grid item key={`number-${index}`}>
                 <CssTextField
                   required
                   id={`number-${index}`}
@@ -128,7 +134,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                   value={Rate.number}
                   {...register(`number-${index}`, {
                     required: true,
-                    onBlur: (event) => handleNumberRateChange(event, index, 'number')
+                    onBlur: (event) => handleNumberRateChange(event)
                   })}
                   error={errors[`number-${index}`]}
                   helperText={
@@ -159,7 +165,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
-                name="effectiveDateAdjustment"
+                name="effectiveDate"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
@@ -167,6 +173,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
+                      handleNEffectiveDate(newValue);
                     }}
                     renderInput={(params) => (
                       <CssTextField
@@ -176,16 +183,16 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
                         size="small"
                         label={'Fecha de efectidad del ajuste'}
                         placeholder="DD/MM/YYYY"
-                        name="effectiveDateAdjustment"
-                        error={errors.effectiveDateAdjustment && true}
+                        name="effectiveDate"
+                        error={errors.effectiveDate && true}
                         helperText={
-                          errors.effectiveDateAdjustment && (
+                          errors.effectiveDate && (
                             <Typography variant="caption" color="error">
                               Campo requerido
                             </Typography>
                           )
                         }
-                        {...register('effectiveDateAdjustment', { required: true })}
+                        {...register('effectiveDate', { required: true })}
                       />
                     )}
                   />
