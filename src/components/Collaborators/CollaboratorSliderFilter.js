@@ -31,7 +31,7 @@ const CollaboratorSliderFilter = ({ setCollaborators, allCollaborators }) => {
 
   return (
     <Grid container spacing={1} justifyContent="flex-end">
-      <Box>
+      <Box sx={{ width: '100%' }}>
         <Typography>Filtrar por salario: </Typography>
         <Slider
           id="salaryFilter"
