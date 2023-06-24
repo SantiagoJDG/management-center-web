@@ -66,13 +66,7 @@ const Collaborators = () => {
 
   return collaborators ? (
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
-      <Grid
-        item
-        xs={12}
-        container
-        spacing={1}
-        style={{ backgroundColor: 'white', padding: '16px' }}
-      >
+      <Grid item xs={12} container style={{ backgroundColor: 'white', padding: '16px' }}>
         <Grid item xs={1}>
           <TextField
             id="name"
@@ -82,6 +76,7 @@ const Collaborators = () => {
             value={searchValueName}
             onChange={onSearchNameValueChange}
             size="small"
+            style={{ marginRight: '8px' }}
           />
         </Grid>
 
@@ -105,7 +100,7 @@ const Collaborators = () => {
           ></DateBarFilter>
         </Grid>
 
-        <Grid item xs={2}>
+        <Grid item xs={3}>
           <CollaboratorSliderFilter
             allCollaborators={AllCollaborators}
             setCollaborators={setCollaborators}
@@ -113,7 +108,7 @@ const Collaborators = () => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid item xs={12} spacing={1} style={{ backgroundColor: 'white', padding: '10px' }}>
         <CollaboratorBarFilter setCollaborators={setCollaborators} />
       </Grid>
 

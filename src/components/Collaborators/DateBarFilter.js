@@ -69,7 +69,7 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
 
   return (
     <Grid container spacing={1}>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} justifyContent="flex-end">
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <DesktopDatePicker
             fullWidth
@@ -82,6 +82,7 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
             renderInput={(params) => (
               <TextField
                 size="small"
+                fullWidth
                 {...params}
                 helperText={initialDateError && initialDateError.message}
               />
@@ -103,6 +104,7 @@ export const DateBarFilter = ({ collaborators, setCollaborators, allCollaborator
             renderInput={(params) => (
               <TextField
                 size="small"
+                fullWidth
                 {...params}
                 helperText={endDateError && endDateError.message}
               />
