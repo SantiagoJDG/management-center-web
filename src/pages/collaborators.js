@@ -65,13 +65,19 @@ const Collaborators = () => {
   }, [userToken, waitingUser]);
 
   return collaborators ? (
-    <Grid container>
-      <Grid container spacing={2}>
-        <Grid item xs={6} md={4} lg={2}>
+    <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
+      <Grid
+        item
+        xs={12}
+        container
+        spacing={1}
+        style={{ backgroundColor: 'white', padding: '16px' }}
+      >
+        <Grid item xs={1}>
           <TextField
             id="name"
             name="name"
-            label="Filtrar por nombre"
+            label="Filtrar nombre"
             variant="standard"
             value={searchValueName}
             onChange={onSearchNameValueChange}
@@ -79,11 +85,11 @@ const Collaborators = () => {
           />
         </Grid>
 
-        <Grid item xs={6} md={4} lg={2}>
+        <Grid item xs={2}>
           <TextField
             id="internalCode"
             name="internalCode"
-            label="Filtrar por codigo"
+            label="Filtrar codigo"
             variant="standard"
             value={searchValueCode}
             onChange={onSearchCodeValueChange}
@@ -91,7 +97,7 @@ const Collaborators = () => {
           />
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={6}>
           <DateBarFilter
             allCollaborators={AllCollaborators}
             collaborators={collaborators}
@@ -99,20 +105,21 @@ const Collaborators = () => {
           ></DateBarFilter>
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
+        <Grid item xs={2}>
           <CollaboratorSliderFilter
             allCollaborators={AllCollaborators}
             setCollaborators={setCollaborators}
           ></CollaboratorSliderFilter>
         </Grid>
+      </Grid>
 
-        <Grid item xs={12}>
-          <CollaboratorBarFilter setCollaborators={setCollaborators} />
-        </Grid>
+      <Grid item xs={12}>
+        <CollaboratorBarFilter setCollaborators={setCollaborators} />
+      </Grid>
 
-        <Grid item xs={12}>
-          <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
-        </Grid>
+      <Grid item xs={12}>
+        <br></br>
+        <CollaboratorTable collaborators={collaborators}></CollaboratorTable>
       </Grid>
     </Grid>
   ) : (

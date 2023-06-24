@@ -1,4 +1,4 @@
-import { Box, Slider, Typography } from '@mui/material';
+import { Grid, Box, Slider, Typography } from '@mui/material';
 
 import { useState } from 'react';
 
@@ -30,23 +30,25 @@ const CollaboratorSliderFilter = ({ setCollaborators, allCollaborators }) => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography>Filtrar por salario: </Typography>
-      <Slider
-        id="salaryFilter"
-        name="salaryFilter"
-        defaultValue={1000}
-        step={100}
-        marks
-        min={100}
-        max={50000}
-        valueLabelDisplay="auto"
-        getAriaLabel={() => minDistance}
-        value={salaryValues}
-        onChange={handleSalaryFilter}
-        disableSwap
-      />
-    </Box>
+    <Grid container spacing={1} justifyContent="flex-end">
+      <Box>
+        <Typography>Filtrar por salario: </Typography>
+        <Slider
+          id="salaryFilter"
+          name="salaryFilter"
+          defaultValue={1000}
+          step={100}
+          marks
+          min={100}
+          max={50000}
+          valueLabelDisplay="auto"
+          getAriaLabel={() => minDistance}
+          value={salaryValues}
+          onChange={handleSalaryFilter}
+          disableSwap
+        />
+      </Box>
+    </Grid>
   );
 };
 

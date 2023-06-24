@@ -88,7 +88,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'Paises'}
           dropdownData={residencies}
@@ -97,7 +97,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
         />
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'Ciudad'}
           dropdownData={cities}
@@ -106,7 +106,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
         />
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'Oficina'}
           dropdownData={office}
@@ -115,7 +115,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
         />
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'Supervisor'}
           dropdownData={supervisors}
@@ -124,7 +124,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
         />
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'Cliente'}
           dropdownData={clients}
@@ -133,7 +133,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
         />
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'N1'}
           dropdownData={profile}
@@ -142,7 +142,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
         />
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'N2'}
           dropdownData={knowledge}
@@ -151,7 +151,7 @@ export const CollaboratorBarFilter = ({ setCollaborators }) => {
         />
       </Grid>
 
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={3}>
         <CustomFilterDropdown
           title={'N3'}
           dropdownData={technologies}

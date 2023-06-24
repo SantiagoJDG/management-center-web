@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+
 import {
   Paper,
   Table,
@@ -175,9 +176,9 @@ const CollaboratorTable = ({ collaborators }) => {
                       })}
                       <TableCell key={collaborator.id} align="center">
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {collaborator.profiles.map((value, index) => (
+                          {/*{collaborator.profiles.map((value, index) => (
                             <Chip key={index} label={value.name} />
-                          ))}
+                           ))}*/}
                         </Box>
                       </TableCell>
                     </TableRow>
@@ -277,7 +278,7 @@ const EnhancedTableHead = (props) => {
               align={headCell.align}
               padding={headCell.disablePadding ? 'none' : 'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
-              style={{ minWidth: headCell.minWidth, background: 'grey' }}
+              style={{ minWidth: headCell.minWidth, background: '#5eaae7', color: 'white' }}
             >
               <TableSortLabel
                 active={orderBy === headCell.id}
