@@ -47,6 +47,10 @@ const Collaborators = () => {
     setCollaborators(filterByName(event.target.value, event.target.name));
   };
 
+  const addCollaborator = () => {
+    router.push('/create-collaborator-steps');
+  };
+
   const onSearchCodeValueChange = (event) => {
     setSearchValueCode(event.target.value);
     setCollaborators(filterByName(event.target.value, event.target.name));
@@ -87,6 +91,7 @@ const Collaborators = () => {
           </Typography>
           <Grid item xs={12} sm="auto" style={{ marginLeft: 'auto' }}>
             <Button
+              onClick={addCollaborator}
               size={'small'}
               variant="contained"
               sx={{
