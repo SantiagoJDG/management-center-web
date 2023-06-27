@@ -31,7 +31,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
 
   const getOperationData = async () => {
     getDataInformation('/api/collaborator', setSupervisors);
-    // getDataInformation('/api/operation/profiles', setProfiles);
+    getDataInformation('/api/operation/profiles', setProfiles);
     getDataInformation('/api/operation/knowledges', setKnowledges);
     getDataInformation('/api/operation/technologies', setTechnologies);
   };

@@ -145,8 +145,11 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   }
 
   function handleOnChangeEndDate(newValue) {
-    setContractInformation({ ...contractInformation, endDate: newValue.format('YYYY-MM-DD') });
-    const monthOfRelativeDate = moment().month(newValue.month()).fromNow(true);
+    setContractInformation({
+      ...contractInformation,
+      endDate: moment(newValue).format('YYYY-MM-DD')
+    });
+    const monthOfRelativeDate = moment().month(moment(newValue).month()).fromNow(true);
     const yearOfRelativeDate = moment(newValue).from(initialDate);
     setExpirationTime(`${yearOfRelativeDate} y ${monthOfRelativeDate}`);
   }
@@ -194,6 +197,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       props.setFormCompleted(false);
+      props.rememberStepFormInformation(props.stepName, contractInformation);
     }
   };
 
@@ -208,6 +212,18 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     }
   };
 
+  const findObject = (array, id) => {
+    const finded = array.find((each) => {
+      return each.id === id;
+    });
+    return finded;
+  };
+
+  const returnedStep = (formData) => {
+    setContractInformation(formData);
+    handleOnChangeEndDate(formData.endDate);
+  };
+
   useEffect(() => {
     if (!mounted) {
       getCatalogseData();
@@ -216,6 +232,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
+    }
+    if (Object.keys(props.formData).length) {
+      const { formData } = props;
+      returnedStep(formData);
     }
     ref.current = validateForm;
   }, [contractInformation, mounted]);
@@ -233,6 +253,9 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               elmentCallback={handleCompanies}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(companies, props.formData.companyId) : ''
+              }
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
@@ -244,6 +267,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               elmentCallback={handleOffice}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={props.formData ? findObject(offices, props.formData.officeId) : ''}
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
@@ -255,6 +279,9 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               elmentCallback={handleContractType}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(contractType, props.formData.typeId) : ''
+              }
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
@@ -266,6 +293,9 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               elmentCallback={handleContractValidity}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(contractValidities, props.formData.validityId) : ''
+              }
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
@@ -273,6 +303,11 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               <Controller
                 name="initialDate"
                 control={control}
+                defaultValue={
+                  Object.keys(props.formData).length
+                    ? moment(props.formData.initialDate).format('YYYY-MM-DD')
+                    : ''
+                }
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     label="Fecha de Inicio"
@@ -312,6 +347,11 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               <Controller
                 name="endDate"
                 control={control}
+                defaultValue={
+                  Object.keys(props.formData).length
+                    ? moment(props.formData.endDate).format('YYYY-MM-DD')
+                    : ''
+                }
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     label="Fecha de Finalizacion"
@@ -365,12 +405,15 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
           <Grid item sx={{ display: 'flex' }}>
             <CustomAutoComplete
               formError={companyErrors.currencyId}
-              name="typeId"
+              name="currencyId"
               label="Moneda"
               optionList={currencies}
               elmentCallback={handleCurrency}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(currencies, props.formData.currencyId) : ''
+              }
             />
 
             <CssTextField
@@ -380,6 +423,7 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
               size="small"
               name="baseAmount"
               placeholder="$0000.00"
+              defaultValue={props.formData ? props.formData.baseAmount : ''}
               label="Tarifa mensual bruta"
               {...register('baseAmount', {
                 required: true,

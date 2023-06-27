@@ -31,7 +31,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     control,
     trigger,
     watch,
-    formState: { errors, isDirty }
+    formState: { errors, isDirty },
+    setValue
   } = useForm();
   const watchAllFields = watch();
 
@@ -70,8 +71,12 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   });
 
   const [initialDate, setInitialDate] = useState();
+  const [age, setAge] = useState(
+    Object.keys(props.formData).length
+      ? moment(moment().format()).diff(moment(props.formData.birthdate).format(), 'year')
+      : 0
+  );
 
-  const [age, setAge] = useState(0);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
 
@@ -153,7 +158,11 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const handleOnChangeDate = (newValue) => {
     setNewCollaborator({ ...newCollaborator, birthdate: moment(newValue).format() });
     setInitialDate(moment(newValue).format());
-    const diff = moment(moment().format()).diff(initialDate, 'year');
+    handleSetAge(initialDate);
+  };
+
+  const handleSetAge = (date) => {
+    const diff = moment(moment().format()).diff(date, 'year');
     setAge(diff);
   };
 
@@ -190,6 +199,55 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     });
   };
 
+  const displayPhoneNumber = (contactNumberToBeDisplayed) => {
+    return contactNumberToBeDisplayed?.map((phone, index) => (
+      <Grid item key={index}>
+        <CssTextField
+          required
+          sx={{ width: '25%' }}
+          id={`areaCode-${index}`}
+          label="Code"
+          placeholder="000"
+          type="number"
+          name={`areaCode-${index}`}
+          variant="outlined"
+          size="small"
+          value={phone.areaCode}
+          {...register(`areaCode-${index}`, {
+            required: true,
+            onChange: (event) => handlePhoneChange(event, index, 'areaCode')
+          })}
+          error={errors[`areaCode-${index}`]}
+        />
+        <CssTextField
+          required
+          sx={{ width: '60%', ml: 1 }}
+          id={`number-${index}`}
+          name={`number-${index}`}
+          label="Telefono de contacto"
+          placeholder="0000 00000"
+          type="number"
+          size="small"
+          variant="outlined"
+          inputRef={secondTextFieldRef}
+          value={phone.number}
+          {...register(`number-${index}`, {
+            required: true,
+            onChange: (event) => handlePhoneChange(event, index, 'number')
+          })}
+          error={errors[`number-${index}`]}
+          helperText={
+            errors[`number-${index}`] && (
+              <Typography variant="caption" color="error">
+                Campo requerido
+              </Typography>
+            )
+          }
+        />
+      </Grid>
+    ));
+  };
+
   const handleAddNationality = () => {
     setNationalities([...nationalities, { docAdress: '', countryId: 1 }]);
   };
@@ -208,6 +266,57 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     });
   };
 
+  const displayNationalities = (nationalitiesArray) => {
+    return nationalitiesArray.map((value, index) => {
+      const { docAdress } = value;
+      const selectedCountry = countries.find((country) => country.id === docAdress.id);
+      const defaultValue = selectedCountry ? selectedCountry : '';
+      return (
+        <Grid item key={index} sx={{ width: '100%' }}>
+          <FormControl size="small" sx={{ width: '100%' }}>
+            <InputLabel
+              id="nationalities"
+              error={errors[`nationalities-${index}`] && !value.docAdress}
+            >
+              Nacionalidades
+            </InputLabel>
+            <CssSelectInput
+              labelId="nationalities"
+              label="Nacionalidades"
+              required
+              size="small"
+              name={`nationalities-${index}`}
+              value={Object.keys(props.formData).length ? defaultValue : docAdress}
+              {...register(`nationalities-${index}`, {
+                required: true,
+                onChange: (event) => handleNationalityChange(event, index)
+              })}
+              error={errors[`nationalities-${index}`] && !value.docAdress}
+              helperText={
+                errors[`nationalities-${index}`] && (
+                  <Typography variant="caption" color="error">
+                    Campo requerido
+                  </Typography>
+                )
+              }
+            >
+              {countries.map((country, index) => {
+                return (
+                  <MenuItem value={country} key={index}>
+                    {country.name}
+                  </MenuItem>
+                );
+              })}
+            </CssSelectInput>
+            {errors[`nationalities-${index}`] && !value.docAdress && (
+              <FormHelperText error>Campo requerido</FormHelperText>
+            )}
+          </FormControl>
+        </Grid>
+      );
+    });
+  };
+
   const handleResidencyErrors = () => {
     if (!newCollaborator.residency.countryId || !newCollaborator.residency.cityId) {
       const newErrors = {
@@ -223,7 +332,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     }
   };
 
-  const afterExecution = (execution) => {
+  const handleExecution = (execution) => {
     if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
       handleNewMessage({
         text: 'Por favor revisar los campos que deben ser unicos',
@@ -234,11 +343,16 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
         text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
         severity: 'success'
       });
-      const idNewCollaborator = execution.data;
-      props.setNewCollaboratorId(idNewCollaborator);
-      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      props.setFormCompleted(false);
+      handlerStepperValidation(execution);
     }
+  };
+
+  const handlerStepperValidation = (execution) => {
+    const idNewCollaborator = execution.data;
+    props.setNewCollaboratorId(idNewCollaborator);
+    props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    props.setFormCompleted(false);
+    props.rememberStepFormInformation(props.stepName, newCollaborator);
   };
 
   const validateForm = () => {
@@ -246,10 +360,30 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const execution = await create();
-        afterExecution(execution);
+        try {
+          const execution = await create();
+          handleExecution(execution);
+        } catch (error) {
+          return error;
+        }
       })();
     }
+  };
+
+  const findObject = (array, id) => {
+    const finded = array.find((each) => {
+      return each.id === id;
+    });
+    return finded;
+  };
+
+  const returnedStep = (formData) => {
+    setNewCollaborator(formData);
+    setPhoto(URL.createObjectURL(formData.file));
+    setValue('file', `${formData.file}`);
+    formData.nationalities?.map((nationality, index) => {
+      setValue(`nationalities-${index}`, `${nationality}`);
+    });
   };
 
   useEffect(() => {
@@ -260,6 +394,10 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
+    }
+    if (Object.keys(props.formData).length) {
+      const { formData } = props;
+      returnedStep(formData);
     }
     ref.current = validateForm;
   }, [age, newCollaborator, isMounted]);
@@ -286,30 +424,32 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
                   name="file"
                   control={control}
                   rules={{ required: true }}
-                  render={({ field }) => (
-                    <CssMuiFileInput
-                      size="small"
-                      placeholder="Adjuntar y subir archivo"
-                      label="Fotografia del Consultor"
-                      value={field.value}
-                      onChange={(newValue) => {
-                        handleFileChange(newValue);
-                        field.onChange(newValue);
-                      }}
-                      error={errors.file}
-                      helperText={
-                        errors.file && (
-                          <Typography
-                            variant="caption"
-                            color="error"
-                            sx={{ boxSizing: 'content-box' }}
-                          >
-                            Campo requerido
-                          </Typography>
-                        )
-                      }
-                    />
-                  )}
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <CssMuiFileInput
+                        size="small"
+                        placeholder="Adjuntar y subir archivo"
+                        label="Fotografia del Consultor"
+                        value={value}
+                        onChange={(newValue) => {
+                          handleFileChange(newValue);
+                          onChange(newValue);
+                        }}
+                        error={errors.file}
+                        helperText={
+                          errors.file && (
+                            <Typography
+                              variant="caption"
+                              color="error"
+                              sx={{ boxSizing: 'content-box' }}
+                            >
+                              Campo requerido
+                            </Typography>
+                          )
+                        }
+                      />
+                    );
+                  }}
                 />
               </Grid>
             </Grid>
@@ -318,6 +458,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '100%' }}
               required
+              defaultValue={props.formData ? props.formData.name : ''}
               name="name"
               size="small"
               placeholder="Nombre completo del Consultor"
@@ -344,6 +485,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               size="small"
               name="lastName"
               placeholder="Apellido completo del Consultor"
+              defaultValue={props.formData ? props.formData.lastName : ''}
               label="Apellido del Consultor"
               {...register('lastName', {
                 required: true,
@@ -365,6 +507,11 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               <Controller
                 name="birthdate"
                 control={control}
+                defaultValue={
+                  Object.keys(props.formData).length
+                    ? moment(props.formData.birthdate).format('YYYY-MM-DD')
+                    : ''
+                }
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     label="Fecha de nacimiento"
@@ -415,6 +562,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               variant="outlined"
               size="small"
               fullWidth
+              defaultValue={props.formData ? props.formData.personalEmail : ''}
               name="personalEmail"
               {...register('personalEmail', {
                 required: true,
@@ -431,52 +579,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               }
             />
           </Grid>
-          {phoneNumbers.map((phone, index) => (
-            <Grid item key={index}>
-              <CssTextField
-                required
-                sx={{ width: '25%' }}
-                id={`areaCode-${index}`}
-                label="Code"
-                placeholder="000"
-                type="number"
-                name={`areaCode-${index}`}
-                variant="outlined"
-                size="small"
-                value={phone.areaCode}
-                {...register(`areaCode-${index}`, {
-                  required: true,
-                  onChange: (event) => handlePhoneChange(event, index, 'areaCode')
-                })}
-                error={errors[`areaCode-${index}`]}
-              />
-              <CssTextField
-                required
-                sx={{ width: '60%', ml: 1 }}
-                id={`number-${index}`}
-                name={`number-${index}`}
-                label="Telefono de contacto"
-                placeholder="0000 00000"
-                type="number"
-                size="small"
-                variant="outlined"
-                inputRef={secondTextFieldRef}
-                value={phone.number}
-                {...register(`number-${index}`, {
-                  required: true,
-                  onChange: (event) => handlePhoneChange(event, index, 'number')
-                })}
-                error={errors[`number-${index}`]}
-                helperText={
-                  errors[`number-${index}`] && (
-                    <Typography variant="caption" color="error">
-                      Campo requerido
-                    </Typography>
-                  )
-                }
-              />
-            </Grid>
-          ))}
+          {Object.keys(props.formData).length
+            ? displayPhoneNumber(props.formData.contactPhones)
+            : displayPhoneNumber(phoneNumbers)}
           <Grid sx={{ pl: 2, pt: 1 }}>
             <ListItemIcon>
               <AddCircleOutlineIcon color="info" onClick={handleAddPhoneNumber} fontSize="small" />
@@ -503,6 +608,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               elmentCallback={handleCountry}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(countries, props.formData.residency?.countryId) : ''
+              }
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
@@ -514,11 +622,15 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               elmentCallback={handleState}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(states, props.formData.residency?.cityId) : ''
+              }
             />
           </Grid>
           <Grid item>
             <CssTextField
               sx={{ width: '25vw' }}
+              defaultValue={props.formData ? props.formData.residency?.address : ''}
               required
               size="small"
               name="address"
@@ -547,49 +659,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
               }
             />
           </Grid>
-          {nationalities.map((value, index) => (
-            <Grid item key={index} sx={{ width: '100%' }}>
-              <FormControl size="small" sx={{ width: '100%' }}>
-                <InputLabel
-                  id="nationalities"
-                  error={errors[`nationalities-${index}`] && !value.docAdress}
-                >
-                  Nacionalidades
-                </InputLabel>
-                <CssSelectInput
-                  labelId="nationalities"
-                  label="Nacionalidades"
-                  required
-                  size="small"
-                  name={`nationalities-${index}`}
-                  value={value.docAdress}
-                  {...register(`nationalities-${index}`, {
-                    required: true,
-                    onChange: (event) => handleNationalityChange(event, index)
-                  })}
-                  error={errors[`nationalities-${index}`] && !value.docAdress}
-                  helperText={
-                    errors[`nationalities-${index}`] && (
-                      <Typography variant="caption" color="error">
-                        Campo requerido
-                      </Typography>
-                    )
-                  }
-                >
-                  {countries.map((country, index) => {
-                    return (
-                      <MenuItem value={country} key={index}>
-                        {country.name}
-                      </MenuItem>
-                    );
-                  })}
-                </CssSelectInput>
-                {errors[`nationalities-${index}`] && !value.docAdress && (
-                  <FormHelperText error>Campo requerido</FormHelperText>
-                )}
-              </FormControl>
-            </Grid>
-          ))}
+          {Object.keys(props.formData).length
+            ? displayNationalities(props.formData.nationalities)
+            : displayNationalities(nationalities)}
           <Grid sx={{ pl: 2, pt: 1 }}>
             <ListItemIcon>
               <AddCircleOutlineIcon color="info" fontSize="small" onClick={handleAddNationality} />
