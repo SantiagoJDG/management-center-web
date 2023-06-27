@@ -1,10 +1,10 @@
 import {
   Divider,
-  MenuItem,
-  FormHelperText,
   FormControl,
-  InputLabel,
+  FormHelperText,
   Grid,
+  InputLabel,
+  MenuItem,
   Typography
 } from '@mui/material';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
@@ -13,11 +13,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
+import moment from 'moment';
 import 'moment/locale/es';
 import { forwardRef, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getAxiosInstance } from 'utils/axiosClient';
-import { CssMuiFileInput, CssTextField, CssSelectInput } from '../../../styles/formButton';
+import { CssMuiFileInput, CssSelectInput, CssTextField } from '../../../styles/formButton';
 
 const listRollUp = [
   { id: 1, name: 'Programa de pasantía' },
@@ -33,46 +34,53 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     handleSubmit,
     control,
     trigger,
-    formState: { errors }
+    watch,
+    formState: { errors, isDirty }
   } = useForm();
+  const watchAllFields = watch();
 
   const [isMounted, setIsMounted] = useState(false);
   const { handleNewMessage } = useMessage();
 
+  const REQUIRED_FIELDS = [
+    { name: 'seniorityId', description: 'Campo requerido' },
+    { name: 'readinessId', description: 'Campo requerido' },
+    { name: 'sessionDate', description: 'Campo requerido' },
+    { name: 'nextSessionDate', description: 'Campo requerido' },
+    { name: 'file', description: 'Campo requerido' }
+  ];
+
   const [newIdentity, setnewIdentity] = useState({
-    responsibleLeader: '',
-    startSesiondate: undefined,
-    endSesiondate: undefined,
-    file: '',
-    readliness: [
-      {
-        name: '',
-        readlinesId: undefined
-      }
-    ],
-    seniority: [
-      {
-        name: '',
-        seniorityId: undefined
-      }
-    ],
-    rollingDevelopmentProgram: ''
+    seniorityId: '',
+    readinessId: '',
+    sessionDate: undefined,
+    nextSessionDate: undefined,
+    supervisorId: '',
+    rollingDevelopmentProgram: '',
+    file: ''
   });
 
-  const [create] = useCreate('/api/consultec-identity', newIdentity, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
+  const [create] = useCreate(
+    `/api/collaborator/${props.newCollaboratorId}/consultec-identity`,
+    newIdentity,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     }
-  });
+  );
 
-  const [seniority, setSeniority] = useState([]);
-  const [readiness, setReadiness] = useState([]);
+  const [seniorities, setSeniorities] = useState([]);
+  const [readinesses, setReadinesses] = useState([]);
+  const [supervisors, setSupervisors] = useState([]);
+
   const [rolledUp, setRolledUp] = useState('');
-  const [rolledUpErrors, setRolledUpErrors] = useState({});
+  const [formErrors, setFormErrors] = useState({});
 
   const getConsultecIdentityData = async () => {
-    getDataInformation('/api/consultec-identity/seniorities', setSeniority);
-    getDataInformation('/api/consultec-identity/readiness', setReadiness);
+    getDataInformation('/api/consultec-identity/seniorities', setSeniorities);
+    getDataInformation('/api/consultec-identity/readiness', setReadinesses);
+    getDataInformation('/api/operation/supervisors', setSupervisors);
   };
 
   const getDataInformation = (path, callbackMethod) => {
@@ -103,10 +111,6 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     });
   };
 
-  const handleFileChange = (newFile) => {
-    setnewIdentity({ ...newIdentity, file: newFile });
-  };
-
   async function handleAutoCompleteValue(
     selectedValue,
     elementName,
@@ -115,39 +119,82 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     previousElements
   ) {
     if (!selectedValue) return;
+
     if (!selectedValue.id) {
       let idReturned = await saveNewItem(pathToSaveNew, selectedValue);
       selectedValue.id = idReturned;
       callbackAfetedSaved([...previousElements, selectedValue]);
     }
-    const newSeniorities = { ...newIdentity.seniorities, [elementName]: selectedValue.id };
+
     setnewIdentity({
       ...newIdentity,
-      seniority: newSeniorities
+      [elementName]: selectedValue.id
     });
 
-    setRolledUpErrors({ ...rolledUpErrors, [elementName]: { error: false, description: '' } });
+    setFormErrors({
+      ...formErrors,
+      [elementName]: { error: false, description: '' }
+    });
   }
 
-  function handleSeniority(seniorities) {
+  function handleSeniority(seniority) {
     handleAutoCompleteValue(
-      seniorities,
-      'id',
+      seniority,
+      'seniorityId',
       '/api/consultec-identity/seniorities',
-      setSeniority,
-      seniority
+      setSeniorities,
+      seniorities
     );
   }
 
   function handleReadliness(readiness) {
     handleAutoCompleteValue(
       readiness,
-      'id',
+      'readinessId',
       '/api/consultec-identity/readiness',
-      setReadiness,
-      readiness
+      setReadinesses,
+      readinesses
     );
   }
+
+  function handleSessionDate(newValue) {
+    setnewIdentity({
+      ...newIdentity,
+      sessionDate: moment(newValue).format()
+    });
+
+    setFormErrors({
+      ...formErrors,
+      sessionDate: { error: false, description: '' }
+    });
+  }
+
+  function handleFileChange(newFile) {
+    setnewIdentity({ ...newIdentity, file: newFile });
+  }
+
+  function handleNextSessionDate(newValue) {
+    setnewIdentity({
+      ...newIdentity,
+      nextSessionDate: moment(newValue).format()
+    });
+
+    setFormErrors({
+      ...formErrors,
+      nextSessionDate: { error: false, description: '' }
+    });
+  }
+
+  function handleSupervisor(supervisor) {
+    handleAutoCompleteValue(
+      supervisor,
+      'supervisorId',
+      '/api/operation/supervisors',
+      setSupervisors,
+      supervisors
+    );
+  }
+
   const handleRolledUp = (event) => {
     const {
       target: { value }
@@ -157,19 +204,25 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     handleSelectValue(rollUp, 'id');
   };
 
-  const handlerolledUpErrors = () => {
-    if (!newIdentity.readliness.readlinesId || !newIdentity.seniority.seniorityId) {
-      const newErrors = {
-        ...rolledUpErrors,
-        readlinesId: {
-          ...(newIdentity.readlinesId ? {} : { error: true, description: 'Campo requerido' })
-        },
-        seniorityId: {
-          ...(newIdentity.seniorityId ? {} : { error: true, description: 'Campo requerido' })
-        }
-      };
-      setRolledUpErrors(newErrors);
+  const isFieldValid = (fieldName, value) => {
+    if (Array.isArray(value)) {
+      return value.length > 0;
     }
+    return !!value;
+  };
+
+  const handleDropdownErrors = () => {
+    const newErrors = {};
+
+    REQUIRED_FIELDS.forEach((field) => {
+      const { name, description } = field;
+      const value = newIdentity[name];
+      if (!isFieldValid(name, value)) {
+        newErrors[name] = { error: true, description };
+      }
+    });
+
+    setFormErrors(newErrors);
   };
 
   const afterExecution = (execution) => {
@@ -183,14 +236,13 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
         text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
         severity: 'success'
       });
-      const idnewIdentity = execution.data;
-      props.setnewIdentityId(idnewIdentity);
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
     }
   };
 
   const validateForm = () => {
-    handlerolledUpErrors();
+    handleDropdownErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
@@ -205,6 +257,13 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       getConsultecIdentityData();
       setIsMounted(true);
     }
+
+    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+
+    if (isDirty && allFieldsCompleted) {
+      props.setFormCompleted(true);
+    }
+
     ref.current = validateForm;
   }, [newIdentity, isMounted]);
 
@@ -214,20 +273,20 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
         <Grid container direction={'column'} spacing={3} p={2}>
           <Grid item sx={{ width: '100%' }}>
             <CustomAutoComplete
-              formError={rolledUpErrors.countryId}
-              name="countryId"
+              formError={formErrors.seniorityId}
+              name="seniorityId"
               label="Seniority en la empresa"
-              optionList={seniority}
+              optionList={seniorities}
               elmentCallback={handleSeniority}
               requiredField={true}
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
             <CustomAutoComplete
-              formError={rolledUpErrors.cityId}
-              name="cityId"
-              label="Seleccione  readiness"
-              optionList={readiness}
+              formError={formErrors.readinessId}
+              name="readinessId"
+              label="Seleccione readiness"
+              optionList={readinesses}
               elmentCallback={handleReadliness}
               requiredField={true}
             />
@@ -235,7 +294,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
-                name="startSesiondate"
+                name="sessionDate"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
@@ -243,40 +302,41 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
+                      handleSessionDate(newValue);
                     }}
                     renderInput={(params) => (
                       <CssTextField
                         {...params}
-                        sx={{ width: '62%' }}
+                        sx={{ width: '100%' }}
                         required
                         size="small"
                         label={'Fecha de sesión'}
                         placeholder="DD/MM/YYYY"
-                        name="startSesiondate"
-                        error={errors.startSesiondate && true}
+                        name="sessionDate"
+                        error={errors.sessionDate && true}
                         helperText={
-                          errors.startSesiondate && (
+                          errors.sessionDate && (
                             <Typography variant="caption" color="error">
                               Campo requerido
                             </Typography>
                           )
                         }
-                        {...register('startSesiondate', { required: true })}
+                        {...register('sessionDate', { required: true })}
                       />
                     )}
                   />
                 )}
               />
             </LocalizationProvider>
+          </Grid>
+          <Grid item>
             <Controller
               name="file"
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
                 <CssMuiFileInput
-                  sx={{ width: '35%', ml: 1 }}
                   size="small"
-                  placeholder="file"
                   label="Adjuntar archivo"
                   value={field.value}
                   onChange={(newValue) => {
@@ -298,14 +358,15 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <Controller
-                name="endSesiondate"
+                name="nextSessionDate"
                 control={control}
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
-                    label="Fecha final de sesión"
+                    label="Fecha de proxima sesión"
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
+                      handleNextSessionDate(newValue);
                     }}
                     renderInput={(params) => (
                       <CssTextField
@@ -315,16 +376,16 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
                         size="small"
                         label={'Fecha de proxima sesión'}
                         placeholder="DD/MM/YYYY"
-                        name="endSesiondate"
-                        error={errors.endSesiondate && true}
+                        name="nextSessionDate"
+                        error={errors.nextSessionDate && true}
                         helperText={
-                          errors.endSesiondate && (
+                          errors.nextSessionDate && (
                             <Typography variant="caption" color="error">
                               Campo requerido
                             </Typography>
                           )
                         }
-                        {...register('endSesiondate', { required: true })}
+                        {...register('nextSessionDate', { required: true })}
                       />
                     )}
                   />
@@ -333,26 +394,14 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
             </LocalizationProvider>
           </Grid>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              required
-              size="small"
-              name="responsibleLeader"
-              placeholder="Lider Responsable"
+            <CustomAutoComplete
+              formError={formErrors.supervisorId}
+              name="supervisorId"
               label="Lider Responsable"
-              {...register('responsibleLeader', {
-                required: true,
-                onChange: (event) =>
-                  setnewIdentity({ ...newIdentity, responsibleLeader: event.target.value })
-              })}
-              error={errors.responsibleLeader && true}
-              helperText={
-                errors.responsibleLeader && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
-                  </Typography>
-                )
-              }
+              optionList={supervisors}
+              elmentCallback={handleSupervisor}
+              requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
         </Grid>
