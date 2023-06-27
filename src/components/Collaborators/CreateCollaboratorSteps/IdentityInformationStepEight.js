@@ -75,7 +75,6 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
   const [supervisors, setSupervisors] = useState([]);
 
   const [rolledUp, setRolledUp] = useState('');
-  const [rolledUpErrors, setRolledUpErrors] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
   const getConsultecIdentityData = async () => {

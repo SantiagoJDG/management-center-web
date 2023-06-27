@@ -1,5 +1,5 @@
 import { forwardRef, useState, useEffect } from 'react';
-import { Grid, Divider, CardMedia, Typography } from '@mui/material';
+import { Grid, Divider, CardMedia } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import { getAxiosInstance } from 'utils/axiosClient';
@@ -59,19 +59,8 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       });
   };
 
-  async function handleAutoCompleteValue(
-    selectedValue,
-    elementName,
-    pathToSaveNew,
-    callbackAfetedSaved,
-    previousElements
-  ) {
+  async function handleAutoCompleteValue(selectedValue, elementName) {
     if (!selectedValue) return;
-    if (!selectedValue.id) {
-      let idReturned = await saveNewItem(pathToSaveNew, selectedValue);
-      selectedValue.id = idReturned;
-      callbackAfetedSaved([...previousElements, selectedValue]);
-    }
 
     setOrganizationalStructureInformation({
       ...organizationalStructureInformation,
@@ -302,5 +291,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
     </Grid>
   );
 });
+
+OrganizationalStructureStepSeven.displayName = 'OrganizationalStructureStepSeven';
 
 export default OrganizationalStructureStepSeven;
