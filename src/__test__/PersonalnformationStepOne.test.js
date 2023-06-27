@@ -17,22 +17,31 @@ describe('PersonalInformation', () => {
     jest.clearAllMocks();
   });
 
-  it('component is mounted correctly', async () => {
+  it('First step component is mounted correctly', async () => {
     const useEffectSpy = jest.spyOn(React, 'useEffect');
     useEffectSpy.mockImplementation((callback) => callback());
 
+    const formStepInformationData = { firstStepForm: {} };
+
     await act(async () => {
-      render(<PersonalnformationStepOne ref={jest.fn()} />);
+      render(
+        <PersonalnformationStepOne
+          ref={jest.fn()}
+          formData={formStepInformationData.firstStepForm}
+        />
+      );
     });
     expect(screen.getAllByText('Fotografia del Consultor')[0]).toBeInTheDocument();
   });
 
-  it('validateForm method should be executed ', async () => {
+  it('First step validateForm method should be executed ', async () => {
     const validateForm = jest.fn();
     validateForm.mockImplementation(() => {});
     const globalRef = React.createRef();
-
-    render(<PersonalnformationStepOne ref={globalRef} />);
+    const formStepInformationData = { firstStepForm: {} };
+    render(
+      <PersonalnformationStepOne ref={globalRef} formData={formStepInformationData.firstStepForm} />
+    );
 
     globalRef.current = validateForm;
     globalRef.current();

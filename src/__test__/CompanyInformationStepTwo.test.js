@@ -17,22 +17,35 @@ describe('Company Information', () => {
     jest.clearAllMocks();
   });
 
-  it('component is mounted correctly', async () => {
+  it('CompanyInformationStepTwo component is mounted correctly', async () => {
     const useEffectSpy = jest.spyOn(React, 'useEffect');
     useEffectSpy.mockImplementation((callback) => callback());
 
+    const formStepInformationData = { secondStepForm: {} };
+
     await act(async () => {
-      render(<CompanyInformationStepTwo ref={jest.fn()} />);
+      render(
+        <CompanyInformationStepTwo
+          ref={jest.fn()}
+          formData={formStepInformationData.secondStepForm}
+        />
+      );
     });
     expect(screen.getByLabelText('Codigo de empleado')).toBeInTheDocument();
   });
 
-  it('validateForm method should be executed ', async () => {
+  it('CompanyInformationStepTwo validateForm method should be executed ', async () => {
     const validateForm = jest.fn();
     validateForm.mockImplementation(() => {});
     const globalRef = React.createRef();
+    const formStepInformationData = { secondStepForm: {} };
 
-    render(<CompanyInformationStepTwo ref={globalRef} />);
+    render(
+      <CompanyInformationStepTwo
+        ref={globalRef}
+        formData={formStepInformationData.secondStepForm}
+      />
+    );
 
     globalRef.current = validateForm;
     globalRef.current();
