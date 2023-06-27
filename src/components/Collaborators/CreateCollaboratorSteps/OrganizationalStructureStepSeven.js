@@ -1,38 +1,50 @@
 import { forwardRef, useState, useEffect } from 'react';
-import { Grid, Divider, CardMedia, Typography } from '@mui/material';
+import { Grid, Divider, CardMedia } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import CustomAutoComplete from 'components/CustomAutoComplete';
-import { CssTextField } from '../../../styles/formButton';
 import { getAxiosInstance } from 'utils/axiosClient';
+import useMessage from 'hooks/useMessage';
+import useCreate from 'hooks/useCreate';
 
 const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
-  const {
-    register,
-    handleSubmit,
-    trigger,
-    watch,
-    formState: { errors, isDirty }
-  } = useForm();
-  const watchAllFields = watch();
+  const { handleSubmit, trigger } = useForm();
+  const { handleNewMessage } = useMessage();
+
+  const REQUIRED_FIELDS = [
+    { name: 'departmentId', description: 'Campo requerido' },
+    { name: 'supervisorId', description: 'Campo requerido' },
+    { name: 'profiles', description: 'Campo requerido' },
+    { name: 'technologies', description: 'Campo requerido' },
+    { name: 'knowledges', description: 'Campo requerido' }
+  ];
 
   const [organizationalStructureInformation, setOrganizationalStructureInformation] = useState({
-    reportDirection: '',
-    supervisor: '',
+    departmentId: '',
+    supervisorId: '',
     profiles: [],
     knowledges: [],
     technologies: []
   });
-  const [formErrors, setFormErrors] = useState({});
+
   const [supervisors, setSupervisors] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [profiles, setProfiles] = useState([]);
   const [knowledges, setKnowledges] = useState([]);
   const [technologies, setTechnologies] = useState([]);
+
   const [isMounted, setIsMounted] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+
+  const [create] = useCreate(
+    `/api/collaborator/${props.newCollaboratorId}/organizational-structure-information`,
+    organizationalStructureInformation
+  );
 
   const getOperationData = async () => {
-    getDataInformation('/api/collaborator', setSupervisors);
-    getDataInformation('/api/operation/profiles', setProfiles);
-    getDataInformation('/api/operation/knowledges', setKnowledges);
+    getDataInformation('/api/operation/supervisors', setSupervisors);
+    getDataInformation('/api/hiring/departments', setDepartments);
+    getDataInformation('/api/operation/structure-profiles', setProfiles);
+    getDataInformation('/api/operation/structure-specialities', setKnowledges);
     getDataInformation('/api/operation/technologies', setTechnologies);
   };
 
@@ -47,16 +59,17 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       });
   };
 
-  function handleSupervisor(supervisor) {
-    if (!supervisor) return;
+  async function handleAutoCompleteValue(selectedValue, elementName) {
+    if (!selectedValue) return;
 
     setOrganizationalStructureInformation({
       ...organizationalStructureInformation,
-      supervisor: supervisor.status.id
+      [elementName]: selectedValue.id
     });
+
     setFormErrors({
       ...formErrors,
-      supervisor: { error: false, description: '' }
+      [elementName]: { error: false, description: '' }
     });
   }
 
@@ -75,6 +88,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       }
       return value;
     });
+
     setFormErrors({
       ...formErrors,
       [elementName]: { error: false, description: '' }
@@ -84,6 +98,26 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       ...organizationalStructureInformation,
       [elementName]: [...newValues]
     });
+  }
+
+  function handleDepartment(deparment) {
+    handleAutoCompleteValue(
+      deparment,
+      'departmentId',
+      '/api/hiring/departments',
+      setDepartments,
+      departments
+    );
+  }
+
+  function handleSupervisor(supervisor) {
+    handleAutoCompleteValue(
+      supervisor,
+      'supervisorId',
+      '/api/operation/supervisors',
+      setSupervisors,
+      supervisors
+    );
   }
 
   function handleKnowledges(_knowledges) {
@@ -116,48 +150,52 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
     );
   }
 
+  const afterExecution = (execution) => {
+    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+      handleNewMessage({
+        text: 'Por favor revisar los campos que deben ser unicos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion de pago fué creada exitosamente',
+        severity: 'success'
+      });
+      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
+      props.setFormCompleted(false);
+    }
+  };
+
   const validateForm = () => {
     handleDropdownErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        return;
+        const response = await create();
+        afterExecution(response);
       })();
     }
   };
 
-  const handleDropdownErrors = () => {
-    if (
-      !organizationalStructureInformation.supervisor ||
-      !organizationalStructureInformation.profiles ||
-      !organizationalStructureInformation.technologies ||
-      !organizationalStructureInformation.knowledges
-    ) {
-      const newErrors = {
-        ...formErrors,
-        supervisor: {
-          ...(organizationalStructureInformation.supervisor
-            ? {}
-            : { error: true, description: 'Campo requerido' })
-        },
-        profiles: {
-          ...(!organizationalStructureInformation.profiles.length
-            ? { error: true, description: 'Campo requerido' }
-            : {})
-        },
-        technologies: {
-          ...(!organizationalStructureInformation.technologies.length
-            ? { error: true, description: 'Campo requerido' }
-            : {})
-        },
-        knowledges: {
-          ...(!organizationalStructureInformation.knowledges.length
-            ? { error: true, description: 'Campo requerido' }
-            : {})
-        }
-      };
-      setFormErrors(newErrors);
+  const isFieldValid = (fieldName, value) => {
+    if (Array.isArray(value)) {
+      return value.length > 0;
     }
+    return !!value;
+  };
+
+  const handleDropdownErrors = () => {
+    const newErrors = {};
+
+    REQUIRED_FIELDS.forEach((field) => {
+      const { name, description } = field;
+      const value = organizationalStructureInformation[name];
+      if (!isFieldValid(name, value)) {
+        newErrors[name] = { error: true, description };
+      }
+    });
+
+    setFormErrors(newErrors);
   };
 
   useEffect(() => {
@@ -165,10 +203,9 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       getOperationData();
       setIsMounted(true);
     }
-    const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
-    if (isDirty && allFieldsCompleted) {
-      props.setFormCompleted(true);
-    }
+
+    props.setFormCompleted(true);
+
     ref.current = validateForm;
   }, [isMounted, organizationalStructureInformation]);
 
@@ -177,35 +214,20 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       <Grid item xs={5}>
         <Grid container direction={'column'} spacing={5} p={2}>
           <Grid item>
-            <CssTextField
-              sx={{ width: '100%' }}
-              required
-              name="reportDirection"
-              size="small"
-              placeholder="Selecciona la direccion"
+            <CustomAutoComplete
+              formError={formErrors.departmentId}
+              name="departmentId"
               label="Direccion del reporte"
-              {...register('reportDirection', {
-                required: true,
-                onChange: (event) =>
-                  setOrganizationalStructureInformation({
-                    ...organizationalStructureInformation,
-                    reportDirection: event.target.value
-                  })
-              })}
-              error={errors.reportDirection && true}
-              helperText={
-                errors.name && (
-                  <Typography variant="caption" color="error">
-                    Campo requerido
-                  </Typography>
-                )
-              }
+              optionList={departments}
+              elmentCallback={handleDepartment}
+              requiredField={true}
+              canCreateNew={false}
             />
           </Grid>
           <Grid item>
             <CustomAutoComplete
-              formError={formErrors.supervisor}
-              name="supervisor"
+              formError={formErrors.supervisorId}
+              name="supervisorId"
               label="Supervisor"
               optionList={supervisors}
               elmentCallback={handleSupervisor}
@@ -270,5 +292,6 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
   );
 });
 
-OrganizationalStructureStepSeven.displayName = 'BillingInformationStepSeven';
+OrganizationalStructureStepSeven.displayName = 'OrganizationalStructureStepSeven';
+
 export default OrganizationalStructureStepSeven;

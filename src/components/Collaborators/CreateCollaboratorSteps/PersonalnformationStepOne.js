@@ -391,7 +391,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
       getResidenceData();
       setIsMounted(true);
     }
+
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
+
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
