@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Paper,
@@ -18,7 +18,6 @@ import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
 
 const CollaboratorTable = ({ collaborators }) => {
-  const [stepValue, setStepValue] = useState('');
   const columns = [
     { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
     {
@@ -145,19 +144,6 @@ const CollaboratorTable = ({ collaborators }) => {
     return stabilizedThis.map((collaborator) => collaborator[0]);
   };
 
-  useEffect(() => {
-    const fetchSteps = async () => {
-      const userId = 1;
-      const response = await fetch(`/collaborator/steps/${userId}`);
-      const data = await response.json();
-      if (data.length > 0) {
-        setStepValue(data[0].step);
-      }
-    };
-
-    fetchSteps();
-  }, []);
-
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -229,9 +215,6 @@ const CollaboratorTable = ({ collaborators }) => {
       >
         <MenuItem onClick={handleProfileRouting}>Ver Perfil</MenuItem>
         <MenuItem onClick={() => handleProfileRouting(true)}>Editar</MenuItem>
-        <MenuItem>
-          {stepValue === 'Agregar' ? 'Agregar Colaborador' : 'Colaborador Completo'}
-        </MenuItem>
       </Menu>
     </Box>
   );
