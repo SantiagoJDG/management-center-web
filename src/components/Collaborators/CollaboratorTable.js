@@ -12,7 +12,6 @@ import {
   TableSortLabel,
   Box,
   Menu,
-  Chip,
   MenuItem
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
