@@ -17,22 +17,34 @@ describe('Contract Information', () => {
     jest.clearAllMocks();
   });
 
-  it('component is mounted correctly', async () => {
+  it('PaymentInformationStepFour component is mounted correctly', async () => {
     const useEffectSpy = jest.spyOn(React, 'useEffect');
     useEffectSpy.mockImplementation((callback) => callback());
+    const formStepInformationData = { fourthStepForm: {} };
 
     await act(async () => {
-      render(<PaymentInformationStepFour ref={jest.fn()} />);
+      render(
+        <PaymentInformationStepFour
+          ref={jest.fn()}
+          formData={formStepInformationData.fourthStepForm}
+        />
+      );
     });
     expect(screen.getByText('Banco / Medio de pago')).toBeInTheDocument();
   });
 
-  it('validateForm method should be executed ', async () => {
+  it('PaymentInformationStepFour validateForm method should be executed ', async () => {
     const validateForm = jest.fn();
     validateForm.mockImplementation(() => {});
     const globalRef = React.createRef();
+    const formStepInformationData = { fourthStepForm: {} };
 
-    render(<PaymentInformationStepFour ref={globalRef} />);
+    render(
+      <PaymentInformationStepFour
+        ref={globalRef}
+        formData={formStepInformationData.fourthStepForm}
+      />
+    );
 
     globalRef.current = validateForm;
     globalRef.current();

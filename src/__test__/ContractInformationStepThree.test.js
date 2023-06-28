@@ -17,22 +17,34 @@ describe('Contract Information', () => {
     jest.clearAllMocks();
   });
 
-  it('component is mounted correctly', async () => {
+  it('ContractInformationStepThree component is mounted correctly 1', async () => {
     const useEffectSpy = jest.spyOn(React, 'useEffect');
     useEffectSpy.mockImplementation((callback) => callback());
+    const formStepInformationData = { thirdStepForm: {} };
 
     await act(async () => {
-      render(<ContractInformationStepThree ref={jest.fn()} />);
+      render(
+        <ContractInformationStepThree
+          ref={jest.fn()}
+          formData={formStepInformationData.thirdStepForm}
+        />
+      );
     });
     expect(screen.getByText('Empresa Contratante')).toBeInTheDocument();
   });
 
-  it('validateForm method should be executed ', async () => {
+  it('ContractInformationStepThree validateForm method should be executed 1', async () => {
     const validateForm = jest.fn();
     validateForm.mockImplementation(() => {});
     const globalRef = React.createRef();
+    const formStepInformationData = { thirdStepForm: {} };
 
-    render(<ContractInformationStepThree ref={globalRef} />);
+    render(
+      <ContractInformationStepThree
+        ref={jest.fn()}
+        formData={formStepInformationData.thirdStepForm}
+      />
+    );
 
     globalRef.current = validateForm;
     globalRef.current();

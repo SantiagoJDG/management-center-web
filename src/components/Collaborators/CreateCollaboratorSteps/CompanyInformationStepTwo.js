@@ -12,7 +12,11 @@ import 'moment/locale/es';
 
 const CompanyInformationStepTwo = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
-  const [age, setAge] = useState(0);
+  const [corporativeYears, setCorporativeYears] = useState(
+    Object.keys(props.formData).length
+      ? moment(moment().format()).diff(moment(props.formData.admissionDate).format(), 'year')
+      : 0
+  );
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
   const [companyInformation, setCompanyInformation] = useState({
     businessCode: '',
@@ -45,7 +49,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
       ...companyInformation,
       admissionDate: date
     });
-    setAge(age);
+    setCorporativeYears(age);
   };
 
   const handleOnChangeEmail = (event) => {
@@ -72,6 +76,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       props.setFormCompleted(false);
+      props.rememberStepFormInformation(props.stepName, companyInformation);
     }
   };
 
@@ -105,6 +110,9 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
               size="small"
               label="Codigo de empleado"
               fullWidth
+              defaultValue={
+                props.formData ? props.formData.businessCode : props.formData.businessCode
+              }
               name="businessCode"
               {...register('businessCode', {
                 required: true,
@@ -124,6 +132,11 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
               <Controller
                 name="admissionDate"
                 control={control}
+                defaultValue={
+                  Object.keys(props.formData).length
+                    ? moment(props.formData.admissionDate).format('YYYY-MM-DD')
+                    : ''
+                }
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     label="Fecha de ingreso"
@@ -161,7 +174,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
           <Grid item>
             <CssTextField
               label="Antiguedad"
-              value={age ? age + ' años corporativos' : 0}
+              value={corporativeYears ? corporativeYears + ' años corporativos' : 0}
               size={'small'}
               InputProps={{ readOnly: true }}
               fullWidth
@@ -176,6 +189,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
               size="small"
               fullWidth
               name="businessEmail"
+              defaultValue={props.formData ? props.formData.businessEmail : ''}
               {...register('businessEmail', {
                 required: true,
                 onChange: (event) => handleOnChangeEmail(event)

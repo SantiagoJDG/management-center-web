@@ -34,6 +34,17 @@ const CreateCollaboratorSteps = () => {
   const [newCollaboratorId, setNewCollaboratorId] = useState(null);
   const router = useRouter();
 
+  const [formStepInformationData, setFormStepInformationKepper] = useState({
+    firstStepForm: {},
+    secondStepForm: {},
+    thirdStepForm: {},
+    fourthStepForm: {},
+    fifthStepForm: {},
+    sixthStepForm: {},
+    seventhStepForm: {},
+    eighthStepForm: {}
+  });
+
   const isStepSkipped = (step) => {
     return skipped.has(step);
   };
@@ -63,7 +74,15 @@ const CreateCollaboratorSteps = () => {
   };
 
   const handleBack = () => {
+    setFormCompleted(true);
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const rememberStepFormInformation = (stepName, formInfo) => {
+    setFormStepInformationKepper({
+      ...formStepInformationData,
+      [stepName]: formInfo
+    });
   };
 
   const steps = [
@@ -78,6 +97,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           setNewCollaboratorId={setNewCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'firstStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.firstStepForm}
         />
       )
     },
@@ -92,6 +114,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'secondStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.secondStepForm}
         />
       )
     },
@@ -106,6 +131,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'thirdStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.thirdStepForm}
         />
       )
     },
@@ -120,6 +148,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'fourthStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.fourthStepForm}
         />
       )
     },

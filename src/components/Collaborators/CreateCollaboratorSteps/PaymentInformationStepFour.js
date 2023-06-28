@@ -104,6 +104,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleBankCountry(country) {
+    console.log(countries);
     setPaymentInformation({
       ...paymentInformation,
       extraterritoriality: country.id != paymentInformation.officePayerId
@@ -154,6 +155,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       props.setFormCompleted(false);
+      props.rememberStepFormInformation(props.stepName, paymentInformation);
     }
   };
 
@@ -168,6 +170,17 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     }
   };
 
+  const returnedStep = (formData) => {
+    setPaymentInformation(formData);
+  };
+
+  const findObject = (array, id) => {
+    const finded = array.find((each) => {
+      return each.id === id;
+    });
+    return finded;
+  };
+
   useEffect(() => {
     if (!mounted) {
       getCatalogs();
@@ -176,6 +189,10 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
+    }
+    if (Object.keys(props.formData).length) {
+      const { formData } = props;
+      returnedStep(formData);
     }
     ref.current = validateForm;
   }, [paymentInformation, mounted]);
@@ -193,6 +210,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               elmentCallback={handleBank}
               requiredField={true}
               canCreateNew={true}
+              prechargedValue={props.formData ? findObject(banks, props.formData.bankId) : ''}
             />
           </Grid>
           <Grid item>
@@ -204,11 +222,16 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               elmentCallback={handleBankCountry}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(countries, props.formData.bankCountryId) : ''
+              }
             />
           </Grid>
           <Grid item>
             <CssTextField
               sx={{ width: '100%' }}
+              accountNumber
+              defaultValue={props.formData ? props.formData.accountNumber : ''}
               required
               name="accountNumber"
               size="small"
@@ -237,6 +260,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               required
               name="commissionAmount"
               size="small"
+              defaultValue={props.formData ? props.formData.commissionAmount : ''}
               type={'number'}
               label="Estimado comision bancaria USD$"
               {...register('commissionAmount', {
@@ -266,6 +290,9 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               elmentCallback={handleOffice}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(offices, props.formData.officePayerId) : ''
+              }
             />
           </Grid>
           <Grid item>
@@ -294,6 +321,9 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
               elmentCallback={handleFrequency}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(frequencies, props.formData.frequencyId) : ''
+              }
             />
           </Grid>
         </Grid>
