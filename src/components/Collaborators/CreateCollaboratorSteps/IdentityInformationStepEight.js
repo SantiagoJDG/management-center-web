@@ -1,12 +1,4 @@
-import {
-  Divider,
-  FormControl,
-  FormHelperText,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Typography
-} from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -18,7 +10,7 @@ import 'moment/locale/es';
 import { forwardRef, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { getAxiosInstance } from 'utils/axiosClient';
-import { CssMuiFileInput, CssSelectInput, CssTextField } from '../../../styles/formButton';
+import { CssMuiFileInput, CssTextField } from '../../../styles/formButton';
 
 const listRollUp = [
   { id: 1, name: 'Programa de pasantía' },
@@ -55,7 +47,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     readinessId: '',
     sessionDate: undefined,
     nextSessionDate: undefined,
-    supervisorId: '',
+    supervisorId: 1,
     rollingDevelopmentProgram: '',
     file: ''
   });
@@ -74,7 +66,6 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
   const [readinesses, setReadinesses] = useState([]);
   const [supervisors, setSupervisors] = useState([]);
 
-  const [rolledUp, setRolledUp] = useState('');
   const [formErrors, setFormErrors] = useState({});
 
   const getConsultecIdentityData = async () => {
@@ -102,14 +93,6 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       console.error('Error while save new item...', error);
     }
   }
-
-  const handleSelectValue = (selectedValue, elementName) => {
-    if (!selectedValue) return;
-    setnewIdentity({
-      ...newIdentity,
-      rollingDevelopmentProgram: selectedValue[elementName]
-    });
-  };
 
   async function handleAutoCompleteValue(
     selectedValue,
@@ -157,6 +140,10 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     );
   }
 
+  function handleRollUp(roll) {
+    handleAutoCompleteValue(roll, 'rollingDevelopmentProgram');
+  }
+
   function handleSessionDate(newValue) {
     setnewIdentity({
       ...newIdentity,
@@ -195,15 +182,6 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     );
   }
 
-  const handleRolledUp = (event) => {
-    const {
-      target: { value }
-    } = event;
-    const rollUp = value;
-    setRolledUp(value);
-    handleSelectValue(rollUp, 'id');
-  };
-
   const isFieldValid = (fieldName, value) => {
     if (Array.isArray(value)) {
       return value.length > 0;
@@ -238,6 +216,7 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       props.setFormCompleted(false);
+      props.rememberStepFormInformation(props.stepName, newIdentity);
     }
   };
 
@@ -251,6 +230,8 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       })();
     }
   };
+
+  const findObject = (array, id) => array.find((each) => each.id === id);
 
   useEffect(() => {
     if (!isMounted) {
@@ -279,6 +260,9 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
               optionList={seniorities}
               elmentCallback={handleSeniority}
               requiredField={true}
+              prechargedValue={
+                props.formData ? findObject(seniorities, props.formData.seniorityId) : ''
+              }
             />
           </Grid>
           <Grid item sx={{ width: '100%' }}>
@@ -289,6 +273,9 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
               optionList={readinesses}
               elmentCallback={handleReadliness}
               requiredField={true}
+              prechargedValue={
+                props.formData ? findObject(readinesses, props.formData.readinessId) : ''
+              }
             />
           </Grid>
           <Grid item>
@@ -296,6 +283,11 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
               <Controller
                 name="sessionDate"
                 control={control}
+                defaultValue={
+                  Object.keys(props.formData).length
+                    ? moment(props.formData.sessionDate).format('YYYY-MM-DD')
+                    : ''
+                }
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     label="Fecha de sesión"
@@ -360,6 +352,11 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
               <Controller
                 name="nextSessionDate"
                 control={control}
+                defaultValue={
+                  Object.keys(props.formData).length
+                    ? moment(props.formData.nextSessionDate).format('YYYY-MM-DD')
+                    : ''
+                }
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     label="Fecha de proxima sesión"
@@ -402,6 +399,9 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
               elmentCallback={handleSupervisor}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(supervisors, props.formData.supervisorId) : ''
+              }
             />
           </Grid>
         </Grid>
@@ -410,37 +410,20 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
       <Grid item xs={5}>
         <Grid container spacing={3} p={2} direction={'column'}>
           <Grid item>
-            <FormControl size="small" sx={{ width: '100%' }}>
-              <InputLabel
-                id="rollingDevelopmentProgram"
-                error={errors.rollingDevelopmentProgram && !rolledUp}
-              >
-                Programa de desarrollo enrollados
-              </InputLabel>
-              <CssSelectInput
-                labelId="rollingDevelopmentProgram"
-                label="programa de desarrollo enrollados"
-                id="rollingDevelopmentProgram"
-                value={rolledUp}
-                onChange={handleRolledUp}
-                error={errors.rollingDevelopmentProgram && !rolledUp}
-                {...register('rollingDevelopmentProgram', {
-                  required: true,
-                  onChange: handleRolledUp
-                })}
-              >
-                {listRollUp.map((type, index) => {
-                  return (
-                    <MenuItem key={index} value={type}>
-                      {type.name}
-                    </MenuItem>
-                  );
-                })}
-              </CssSelectInput>
-              {errors.rollingDevelopmentProgram && !rolledUp && (
-                <FormHelperText error>Campo requerido</FormHelperText>
-              )}
-            </FormControl>
+            <CustomAutoComplete
+              formError={formErrors.readinessId}
+              name="rollingDevelopmentProgramv"
+              label="programa de desarrollo enrollados"
+              optionList={listRollUp}
+              elmentCallback={handleRollUp}
+              requiredField={true}
+              prechargedValue={
+                props.formData
+                  ? findObject(listRollUp, props.formData.rollingDevelopmentProgramv)
+                  : ''
+              }
+              canCreateNew={false}
+            />
           </Grid>
         </Grid>
       </Grid>

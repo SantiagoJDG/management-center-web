@@ -165,6 +165,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'fifthStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.fifthStepForm}
         />
       )
     },
@@ -179,6 +182,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'sixthStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.sixthStepForm}
         />
       )
     },
@@ -193,6 +199,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'seventhStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.seventhStepForm}
         />
       )
     },
@@ -207,6 +216,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'eighthStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.eighthStepForm}
         />
       )
     },

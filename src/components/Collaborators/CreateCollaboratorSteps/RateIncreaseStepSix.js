@@ -5,6 +5,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import useCreate from 'hooks/useCreate';
 import useMessage from 'hooks/useMessage';
+import moment from 'moment';
 import 'moment/locale/es';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -23,6 +24,11 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
   const [newBaseAmount, setNewBaseAmount] = useState();
   const [collaboratorContract, setCollaboratorContract] = useState({ id: 0 });
 
+  const [rateIncreaseData, setRateIncreaseData] = useState({
+    percentage: [],
+    effectiveDate: '',
+    amount: ''
+  });
   const secondTextFieldRef = useRef(null);
 
   const {
@@ -44,9 +50,15 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     setNumberRateIncrease([...numbeRateIncrease, { rateIncreasePercentage: '' }]);
   };
 
-  const handleNumberRateChange = (event) => {
+  const handleNumberRateChange = (event, index) => {
     const percentageValue = (collaboratorContract.baseAmount * event.target.value) / 100;
     const newBaseAmount = collaboratorContract.baseAmount + percentageValue;
+
+    const newNumberRatePercentage = [...numbeRateIncrease];
+    newNumberRatePercentage[index] = {
+      ...newNumberRatePercentage[index],
+      rateIncreasePercentage: event.target.value * collaboratorContract.baseAmount
+    };
 
     setNewBaseAmount(newBaseAmount);
 
@@ -54,11 +66,21 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       ...rateIncrease,
       amount: event.target.value
     });
+
+    setRateIncreaseData({
+      ...rateIncreaseData,
+      amount: newBaseAmount,
+      percentage: newNumberRatePercentage
+    });
   };
 
   const handleNEffectiveDate = (date) => {
     setRateIncrease({
       ...rateIncrease,
+      effectiveDate: date
+    });
+    setRateIncreaseData({
+      ...rateIncreaseData,
       effectiveDate: date
     });
   };
@@ -74,8 +96,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
         text: 'Excelente! La Informacion de incremento de tarifa fue creada exitosamente',
         severity: 'success'
       });
+
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       props.setFormCompleted(false);
+      props.rememberStepFormInformation(props.stepName, rateIncreaseData);
     }
   };
 
@@ -96,6 +120,43 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     );
   };
 
+  const renderPercertanges = (numberRateIncrease) => {
+    return numberRateIncrease.map((Rate, index) => (
+      <Grid item key={`number-${index}`}>
+        <CssTextField
+          required
+          id={`number-${index}`}
+          name={`number-${index}`}
+          label="Porcentaje de incremento de tarifa"
+          placeholder="%0.00"
+          type="number"
+          size="small"
+          fullWidth
+          inputProps={{
+            min: 1,
+            max: 100
+          }}
+          variant="outlined"
+          inputRef={secondTextFieldRef}
+          value={Object.keys(props.formData).length ? Rate.rateIncreasePercentage : Rate.number}
+          {...register(`number-${index}`, {
+            required: true,
+            onChange: (event) => handleNumberRateChange(event, index)
+          })}
+          error={errors[`number-${index}`]}
+          helperText={
+            errors[`number-${index}`] && (
+              <Typography variant="caption" color="error">
+                Campo requerido
+              </Typography>
+            )
+          }
+        />
+        <Grid sx={{ pl: 2, pt: 1 }}></Grid>
+      </Grid>
+    ));
+  };
+
   useEffect(() => {
     if (!isMounted) {
       setIsMounted(true);
@@ -106,6 +167,10 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
+    if (Object.keys(props.formData).length) {
+      const { formData } = props;
+      setNewBaseAmount(formData.amount);
+    }
     ref.current = validateForm;
   }, [rateIncrease]);
 
@@ -114,40 +179,9 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
       <Grid item xs={5}>
         <Grid container direction={'column'} spacing={4} p={2}>
           <Grid item>
-            {numbeRateIncrease.map((Rate, index) => (
-              <Grid item key={`number-${index}`}>
-                <CssTextField
-                  required
-                  id={`number-${index}`}
-                  name={`number-${index}`}
-                  label="Porcentaje de incremento de tarifa"
-                  placeholder="%0.00"
-                  type="number"
-                  size="small"
-                  fullWidth
-                  inputProps={{
-                    min: 1,
-                    max: 100
-                  }}
-                  variant="outlined"
-                  inputRef={secondTextFieldRef}
-                  value={Rate.number}
-                  {...register(`number-${index}`, {
-                    required: true,
-                    onBlur: (event) => handleNumberRateChange(event)
-                  })}
-                  error={errors[`number-${index}`]}
-                  helperText={
-                    errors[`number-${index}`] && (
-                      <Typography variant="caption" color="error">
-                        Campo requerido
-                      </Typography>
-                    )
-                  }
-                />
-                <Grid sx={{ pl: 2, pt: 1 }}></Grid>
-              </Grid>
-            ))}
+            {Object.keys(props.formData).length
+              ? renderPercertanges(props.formData.percentage)
+              : renderPercertanges(numbeRateIncrease)}
           </Grid>
 
           <Grid item>
@@ -158,7 +192,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               placeholder="$0.00"
               fullWidth
               name="newRate"
-              value={newBaseAmount}
+              value={newBaseAmount ? newBaseAmount : collaboratorContract.baseAmount}
               readOnly
             />
           </Grid>
@@ -167,6 +201,11 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
               <Controller
                 name="effectiveDate"
                 control={control}
+                defaultValue={
+                  Object.keys(props.formData).length
+                    ? moment(props.formData.effectiveDate).format('YYYY-MM-DD')
+                    : ''
+                }
                 render={({ field: { value, onChange } }) => (
                   <DatePicker
                     label="Fecha de efectidad del ajuste"

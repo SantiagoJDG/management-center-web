@@ -91,7 +91,6 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     const {
       target: { value }
     } = event;
-
     setInformationForm({
       ...informationForm,
       calculationRegime: value,
@@ -108,8 +107,6 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     const {
       target: { value }
     } = event;
-
-    console.log(value);
 
     setInformationForm({
       ...informationForm,
@@ -150,6 +147,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       props.setFormCompleted(false);
+      props.rememberStepFormInformation(props.stepName, billingInformation);
     }
   };
 
@@ -188,6 +186,160 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     return Math.round(response, 3);
   }
 
+  const calculateAnualCompensation = (formData) => {
+    const { calculationRegimeId, compensationAmount, compensationPeriodicityId } = formData;
+    const defaultPeriodicityValue = findObject(periodicities, compensationPeriodicityId);
+    const defaultCalculationRegime = findObject(calculationRegimes, calculationRegimeId);
+    setInformationForm({
+      ...informationForm,
+      anualCalculatedCompensation:
+        compensationAmount * calculationRegimeId * defaultPeriodicityValue?.value,
+      anualCalculatedRegimeBase: compensationAmount * defaultCalculationRegime?.compensationFactor
+    });
+    return;
+  };
+
+  const displayCalculusRegime = () => {
+    const defaultCalculationRegime = findObject(
+      calculationRegimes,
+      props.formData.calculationRegimeId
+    );
+    const defaultValue = defaultCalculationRegime ? defaultCalculationRegime : '';
+
+    return (
+      <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
+        <InputLabel id="calculationRegimeLabel" error={errors.calculationRegimeId}>
+          Regimen de calculo
+        </InputLabel>
+        <CssSelectInput
+          value={
+            informationForm.calculationRegime ? informationForm.calculationRegime : defaultValue
+          }
+          id="calculationRegimeId"
+          label="Regimen de calculo"
+          error={errors.calculationRegimeId}
+          {...register('calculationRegimeId', {
+            required: true,
+            onChange: handleCalculationRegimeId
+          })}
+        >
+          {calculationRegimes.map((type) => {
+            return (
+              <MenuItem key={type.id} value={type}>
+                {type.name}
+              </MenuItem>
+            );
+          })}
+        </CssSelectInput>
+        {errors.calculationRegimeId && <FormHelperText error>Campo requerido</FormHelperText>}
+      </FormControl>
+    );
+  };
+
+  const displayCompensationType = () => {
+    const defaultCompensationType = findObject(
+      compensationTypes,
+      props.formData.compensationTypeId
+    );
+    const defaultValue = defaultCompensationType ? defaultCompensationType : '';
+
+    return (
+      <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
+        <InputLabel id="compensationTypeIdLabel" error={errors.compensationTypeId}>
+          Compensacion complementaria
+        </InputLabel>
+        <CssSelectInput
+          value={informationForm.compensationType ? informationForm.compensationType : defaultValue}
+          id="compensationTypeId"
+          label="Compensacion complementaria"
+          error={errors.compensationTypeId}
+          {...register('compensationTypeId', {
+            required: true,
+            onChange: handleCompensationTypeId
+          })}
+        >
+          {compensationTypes.map((type) => {
+            return (
+              <MenuItem key={type.id} value={type}>
+                {type.name}
+              </MenuItem>
+            );
+          })}
+        </CssSelectInput>
+        {errors.compensationTypeId && <FormHelperText error>Campo requerido</FormHelperText>}
+      </FormControl>
+    );
+  };
+
+  const displayFactor = () => {
+    const defaultCalculationRegime = findObject(
+      calculationRegimes,
+      props.formData.calculationRegimeId
+    );
+    const defaultValue = defaultCalculationRegime ? defaultCalculationRegime : '';
+    return (
+      <>
+        <InputLabel id="calculatation">Factor de compensacion</InputLabel>
+        <CssTextField
+          sx={{ width: '20%' }}
+          value={
+            informationForm.calculationRegime.compensationFactor
+              ? informationForm.calculationRegime.compensationFactor
+              : defaultValue.compensationFactor
+          }
+          size="small"
+          InputProps={{
+            readOnly: true
+          }}
+          variant="outlined"
+        />
+      </>
+    );
+  };
+
+  const displayPeriodicity = () => {
+    const defaultPeriodicity = findObject(periodicities, props.formData.compensationPeriodicityId);
+    const defaultValue = defaultPeriodicity ? defaultPeriodicity : '';
+    return (
+      <FormControl size="small" sx={{ width: '100%' }}>
+        <InputLabel
+          id="periodicity"
+          error={errors.periodicity && !informationForm.compensationPeriodicity}
+        >
+          Periodicidad
+        </InputLabel>
+        <CssSelectInput
+          labelId="periodicity"
+          label="Periodicidad"
+          id="periodicity"
+          value={
+            informationForm.compensationPeriodicity
+              ? informationForm.compensationPeriodicity
+              : defaultValue
+          }
+          error={errors.compensationPeriodicityId && !informationForm.compensationPeriodicity}
+          {...register('compensationPeriodicityId', {
+            required: true,
+            onChange: handlePeriodicityId
+          })}
+        >
+          {periodicities.map((type, index) => {
+            return (
+              <MenuItem key={index} value={type}>
+                {type.name}
+              </MenuItem>
+            );
+          })}
+        </CssSelectInput>
+        {errors.compensationPeriodicityId && !informationForm.compensationPeriodicity && (
+          <FormHelperText error>Campo requerido</FormHelperText>
+        )}
+      </FormControl>
+    );
+  };
+
+  const findObject = (array, id) => array.find((each) => each.id === id);
+
   useEffect(() => {
     if (!mounted) {
       getInitialData();
@@ -196,6 +348,11 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
+    }
+    if (Object.keys(props.formData).length) {
+      const { formData } = props;
+      setBillingInformation(formData);
+      calculateAnualCompensation(formData);
     }
     ref.current = validateForm;
   }, [billingInformation]);
@@ -212,88 +369,31 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               variant="outlined"
               size="small"
-              value={informationForm.baseFeeUSD}
+              value={
+                informationForm.baseFeeUSD
+                  ? informationForm.baseFeeUSD
+                  : billingInformation.compensationAmount
+              }
               InputProps={{
                 readOnly: true
               }}
             />
           </Grid>
-          <Grid item>
-            <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
-              <InputLabel id="calculationRegimeLabel" error={errors.calculationRegimeId}>
-                Regimen de calculo
-              </InputLabel>
-              <CssSelectInput
-                value={informationForm.calculationRegime}
-                id="calculationRegimeId"
-                label="Regimen de calculo"
-                error={errors.calculationRegimeId}
-                {...register('calculationRegimeId', {
-                  required: true,
-                  onChange: handleCalculationRegimeId
-                })}
-              >
-                {calculationRegimes.map((type) => {
-                  return (
-                    <MenuItem key={type.id} value={type}>
-                      {type.name}
-                    </MenuItem>
-                  );
-                })}
-              </CssSelectInput>
-              {errors.calculationRegimeId && <FormHelperText error>Campo requerido</FormHelperText>}
-            </FormControl>
-          </Grid>
-          <Grid item>
-            <InputLabel id="calculatation">Factor de compensacion</InputLabel>
-            <CssTextField
-              sx={{ width: '20%' }}
-              value={informationForm.calculationRegime.compensationFactor}
-              size="small"
-              InputProps={{
-                readOnly: true
-              }}
-              variant="outlined"
-            />
-          </Grid>
+          <Grid item>{displayCalculusRegime()}</Grid>
+          <Grid item>{displayFactor()}</Grid>
           <Grid item>
             <CssTextField
               sx={{ width: '100%' }}
               label="Tarifa con factor de compensacion. Anual"
               size="small"
-              value={informationForm.anualCalculatedRegimeBase + '$'}
+              value={informationForm.anualCalculatedRegimeBase}
               InputProps={{
                 readOnly: true
               }}
               variant="outlined"
             />
           </Grid>
-          <Grid item>
-            <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
-              <InputLabel id="compensationTypeIdLabel" error={errors.compensationTypeId}>
-                Compensacion complementaria
-              </InputLabel>
-              <CssSelectInput
-                value={informationForm.compensationType}
-                id="compensationTypeId"
-                label="Compensacion complementaria"
-                error={errors.compensationTypeId}
-                {...register('compensationTypeId', {
-                  required: true,
-                  onChange: handleCompensationTypeId
-                })}
-              >
-                {compensationTypes.map((type) => {
-                  return (
-                    <MenuItem key={type.id} value={type}>
-                      {type.name}
-                    </MenuItem>
-                  );
-                })}
-              </CssSelectInput>
-              {errors.compensationTypeId && <FormHelperText error>Campo requerido</FormHelperText>}
-            </FormControl>
-          </Grid>
+          <Grid item>{displayCompensationType()}</Grid>
           <Grid item>
             <CssTextField
               required
@@ -328,38 +428,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
       <Divider orientation="vertical" flexItem></Divider>
       <Grid item xs={5}>
         <Grid container spacing={3} p={2} direction={'column'}>
-          <Grid item>
-            <FormControl size="small" sx={{ width: '100%' }}>
-              <InputLabel
-                id="periodicity"
-                error={errors.periodicity && !informationForm.compensationPeriodicity}
-              >
-                Periodicidad
-              </InputLabel>
-              <CssSelectInput
-                labelId="periodicity"
-                label="Periodicidad"
-                id="periodicity"
-                value={informationForm.compensationPeriodicity}
-                error={errors.compensationPeriodicityId && !informationForm.compensationPeriodicity}
-                {...register('compensationPeriodicityId', {
-                  required: true,
-                  onChange: handlePeriodicityId
-                })}
-              >
-                {periodicities.map((type, index) => {
-                  return (
-                    <MenuItem key={index} value={type}>
-                      {type.name}
-                    </MenuItem>
-                  );
-                })}
-              </CssSelectInput>
-              {errors.compensationPeriodicityId && !informationForm.compensationPeriodicity && (
-                <FormHelperText error>Campo requerido</FormHelperText>
-              )}
-            </FormControl>
-          </Grid>
+          <Grid item>{displayPeriodicity()}</Grid>
           <Grid item>
             <CssTextField
               required
@@ -387,7 +456,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '80%' }}
               size="small"
-              value={informationForm.anualCalculatedCompensation + ' $'}
+              value={informationForm.anualCalculatedCompensation}
               InputProps={{
                 readOnly: true
               }}
@@ -463,7 +532,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
           <Grid item>
             <CssTextField
               sx={{ width: '100%' }}
-              label="Trifa por Hora"
+              label="Tarifa por Hora"
               size="small"
               value={getTotalAnualyHourFee()}
               InputProps={{

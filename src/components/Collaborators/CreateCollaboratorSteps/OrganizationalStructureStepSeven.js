@@ -20,7 +20,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
 
   const [organizationalStructureInformation, setOrganizationalStructureInformation] = useState({
     departmentId: '',
-    supervisorId: '',
+    supervisorId: 1,
     profiles: [],
     knowledges: [],
     technologies: []
@@ -163,6 +163,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
       });
       props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
       props.setFormCompleted(false);
+      props.rememberStepFormInformation(props.stepName, organizationalStructureInformation);
     }
   };
 
@@ -198,6 +199,8 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
     setFormErrors(newErrors);
   };
 
+  const findObject = (array, id) => array.find((each) => each.id === id);
+
   useEffect(() => {
     if (!isMounted) {
       getOperationData();
@@ -222,6 +225,9 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
               elmentCallback={handleDepartment}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(departments, props.formData.departmentId) : ''
+              }
             />
           </Grid>
           <Grid item>
@@ -233,6 +239,9 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
               elmentCallback={handleSupervisor}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={
+                props.formData ? findObject(supervisors, props.formData.supervisorId) : ''
+              }
             />
           </Grid>
           <Grid item>
@@ -246,6 +255,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
                 multiple={true}
                 requiredField={true}
                 canCreateNew={false}
+                prechargedValue={props.formData ? props.formData.profiles : ''}
               />
             </Grid>
           </Grid>
@@ -259,6 +269,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
               multiple={true}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={props.formData ? props.formData.knowledges : ''}
             />
           </Grid>
           <Grid item>
@@ -271,6 +282,7 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
               multiple={true}
               requiredField={true}
               canCreateNew={false}
+              prechargedValue={props.formData ? props.formData.technologies : ''}
             />
           </Grid>
         </Grid>

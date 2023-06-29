@@ -86,7 +86,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleOffice(office) {
-    if (paymentInformation.bankCountryId != office.id) {
+    if (paymentInformation.bankCountryId != office?.id) {
       setExtraterritoriality(true);
     }
 
@@ -104,7 +104,6 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleBankCountry(country) {
-    console.log(countries);
     setPaymentInformation({
       ...paymentInformation,
       extraterritoriality: country.id != paymentInformation.officePayerId
