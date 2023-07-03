@@ -1,4 +1,4 @@
-import { Drawer, Box,  CardMedia } from '@mui/material';
+import { Drawer, Box, CardMedia } from '@mui/material';
 
 import useAuth from 'hooks/useAuth';
 import UserInfo from '../User/UserInfo';
