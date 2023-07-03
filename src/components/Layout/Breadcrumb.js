@@ -7,7 +7,9 @@ import {
   Typography,
   AppBar,
   Grid,
-  ListItemIcon
+  ListItemIcon,
+  Box,
+  CardMedia
 } from '@mui/material';
 import ArrowCircleLeftOutlinedIcon from '@mui/icons-material/ArrowCircleLeftOutlined';
 import Link from 'next/link';
@@ -62,8 +64,22 @@ const BreadCrumb = () => {
   }, [segments.length, active]);
 
   return (
-    <AppBar position="static" color="inherit" sx={{ p: 2, marginBottom: 1, paddingTop: 5 }}>
+    <AppBar
+      position="static"
+      color="inherit"
+      sx={{ p: 1, marginBottom: 1, paddingTop: 1, zIndex: (theme) => theme.zIndex.drawer + 1 }}
+    >
       <Grid container>
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
+          <CardMedia
+            sx={{
+              width: 120,
+              height: 30,
+              margin: 0.5
+            }}
+            image="consultec_logo_name.png"
+          />
+        </Box>
         <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemIcon
             data-testid="goBack-button"
@@ -74,7 +90,7 @@ const BreadCrumb = () => {
             {displayIcon(segments.length == 0 ? 'true' : null)}
           </ListItemIcon>
         </Grid>
-        <Grid>
+        <Grid sx={{ p: 2, marginBottom: 1, paddingTop: 3 }}>
           <Breadcrumbs aria-label="breadcrumb">
             <Typography variant="subtitle1">
               <LinkRouter underline="none" color={active ? 'primary' : 'inherit'} href="/">

@@ -1,16 +1,32 @@
-import { Chip, List, ListItem, ListItemText, Typography, ListItemIcon } from '@mui/material';
+import { Avatar, Chip, ListItem, ListItemText, Typography, ListItemIcon, Box } from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupsIcon from '@mui/icons-material/Groups';
+
+import moment from 'moment';
 import 'moment/locale/es';
 
-const UserInfo = ({ userDataLogged }) => {
+const UserProfileMenu = ({ userDataLogged }) => {
+  const admissionDateFormated = moment(userDataLogged.admissionDate).format('LL');
   if (!userDataLogged) {
     return 'There is no user Data';
   } else {
     return (
-      <List data-testid="user-info-component" dense sx={{ padding: 2.5 }}>
+      <Box display="flex" flexDirection="row" alignItems="center">
+        <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center' }}>
+          <ListItemIcon>
+            <Avatar alt={userDataLogged.name} src={userDataLogged.picture} />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <Typography variant="h7" align="center">
+                {userDataLogged.name}
+              </Typography>
+            }
+          />
+        </ListItem>
+
         <ListItem
           disablePadding
           sx={{
@@ -22,45 +38,36 @@ const UserInfo = ({ userDataLogged }) => {
           }}
         >
           <ListItemIcon>
-            <CalendarMonthIcon
-              color="white"
-              fontSize="large"
-              style={{ fontSize: 40, color: 'white' }}
-            />
+            <CalendarMonthIcon color="info" fontSize="large" />
           </ListItemIcon>
           <ListItemText
-            secondary={<Typography variant="body2" style={{ fontSize: 12 }}></Typography>}
+            secondary={
+              <Typography variant="body2" style={{ fontSize: 12 }}>
+                {admissionDateFormated}
+              </Typography>
+            }
           />
         </ListItem>
 
         <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
           <ListItemIcon>
-            <AccountCircleIcon
-              color="aliceblue"
-              fontSize="large"
-              style={{ fontSize: 40, color: 'white' }}
-            />
+            <AccountCircleIcon color="info" fontSize="large" />
           </ListItemIcon>
-          <ListItemText primary="" secondary={userDataLogged.supervisorData?.name} />
+          <ListItemText primary="Supervisor" secondary={userDataLogged.supervisorData?.name} />
         </ListItem>
 
         <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemIcon>
-            <GroupsIcon color="aliceblue" style={{ fontSize: 40, color: 'white' }} />
+            <GroupsIcon color="info" style={{ fontSize: 40 }} />
           </ListItemIcon>
-          <ListItemText />
+          <ListItemText primary="Cliente" secondary={userDataLogged.clientData?.name} />
         </ListItem>
-        <br></br>
 
         <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemIcon>
-            <ConstructionIcon
-              color="aliceblue"
-              fontSize="large"
-              style={{ fontSize: 40, color: 'white' }}
-            />
+            <ConstructionIcon color="info" fontSize="large" />
           </ListItemIcon>
-          <ListItemText />
+          <ListItemText primary="N-1 Perfil" />
           <ListItemText
             component="div"
             primary={userDataLogged.profilesData?.slice(0, 8).map((value, index) => (
@@ -71,24 +78,18 @@ const UserInfo = ({ userDataLogged }) => {
 
         <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText />
+          <ListItemText primary=" N-2 Conocimientos:" />
           <ListItemText
             component="div"
             primary={userDataLogged.knowledges?.slice(0, 8).map((value, index) => (
-              <Chip
-                sx={{ margin: 0.2 }}
-                color="default"
-                size="small"
-                key={index}
-                label={value.name}
-              />
+              <Chip sx={{ margin: 0.2 }} color="info" size="small" key={index} label={value.name} />
             ))}
           />
         </ListItem>
 
         <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center' }}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText />
+          <ListItemText primary=" N-3 Tecnologias:" />
           <ListItemText
             component="div"
             primary={userDataLogged.technologies?.slice(0, 8).map((value, index) => (
@@ -96,9 +97,9 @@ const UserInfo = ({ userDataLogged }) => {
             ))}
           />
         </ListItem>
-      </List>
+      </Box>
     );
   }
 };
 
-export default UserInfo;
+export default UserProfileMenu;
