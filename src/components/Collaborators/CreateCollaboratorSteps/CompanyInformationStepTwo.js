@@ -12,17 +12,21 @@ import 'moment/locale/es';
 
 const CompanyInformationStepTwo = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
-  const [corporativeYears, setCorporativeYears] = useState(
-    Object.keys(props.formData).length
-      ? moment(moment().format()).diff(moment(props.formData.admissionDate).format(), 'year')
-      : 0
-  );
+
   const [errorEmailMessage, setEmailErrorMessage] = useState('');
   const [companyInformation, setCompanyInformation] = useState({
     businessCode: '',
     admissionDate: '',
     businessEmail: ''
   });
+  const [corporativeYears, setCorporativeYears] = useState(
+    Object.keys(props.formData).length
+      ? moment(moment().format()).diff(moment(props.formData.admissionDate).format(), 'year') +
+          ' años corporativos y ' +
+          moment().month(moment(props.formData.admissionDate).month()).fromNow(true)
+      : 0
+  );
+
   const [edit] = useEdit(`/api/collaborator/${props.newCollaboratorId}`, companyInformation);
 
   const {
@@ -37,19 +41,14 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   const [isMounted, setIsMounted] = useState(false);
   const watchAllFields = watch();
 
-  const calculateAge = (date) => {
-    const today = new Date();
-    const birthDate = new Date(date);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const month = today.getMonth() - birthDate.getMonth();
-    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
+  const calculateCoporativeYears = (date) => {
+    const monthOfRelativeDate = moment().month(moment(date).month()).fromNow(true);
+    const yearOfRelativeDate = moment().from(date);
+    setCorporativeYears(`${yearOfRelativeDate} corporativos y ${monthOfRelativeDate}`);
     setCompanyInformation({
       ...companyInformation,
       admissionDate: date
     });
-    setCorporativeYears(age);
   };
 
   const handleOnChangeEmail = (event) => {
@@ -148,7 +147,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
-                      calculateAge(newValue);
+                      calculateCoporativeYears(newValue);
                     }}
                     renderInput={(params) => (
                       <CssTextField
@@ -178,7 +177,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
           <Grid item>
             <CssTextField
               label="Antiguedad"
-              value={corporativeYears ? corporativeYears + ' años corporativos' : 0}
+              value={corporativeYears ? corporativeYears : 0}
               size={'small'}
               InputProps={{ readOnly: true }}
               fullWidth
