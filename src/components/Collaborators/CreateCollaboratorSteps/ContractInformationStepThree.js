@@ -145,10 +145,6 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
   }
 
   function handleOnChangeEndDate(newValue) {
-    setContractInformation({
-      ...contractInformation,
-      endDate: moment(newValue).format('YYYY-MM-DD')
-    });
     const monthOfRelativeDate = moment().month(moment(newValue).month()).fromNow(true);
     const yearOfRelativeDate = moment(newValue).from(initialDate);
     setExpirationTime(`${yearOfRelativeDate} y ${monthOfRelativeDate}`);
@@ -228,15 +224,17 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
     if (!mounted) {
       getCatalogseData();
       setMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+
+        returnedStep(formData);
+      }
     }
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
-    if (Object.keys(props.formData).length) {
-      const { formData } = props;
-      returnedStep(formData);
-    }
+
     ref.current = validateForm;
   }, [contractInformation, mounted]);
 
@@ -358,6 +356,10 @@ const ContractInformationStepThree = forwardRef((props, ref) => {
                     value={value || null}
                     onChange={(newValue) => {
                       onChange(newValue);
+                      setContractInformation({
+                        ...contractInformation,
+                        endDate: moment(newValue).format('YYYY-MM-DD')
+                      });
                       handleOnChangeEndDate(newValue);
                     }}
                     renderInput={(params) => (

@@ -27,7 +27,7 @@ import { useEffect, useRef, useState } from 'react';
 const CreateCollaboratorSteps = () => {
   const { userToken, waitingUser } = useAuth();
 
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(1);
   const [skipped, setSkipped] = useState(new Set());
   const [formCompleted, setFormCompleted] = useState(false);
   const formValidate = useRef(null);
@@ -96,6 +96,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           setNewCollaboratorId={setNewCollaboratorId}
+          newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
           stepName={'firstStepForm'}
           rememberStepFormInformation={rememberStepFormInformation}
@@ -165,6 +166,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'fifthStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.fifthStepForm}
         />
       )
     },
@@ -179,6 +183,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'sixthStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.sixthStepForm}
         />
       )
     },
@@ -193,6 +200,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'seventhStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.seventhStepForm}
         />
       )
     },
@@ -207,6 +217,9 @@ const CreateCollaboratorSteps = () => {
           setActiveStep={setActiveStep}
           newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
+          stepName={'eighthStepForm'}
+          rememberStepFormInformation={rememberStepFormInformation}
+          formData={formStepInformationData.eighthStepForm}
         />
       )
     },

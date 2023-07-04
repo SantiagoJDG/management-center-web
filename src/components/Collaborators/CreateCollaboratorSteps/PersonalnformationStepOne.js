@@ -16,6 +16,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import useCreate from 'hooks/useCreate';
+import useEdit from 'hooks/useEdit';
 import useMessage from 'hooks/useMessage';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -62,6 +63,12 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
         number: undefined
       }
     ]
+  });
+
+  const [edit] = useEdit(`/api/collaborator/${props.formData.newCollaboratorId}`, newCollaborator, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   });
 
   const [create] = useCreate('/api/collaborator', newCollaborator, {
@@ -333,9 +340,9 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   };
 
   const handleExecution = (execution) => {
-    if (execution.status !== 200 || execution.data === 'SequelizeUniqueConstraintError') {
+    if (execution.status !== 200) {
       handleNewMessage({
-        text: 'Por favor revisar los campos que deben ser unicos',
+        text: 'Por favor revisar los campos',
         severity: 'error'
       });
     } else {
@@ -356,12 +363,15 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
+    let execution = undefined;
     handleResidencyErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
         try {
-          const execution = await create();
+          Object.keys(props.formData).length
+            ? (execution = await edit())
+            : (execution = await create());
           handleExecution(execution);
         } catch (error) {
           return error;
@@ -390,6 +400,10 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     if (!isMounted) {
       getResidenceData();
       setIsMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        returnedStep(formData);
+      }
     }
 
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
@@ -397,10 +411,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
-    if (Object.keys(props.formData).length) {
-      const { formData } = props;
-      returnedStep(formData);
-    }
+
     ref.current = validateForm;
   }, [age, newCollaborator, isMounted]);
 

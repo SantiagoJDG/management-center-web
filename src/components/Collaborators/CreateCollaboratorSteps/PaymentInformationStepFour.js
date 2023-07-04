@@ -86,7 +86,7 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleOffice(office) {
-    if (paymentInformation.bankCountryId != office.id) {
+    if (paymentInformation.bankCountryId != office?.id) {
       setExtraterritoriality(true);
     }
 
@@ -104,7 +104,6 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
   }
 
   function handleBankCountry(country) {
-    console.log(countries);
     setPaymentInformation({
       ...paymentInformation,
       extraterritoriality: country.id != paymentInformation.officePayerId
@@ -185,15 +184,16 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     if (!mounted) {
       getCatalogs();
       setMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        returnedStep(formData);
+      }
     }
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
-    if (Object.keys(props.formData).length) {
-      const { formData } = props;
-      returnedStep(formData);
-    }
+
     ref.current = validateForm;
   }, [paymentInformation, mounted]);
 
