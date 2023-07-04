@@ -96,6 +96,7 @@ const CreateCollaboratorSteps = () => {
           ref={formValidate}
           setActiveStep={setActiveStep}
           setNewCollaboratorId={setNewCollaboratorId}
+          newCollaboratorId={newCollaboratorId}
           setFormCompleted={setFormCompleted}
           stepName={'firstStepForm'}
           rememberStepFormInformation={rememberStepFormInformation}

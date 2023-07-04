@@ -5,6 +5,7 @@ import CustomAutoComplete from 'components/CustomAutoComplete';
 import { getAxiosInstance } from 'utils/axiosClient';
 import useMessage from 'hooks/useMessage';
 import useCreate from 'hooks/useCreate';
+import useEdit from 'hooks/useEdit';
 
 const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
   const { handleSubmit, trigger } = useForm();
@@ -39,7 +40,10 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
     `/api/collaborator/${props.newCollaboratorId}/organizational-structure-information`,
     organizationalStructureInformation
   );
-
+  const [edit] = useEdit(
+    `/api/collaborator/${props.newCollaboratorId}/organizational-structure-information`,
+    organizationalStructureInformation
+  );
   const getOperationData = async () => {
     getDataInformation('/api/operation/supervisors', setSupervisors);
     getDataInformation('/api/hiring/departments', setDepartments);
@@ -168,12 +172,16 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
+    let execution = undefined;
+
     handleDropdownErrors();
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const response = await create();
-        afterExecution(response);
+        Object.keys(props.formData).length
+          ? (execution = await edit())
+          : (execution = await create());
+        afterExecution(execution);
       })();
     }
   };
@@ -201,10 +209,18 @@ const OrganizationalStructureStepSeven = forwardRef((props, ref) => {
 
   const findObject = (array, id) => array.find((each) => each.id === id);
 
+  const returnedStep = (formDataPrecharged) => {
+    setOrganizationalStructureInformation(formDataPrecharged);
+  };
+
   useEffect(() => {
     if (!isMounted) {
       getOperationData();
       setIsMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        returnedStep(formData);
+      }
     }
 
     props.setFormCompleted(true);

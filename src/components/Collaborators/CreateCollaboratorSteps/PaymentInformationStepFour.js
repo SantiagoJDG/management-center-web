@@ -184,15 +184,16 @@ const ContractInformationStepFour = forwardRef((props, ref) => {
     if (!mounted) {
       getCatalogs();
       setMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        returnedStep(formData);
+      }
     }
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
-    if (Object.keys(props.formData).length) {
-      const { formData } = props;
-      returnedStep(formData);
-    }
+
     ref.current = validateForm;
   }, [paymentInformation, mounted]);
 

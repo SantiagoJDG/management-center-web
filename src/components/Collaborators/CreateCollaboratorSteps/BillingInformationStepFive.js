@@ -8,6 +8,7 @@ import {
   Typography
 } from '@mui/material';
 import useCreate from 'hooks/useCreate';
+import useEdit from 'hooks/useEdit';
 import useMessage from 'hooks/useMessage';
 import 'moment/locale/es';
 import { forwardRef, useEffect, useState } from 'react';
@@ -44,6 +45,11 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   });
 
   const [create] = useCreate(
+    `/api/collaborator/${props.newCollaboratorId}/compensation-information`,
+    billingInformation
+  );
+
+  const [edit] = useEdit(
     `/api/collaborator/${props.newCollaboratorId}/compensation-information`,
     billingInformation
   );
@@ -152,10 +158,13 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
+    let response = undefined;
     const isValid = trigger();
     if (isValid) {
       handleSubmit(async () => {
-        const response = await create();
+        Object.keys(props.formData).length
+          ? (response = await edit())
+          : (response = await create());
         afterExecution(response);
       })();
     }
@@ -186,10 +195,10 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     return Math.round(response, 3);
   }
 
-  const calculateAnualCompensation = (formData) => {
+  const calculateAnualCompensation = async (formData) => {
     const { calculationRegimeId, compensationAmount, compensationPeriodicityId } = formData;
-    const defaultPeriodicityValue = findObject(periodicities, compensationPeriodicityId);
-    const defaultCalculationRegime = findObject(calculationRegimes, calculationRegimeId);
+    const defaultPeriodicityValue = await findObject(periodicities, compensationPeriodicityId);
+    const defaultCalculationRegime = await findObject(calculationRegimes, calculationRegimeId);
     setInformationForm({
       ...informationForm,
       anualCalculatedCompensation:
@@ -344,16 +353,18 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     if (!mounted) {
       getInitialData();
       setMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        calculateAnualCompensation(formData);
+        setBillingInformation(formData);
+        props.setFormCompleted(true);
+      }
     }
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
-    if (Object.keys(props.formData).length) {
-      const { formData } = props;
-      setBillingInformation(formData);
-      calculateAnualCompensation(formData);
-    }
+
     ref.current = validateForm;
   }, [billingInformation]);
 

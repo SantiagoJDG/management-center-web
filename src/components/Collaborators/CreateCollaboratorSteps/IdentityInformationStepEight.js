@@ -68,6 +68,8 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
 
   const [formErrors, setFormErrors] = useState({});
 
+  const [fileCharged, setFileCharged] = useState();
+
   const getConsultecIdentityData = async () => {
     getDataInformation('/api/consultec-identity/seniorities', setSeniorities);
     getDataInformation('/api/consultec-identity/readiness', setReadinesses);
@@ -156,9 +158,10 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     });
   }
 
-  function handleFileChange(newFile) {
+  const handleFileChange = (newFile) => {
+    setFileCharged(newFile);
     setnewIdentity({ ...newIdentity, file: newFile });
-  }
+  };
 
   function handleNextSessionDate(newValue) {
     setnewIdentity({
@@ -231,12 +234,20 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
     }
   };
 
+  const returnedStep = (formDataPrecharged) => {
+    setnewIdentity(formDataPrecharged);
+  };
+
   const findObject = (array, id) => array.find((each) => each.id === id);
 
   useEffect(() => {
     if (!isMounted) {
       getConsultecIdentityData();
       setIsMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        returnedStep(formData);
+      }
     }
 
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
@@ -322,30 +333,25 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
             </LocalizationProvider>
           </Grid>
           <Grid item>
-            <Controller
-              name="file"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <CssMuiFileInput
-                  size="small"
-                  label="Adjuntar archivo"
-                  value={field.value}
-                  onChange={(newValue) => {
-                    handleFileChange(newValue);
-                    field.onChange(newValue);
-                  }}
-                  error={errors.file}
-                  helperText={
-                    errors.file && (
-                      <Typography variant="caption" color="error" sx={{ boxSizing: 'content-box' }}>
-                        Campo requerido
-                      </Typography>
-                    )
-                  }
-                />
-              )}
+            <CssMuiFileInput
+              size="small"
+              label="Adjuntar archivo"
+              value={fileCharged}
+              defaultValue={'dnndd'}
+              getInputText={(fileCharged) => (fileCharged ? 'Thanks!' : '')}
+              onChange={handleFileChange}
+              error={errors.file}
+              helperText={
+                errors.file &&
+                !props.formData.file && (
+                  <Typography variant="caption" color="error" sx={{ boxSizing: 'content-box' }}>
+                    Campo requerido
+                  </Typography>
+                )
+              }
+              // {...register('file')}
             />
+            {/* )} */}
           </Grid>
           <Grid item>
             <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -413,13 +419,13 @@ const IdentityInformationStepEight = forwardRef((props, ref) => {
             <CustomAutoComplete
               formError={formErrors.readinessId}
               name="rollingDevelopmentProgramv"
-              label="programa de desarrollo enrollados"
+              label="Programa de desarrollo enrollados"
               optionList={listRollUp}
               elmentCallback={handleRollUp}
               requiredField={true}
               prechargedValue={
                 props.formData
-                  ? findObject(listRollUp, props.formData.rollingDevelopmentProgramv)
+                  ? findObject(listRollUp, props.formData.rollingDevelopmentProgram)
                   : ''
               }
               canCreateNew={false}

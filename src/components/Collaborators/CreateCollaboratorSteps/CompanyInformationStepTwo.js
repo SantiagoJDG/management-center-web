@@ -93,6 +93,10 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
   useEffect(() => {
     if (!isMounted) {
       setIsMounted(true);
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        setCompanyInformation(formData);
+      }
     }
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {

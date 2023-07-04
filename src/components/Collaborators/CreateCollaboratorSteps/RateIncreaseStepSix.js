@@ -138,7 +138,7 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
           }}
           variant="outlined"
           inputRef={secondTextFieldRef}
-          value={Object.keys(props.formData).length ? Rate.rateIncreasePercentage : Rate.number}
+          value={Object.keys(props.formData).length ? Rate.number : Rate.number}
           {...register(`number-${index}`, {
             required: true,
             onChange: (event) => handleNumberRateChange(event, index)
@@ -161,16 +161,18 @@ const RateIncreaseStepSix = forwardRef((props, ref) => {
     if (!isMounted) {
       setIsMounted(true);
       getCollaboratorContract();
+      if (Object.keys(props.formData).length) {
+        const { formData } = props;
+        setRateIncrease({ effectiveDate: formData.effectiveDate });
+        setNewBaseAmount(formData.amount);
+      }
     }
 
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
     if (isDirty && allFieldsCompleted) {
       props.setFormCompleted(true);
     }
-    if (Object.keys(props.formData).length) {
-      const { formData } = props;
-      setNewBaseAmount(formData.amount);
-    }
+
     ref.current = validateForm;
   }, [rateIncrease]);
 
