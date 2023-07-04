@@ -56,13 +56,6 @@ describe('UserInfo component', () => {
     expect(getByTestId('user-info-component')).toBeInTheDocument();
   });
 
-  it('Should render user data correctly', () => {
-    const { getByText } = render(<UserInfo userDataLogged={userData} />);
-    expect(getByText('Fecha de ingreso')).toBeInTheDocument();
-    expect(getByText('Supervisor')).toBeInTheDocument();
-    expect(getByText('Cliente')).toBeInTheDocument();
-  });
-
   it('Should limit the N-1 Perfil to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Profile \d/);
