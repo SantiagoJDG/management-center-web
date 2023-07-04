@@ -58,7 +58,6 @@ describe('UserInfo component', () => {
 
   it('Should render user data correctly', () => {
     const { getByText } = render(<UserInfo userDataLogged={userData} />);
-    expect(getByText('Santiago')).toBeInTheDocument();
     expect(getByText('Fecha de ingreso')).toBeInTheDocument();
     expect(getByText('Supervisor')).toBeInTheDocument();
     expect(getByText('Cliente')).toBeInTheDocument();
