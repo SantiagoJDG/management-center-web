@@ -27,7 +27,7 @@ import { useEffect, useRef, useState } from 'react';
 const CreateCollaboratorSteps = () => {
   const { userToken, waitingUser } = useAuth();
 
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, setActiveStep] = useState(0);
   const [skipped, setSkipped] = useState(new Set());
   const [formCompleted, setFormCompleted] = useState(false);
   const formValidate = useRef(null);
