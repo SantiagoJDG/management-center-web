@@ -81,10 +81,10 @@ describe('UserInfo component', () => {
 
   it('Should render user data correctly', () => {
     const { getByText } = render(<UserInfo userDataLogged={userData} />);
-    expect(getByText('Santiago')).toBeInTheDocument();
-    expect(getByText('Fecha de ingreso')).toBeInTheDocument();
-    expect(getByText('Supervisor')).toBeInTheDocument();
-    expect(getByText('Cliente')).toBeInTheDocument();
+    expect(screen.getByTitle('Planificacion Estratégica')).toBeInTheDocument();
+    expect(screen.getByTitle('Agregar nuevo colaborador.')).toBeInTheDocument();
+    expect(screen.getByTitle('Lista de colaboradores.')).toBeInTheDocument();
+    expect(screen.getByTitle('Opciones')).toBeInTheDocument();
   });
 
   it('renders the component with the mock icon', () => {
