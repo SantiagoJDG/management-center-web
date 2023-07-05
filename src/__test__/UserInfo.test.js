@@ -6,7 +6,9 @@ import { render, screen } from '@testing-library/react';
 jest.mock('@mui/icons-material', () => ({
   AccountCircleIcon: jest.fn().mockReturnValue(<span data-testid="mock-icon" />)
 }));
-
+jest.mock('next/router', () => ({
+  useRouter: jest.fn()
+}));
 describe('UserInfo component', () => {
   const userData = {
     name: 'Santiago',

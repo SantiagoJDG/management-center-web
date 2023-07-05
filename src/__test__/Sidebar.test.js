@@ -14,7 +14,9 @@ const mockedUserData = {
   knowledges: [{ name: 'Knowledge 1' }, { name: 'Knowledge 2' }],
   technologies: [{ name: 'Technology 1' }, { name: 'Technology 2' }]
 };
-
+jest.mock('next/router', () => ({
+  useRouter: jest.fn()
+}));
 describe('Sidebar', () => {
   beforeAll(() => {
     useAuth.mockReturnValue({ userData: mockedUserData });
