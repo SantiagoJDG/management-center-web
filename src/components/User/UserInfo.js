@@ -1,62 +1,91 @@
 import {
-  Avatar,
   Chip,
   List,
   ListItem,
   ListItemText,
   Typography,
   ListItemIcon,
-  Box
+  Box,
+  Tooltip
 } from '@mui/material';
 import ConstructionIcon from '@mui/icons-material/Construction';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import moment from 'moment';
+import GroupsIcon from '@mui/icons-material/Groups';
 import 'moment/locale/es';
 
 const UserInfo = ({ userDataLogged }) => {
-  const admissionDateFormated = moment(userDataLogged.admissionDate).format('LL');
   if (!userDataLogged) {
     return 'There is no user Data';
   } else {
     return (
-      <List data-testid="user-info-component" dense sx={{ padding: 1.5 }}>
-        <ListItem disablePadding sx={{ mb: 3, padding: 0.5 }}>
-          <ListItemIcon>
-            <Avatar alt={userDataLogged.name} src={userDataLogged.picture} />
-          </ListItemIcon>
+      <List data-testid="user-info-component" dense sx={{ padding: 2.5 }}>
+        <ListItem
+          disablePadding
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            marginTop: '1px',
+            marginBottom: '1px'
+          }}
+        >
+          <Tooltip title="Planificacion Estratégica">
+            <ListItemIcon>
+              <CalendarMonthIcon
+                color="white"
+                fontSize="large"
+                style={{ fontSize: 40, color: 'white' }}
+              />
+            </ListItemIcon>
+          </Tooltip>
           <ListItemText
-            component="span"
-            primary={
-              <Typography variant="h6" align="center">
-                {userDataLogged.name}
-              </Typography>
-            }
+            title="Planificacion Estratégica"
+            secondary={<Typography variant="body2" style={{ fontSize: 12 }}></Typography>}
           />
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemIcon>
-            <CalendarMonthIcon color="info" fontSize="large" />
-          </ListItemIcon>
-          <ListItemText primary="Fecha de ingreso" secondary={admissionDateFormated} />
-        </ListItem>
-
-        <ListItem disablePadding>
-          <ListItemIcon>
-            <AccountCircleIcon color="info" fontSize="large" />
-          </ListItemIcon>
-          <ListItemText primary="Supervisor" secondary={userDataLogged.supervisorData?.name} />
-        </ListItem>
-
+        </ListItem>{' '}
+        <br></br> <br></br>
+        <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
+          <Tooltip title="Agregar nuevo colaborador.">
+            <ListItemIcon>
+              <AccountCircleIcon
+                data-testid="mock-icon"
+                color="aliceblue"
+                fontSize="large"
+                style={{ fontSize: 40, color: 'white' }}
+              />
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText
+            title="Agregar nuevo colaborador."
+            secondary={userDataLogged.supervisorData?.name}
+          />
+        </ListItem>{' '}
+        <br></br>
+        <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center' }}>
+          <Tooltip title="Lista de colaboradores.">
+            <ListItemIcon>
+              <GroupsIcon color="aliceblue" style={{ fontSize: 40, color: 'white' }} />
+            </ListItemIcon>
+          </Tooltip>
+          <ListItemText
+            title="Lista de colaboradores."
+            secondary={userDataLogged.supervisorData?.name}
+          />
+        </ListItem>{' '}
+        <br></br>
         <ListItem disablePadding>
           <ListItemIcon></ListItemIcon>
           <ListItemText primary="Cliente" secondary={userDataLogged.clientData?.name} />
         </ListItem>
-
         <ListItem disablePadding>
           <ListItemIcon>
-            <ConstructionIcon color="info" fontSize="large" />
+            <ConstructionIcon
+              color="white"
+              fontSize="large"
+              style={{ fontSize: 40, color: 'white' }}
+            />
+            <ListItemText title="Opciones" secondary={userDataLogged.supervisorData?.name} />
           </ListItemIcon>
           <Box sx={{ display: 'block' }}>
             <ListItemText primary="N-1 Perfil" />
@@ -74,7 +103,6 @@ const UserInfo = ({ userDataLogged }) => {
             />
           </Box>
         </ListItem>
-
         <ListItem disablePadding>
           <ListItemIcon></ListItemIcon>
           <Box sx={{ display: 'block' }}>
@@ -93,7 +121,16 @@ const UserInfo = ({ userDataLogged }) => {
             />
           </Box>
         </ListItem>
-
+        <ListItem
+          disablePadding
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            marginTop: '1px',
+            marginBottom: '1px'
+          }}
+        ></ListItem>
         <ListItem disablePadding>
           <ListItemIcon></ListItemIcon>
           <Box sx={{ display: 'block' }}>

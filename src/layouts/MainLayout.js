@@ -3,13 +3,11 @@ import Head from 'next/head';
 
 import useAuth from 'hooks/useAuth';
 import useMessage from 'hooks/useMessage';
-
 import Sidebar from 'components/Layout/Sidebar';
 import BreadCrumb from 'components/Layout/Breadcrumb';
-
 import { useState } from 'react';
 
-const drawerWidth = 240;
+const drawerWidth = 100;
 
 const MainLayout = (props) => {
   const { userToken, waitingUser } = useAuth();
@@ -40,6 +38,7 @@ const MainLayout = (props) => {
         </Snackbar>
         {!waitingUser && userToken ? (
           <>
+            <BreadCrumb />
             <Sidebar
               drawerWidth={drawerWidth}
               mobileOpen={mobileOpen}
@@ -56,8 +55,6 @@ const MainLayout = (props) => {
                 height: '100%'
               }}
             >
-              <BreadCrumb />
-
               <Box
                 sx={{
                   height: '100%',

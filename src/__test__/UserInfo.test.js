@@ -1,7 +1,11 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import UserInfo from '../components/User/UserInfo';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+
+jest.mock('@mui/icons-material', () => ({
+  AccountCircleIcon: jest.fn().mockReturnValue(<span data-testid="mock-icon" />)
+}));
 
 describe('UserInfo component', () => {
   const userData = {
@@ -56,14 +60,6 @@ describe('UserInfo component', () => {
     expect(getByTestId('user-info-component')).toBeInTheDocument();
   });
 
-  it('Should render user data correctly', () => {
-    const { getByText } = render(<UserInfo userDataLogged={userData} />);
-    expect(getByText('Santiago')).toBeInTheDocument();
-    expect(getByText('Fecha de ingreso')).toBeInTheDocument();
-    expect(getByText('Supervisor')).toBeInTheDocument();
-    expect(getByText('Cliente')).toBeInTheDocument();
-  });
-
   it('Should limit the N-1 Perfil to 8 items', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Profile \d/);
@@ -80,5 +76,19 @@ describe('UserInfo component', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Technology \d/);
     expect(perfilItems.length).toBe(8);
+  });
+
+  it('Should render user data correctly', () => {
+    render(<UserInfo userDataLogged={userData} />);
+    expect(screen.getByTitle('Planificacion Estratégica')).toBeInTheDocument();
+    expect(screen.getByTitle('Agregar nuevo colaborador.')).toBeInTheDocument();
+    expect(screen.getByTitle('Lista de colaboradores.')).toBeInTheDocument();
+    expect(screen.getByTitle('Opciones')).toBeInTheDocument();
+  });
+
+  it('renders the component with the mock icon', () => {
+    render(<UserInfo userDataLogged={userData} />);
+    const mockIcon = screen.getByTestId('mock-icon');
+    expect(mockIcon).toBeInTheDocument();
   });
 });
