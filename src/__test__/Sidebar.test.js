@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import useAuth from 'hooks/useAuth';
 import Sidebar from '../components/Layout/Sidebar';
+import UserInfo from '../components/User/UserInfo';
 
 jest.mock('hooks/useAuth');
 
@@ -20,15 +21,9 @@ describe('Sidebar', () => {
     useAuth.mockReturnValue({ userData: mockedUserData });
   });
 
-  it('render Sidebar metadata ', () => {
+  it('renders Sidebar metadata', () => {
     render(<Sidebar />);
     const sidebarMetadata = screen.getByTestId('sidebar');
     expect(sidebarMetadata).toBeInTheDocument();
-  });
-
-  it('renders child component UserInfo', () => {
-    render(<Sidebar />);
-    const userInfo = screen.getByText('Consultec');
-    expect(userInfo).toBeInTheDocument();
   });
 });

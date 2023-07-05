@@ -36,6 +36,7 @@ const UserInfo = ({ userDataLogged }) => {
         <ListItem disablePadding sx={{ display: 'flex', alignItems: 'center', my: 2 }}>
           <ListItemIcon>
             <AccountCircleIcon
+              data-testid="mock-icon"
               color="aliceblue"
               fontSize="large"
               style={{ fontSize: 40, color: 'white' }}

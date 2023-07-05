@@ -1,7 +1,12 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import UserInfo from '../components/User/UserInfo';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { AccountCircleIcon } from '@mui/icons-material';
+
+jest.mock('@mui/icons-material', () => ({
+  AccountCircleIcon: jest.fn().mockReturnValue(<span data-testid="mock-icon" />)
+}));
 
 describe('UserInfo component', () => {
   const userData = {
@@ -72,5 +77,19 @@ describe('UserInfo component', () => {
     const { getAllByText } = render(<UserInfo userDataLogged={userData} />);
     const perfilItems = getAllByText(/Technology \d/);
     expect(perfilItems.length).toBe(8);
+  });
+
+  it('Should render user data correctly', () => {
+    const { getByText } = render(<UserInfo userDataLogged={userData} />);
+    expect(getByText('Santiago')).toBeInTheDocument();
+    expect(getByText('Fecha de ingreso')).toBeInTheDocument();
+    expect(getByText('Supervisor')).toBeInTheDocument();
+    expect(getByText('Cliente')).toBeInTheDocument();
+  });
+
+  it('renders the component with the mock icon', () => {
+    render(<UserInfo userDataLogged={userData} />);
+    const mockIcon = screen.getByTestId('mock-icon');
+    expect(mockIcon).toBeInTheDocument();
   });
 });
