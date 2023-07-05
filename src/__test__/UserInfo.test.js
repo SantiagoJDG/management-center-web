@@ -2,7 +2,6 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import UserInfo from '../components/User/UserInfo';
 import { render, screen } from '@testing-library/react';
-import { AccountCircleIcon } from '@mui/icons-material';
 
 jest.mock('@mui/icons-material', () => ({
   AccountCircleIcon: jest.fn().mockReturnValue(<span data-testid="mock-icon" />)
@@ -80,7 +79,7 @@ describe('UserInfo component', () => {
   });
 
   it('Should render user data correctly', () => {
-    const { getByText } = render(<UserInfo userDataLogged={userData} />);
+    render(<UserInfo userDataLogged={userData} />);
     expect(screen.getByTitle('Planificacion Estratégica')).toBeInTheDocument();
     expect(screen.getByTitle('Agregar nuevo colaborador.')).toBeInTheDocument();
     expect(screen.getByTitle('Lista de colaboradores.')).toBeInTheDocument();

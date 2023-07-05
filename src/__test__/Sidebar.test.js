@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import useAuth from 'hooks/useAuth';
 import Sidebar from '../components/Layout/Sidebar';
-import UserInfo from '../components/User/UserInfo';
 
 jest.mock('hooks/useAuth');
 

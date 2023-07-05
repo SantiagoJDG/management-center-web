@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Chip,
   List,
   ListItem,
@@ -13,11 +12,9 @@ import ConstructionIcon from '@mui/icons-material/Construction';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupsIcon from '@mui/icons-material/Groups';
-import moment from 'moment';
 import 'moment/locale/es';
 
 const UserInfo = ({ userDataLogged }) => {
-  const admissionDateFormated = moment(userDataLogged.admissionDate).format('LL');
   if (!userDataLogged) {
     return 'There is no user Data';
   } else {
