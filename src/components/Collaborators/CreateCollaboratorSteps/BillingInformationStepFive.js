@@ -88,20 +88,20 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     });
   };
 
-  function handleCalculationRegimeId(roll) {
-    handleAutoCompleteValue(roll, 'calculationRegimeId');
+  function handleCalculationRegimeId(value) {
+    handleAutoCompleteValue(value, 'calculationRegimeId');
     setInformationForm({
       ...informationForm,
-      calculationRegime: roll,
-      anualCalculatedRegimeBase: roll.compensationFactor * informationForm.baseFeeUSD
+      calculationRegime: value,
+      anualCalculatedRegimeBase: value.compensationFactor * informationForm.baseFeeUSD
     });
   }
 
-  const handlePeriodicityId = (event) => {
-    handleAutoCompleteValue(event, 'compensationPeriodicityId');
+  const handlePeriodicityId = (value) => {
+    handleAutoCompleteValue(value, 'compensationPeriodicityId');
     setInformationForm({
       ...informationForm,
-      compensationPeriodicity: event
+      compensationPeriodicity: value
     });
   };
 
