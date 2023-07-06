@@ -12,7 +12,7 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
 
   return (
     <Drawer
-      backgroundColor="blue"
+      backgroundColor="#0288d1"
       data-testid="sidebar"
       container={container}
       variant="permanent"
@@ -23,12 +23,10 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
         flexShrink: 0,
         display: { xs: 'none', sm: 'block' },
         '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-        backgroundColor: 'blue'
+        backgroundColor: '#0288d1'
       }}
     >
-      <Box
-        sx={{ p: 5, display: 'flex', justifyContent: 'center', backgroundColor: 'rgb(27 112 181)' }}
-      >
+      <Box sx={{ p: 5, display: 'flex', justifyContent: 'center', backgroundColor: '#0288d1' }}>
         <CardMedia
           sx={{
             width: 143,
@@ -45,7 +43,7 @@ const Sidebar = ({ window, drawerWidth, mobileOpen, setMobileOpen }) => {
           backgroundPosition: 'bottom',
           backgroundRepeat: 'no-repeat',
           height: '100vh',
-          backgroundColor: 'rgb(27 112 181)'
+          backgroundColor: '#0288d1'
         }}
       >
         <UserInfo userDataLogged={userData}></UserInfo>
