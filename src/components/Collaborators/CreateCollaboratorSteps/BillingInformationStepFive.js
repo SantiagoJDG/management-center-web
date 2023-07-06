@@ -15,6 +15,7 @@ import { forwardRef, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CssSelectInput, CssTextField } from '../../../styles/formButton';
 import { getDataInformation } from '../../../utils/dataUtils';
+import CustomAutoComplete from 'components/CustomAutoComplete';
 
 const BillingInformationStepFive = forwardRef((props, ref) => {
   const { handleNewMessage } = useMessage();
@@ -24,6 +25,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   const [periodicities, setPeriodicities] = useState([]);
   const [compensationTypes, setCompensationTypes] = useState([]);
   const [currency] = useState({ name: 'USD', valueAmount: 1 });
+  const [formErrors, setFormErrors] = useState({});
 
   const [billingInformation, setBillingInformation] = useState({
     calculationRegimeId: '',
@@ -79,49 +81,27 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   };
 
   const handleCompensationTypeId = (event) => {
-    const {
-      target: { value }
-    } = event;
+    handleAutoCompleteValue(event, 'compensationTypeId');
     setInformationForm({
       ...informationForm,
-      compensationType: value
-    });
-
-    setBillingInformation({
-      ...billingInformation,
-      compensationTypeId: value.id
+      compensationType: event
     });
   };
 
-  const handleCalculationRegimeId = (event) => {
-    const {
-      target: { value }
-    } = event;
+  function handleCalculationRegimeId(roll) {
+    handleAutoCompleteValue(roll, 'calculationRegimeId');
     setInformationForm({
       ...informationForm,
-      calculationRegime: value,
-      anualCalculatedRegimeBase: value.compensationFactor * informationForm.baseFeeUSD
+      calculationRegime: roll,
+      anualCalculatedRegimeBase: roll.compensationFactor * informationForm.baseFeeUSD
     });
-
-    setBillingInformation({
-      ...billingInformation,
-      calculationRegimeId: value.id
-    });
-  };
+  }
 
   const handlePeriodicityId = (event) => {
-    const {
-      target: { value }
-    } = event;
-
+    handleAutoCompleteValue(event, 'compensationPeriodicityId');
     setInformationForm({
       ...informationForm,
-      compensationPeriodicity: value
-    });
-
-    setBillingInformation({
-      ...billingInformation,
-      compensationPeriodicityId: value.id
+      compensationPeriodicity: event
     });
   };
 
@@ -160,6 +140,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
   const validateForm = () => {
     let response = undefined;
     const isValid = trigger();
+    handleDropdownErrors();
     if (isValid) {
       handleSubmit(async () => {
         Object.keys(props.formData).length
@@ -170,42 +151,104 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     }
   };
 
-  function getTotalAnualFee() {
+  function getTotalAnualFee(
+    anualCalculatedRegimeBase,
+    anualCalculatedCompensation,
+    healthInsuranceAmount
+  ) {
     let response = 0;
 
-    if (informationForm.anualCalculatedRegimeBase) {
-      response = response + Number(informationForm.anualCalculatedRegimeBase);
+    if (anualCalculatedRegimeBase) {
+      response = response + Number(anualCalculatedRegimeBase);
     }
 
-    if (informationForm.anualCalculatedCompensation) {
-      response = response + Number(informationForm.anualCalculatedCompensation);
+    if (anualCalculatedCompensation) {
+      response = response + Number(anualCalculatedCompensation);
     }
 
-    if (billingInformation.healthInsuranceAmount) {
-      response = response + Number(billingInformation.healthInsuranceAmount);
+    if (healthInsuranceAmount) {
+      response = response + Number(healthInsuranceAmount);
     }
 
     return Math.round(response, 3);
   }
 
   function getTotalAnualyHourFee() {
-    let response = getTotalAnualFee();
+    let response = Object.keys(props.formData).length
+      ? getTotalAnualFee(
+          calculateDefaultAnualRegimeBase(),
+          calculateDefaultAnualCompensation(),
+          props.formData.healthInsuranceAmount
+        )
+      : getTotalAnualFee(
+          informationForm.anualCalculatedRegimeBase,
+          informationForm.anualCalculatedCompensation,
+          billingInformation.healthInsuranceAmount
+        );
     response = response / 12;
     response = response / 160;
     return Math.round(response, 3);
   }
 
-  const calculateAnualCompensation = async (formData) => {
-    const { calculationRegimeId, compensationAmount, compensationPeriodicityId } = formData;
-    const defaultPeriodicityValue = await findObject(periodicities, compensationPeriodicityId);
-    const defaultCalculationRegime = await findObject(calculationRegimes, calculationRegimeId);
-    setInformationForm({
-      ...informationForm,
-      anualCalculatedCompensation:
-        compensationAmount * calculationRegimeId * defaultPeriodicityValue?.value,
-      anualCalculatedRegimeBase: compensationAmount * defaultCalculationRegime?.compensationFactor
+  const calculateDefaultAnualCompensation = () => {
+    const { calculationRegimeId, compensationAmount, compensationPeriodicityId } = props.formData;
+
+    const defaultPeriodicityValue = findObject(periodicities, compensationPeriodicityId);
+    const anualCalculatedCompensation =
+      compensationAmount * calculationRegimeId * defaultPeriodicityValue?.value;
+
+    return Math.round(anualCalculatedCompensation);
+  };
+
+  const calculateDefaultAnualRegimeBase = () => {
+    const { calculationRegimeId, compensationAmount } = props.formData;
+
+    const defaultCalculationRegime = findObject(calculationRegimes, calculationRegimeId);
+    const anualCalculatedRegimeBase =
+      compensationAmount * defaultCalculationRegime?.compensationFactor;
+
+    return Math.round(anualCalculatedRegimeBase);
+  };
+
+  async function handleAutoCompleteValue(selectedValue, elementName) {
+    if (!selectedValue) return;
+
+    setBillingInformation({
+      ...billingInformation,
+      [elementName]: selectedValue.id
     });
-    return;
+
+    setFormErrors({
+      ...formErrors,
+      [elementName]: { error: false, description: '' }
+    });
+  }
+  const handleDropdownErrors = () => {
+    if (
+      !billingInformation.calculationRegimeId ||
+      !billingInformation.compensationTypeId ||
+      !billingInformation.compensationPeriodicityId
+    ) {
+      const newErrors = {
+        ...formErrors,
+        calculationRegimeId: {
+          ...(billingInformation.calculationRegimeId
+            ? {}
+            : { error: true, description: 'Campo requerido' })
+        },
+        compensationTypeId: {
+          ...(billingInformation.compensationTypeId
+            ? {}
+            : { error: true, description: 'Campo requerido' })
+        },
+        compensationPeriodicityId: {
+          ...(billingInformation.compensationPeriodicityId
+            ? {}
+            : { error: true, description: 'Campo requerido' })
+        }
+      };
+      setFormErrors(newErrors);
+    }
   };
 
   const displayCalculusRegime = () => {
@@ -216,32 +259,18 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     const defaultValue = defaultCalculationRegime ? defaultCalculationRegime : '';
 
     return (
-      <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
-        <InputLabel id="calculationRegimeLabel" error={errors.calculationRegimeId}>
-          Regimen de calculo
-        </InputLabel>
-        <CssSelectInput
-          value={
-            informationForm.calculationRegime ? informationForm.calculationRegime : defaultValue
-          }
-          id="calculationRegimeId"
-          label="Regimen de calculo"
-          error={errors.calculationRegimeId}
-          {...register('calculationRegimeId', {
-            required: true,
-            onChange: handleCalculationRegimeId
-          })}
-        >
-          {calculationRegimes.map((type) => {
-            return (
-              <MenuItem key={type.id} value={type}>
-                {type.name}
-              </MenuItem>
-            );
-          })}
-        </CssSelectInput>
-        {errors.calculationRegimeId && <FormHelperText error>Campo requerido</FormHelperText>}
-      </FormControl>
+      <CustomAutoComplete
+        formError={formErrors.calculationRegimeId}
+        name="calculationRegimeId"
+        label="Regimen de calculo"
+        optionList={calculationRegimes}
+        elmentCallback={handleCalculationRegimeId}
+        requiredField={true}
+        canCreateNew={false}
+        prechargedValue={
+          informationForm.calculationRegime ? informationForm.calculationRegime : defaultValue
+        }
+      />
     );
   };
 
@@ -253,30 +282,18 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     const defaultValue = defaultCompensationType ? defaultCompensationType : '';
 
     return (
-      <FormControl size="small" sx={{ width: '100%', borderColor: '#2196f3' }}>
-        <InputLabel id="compensationTypeIdLabel" error={errors.compensationTypeId}>
-          Compensacion complementaria
-        </InputLabel>
-        <CssSelectInput
-          value={informationForm.compensationType ? informationForm.compensationType : defaultValue}
-          id="compensationTypeId"
-          label="Compensacion complementaria"
-          error={errors.compensationTypeId}
-          {...register('compensationTypeId', {
-            required: true,
-            onChange: handleCompensationTypeId
-          })}
-        >
-          {compensationTypes.map((type) => {
-            return (
-              <MenuItem key={type.id} value={type}>
-                {type.name}
-              </MenuItem>
-            );
-          })}
-        </CssSelectInput>
-        {errors.compensationTypeId && <FormHelperText error>Campo requerido</FormHelperText>}
-      </FormControl>
+      <CustomAutoComplete
+        formError={formErrors.compensationTypeId}
+        name="compensationTypeId"
+        label="Compensacion complementaria"
+        optionList={compensationTypes}
+        elmentCallback={handleCompensationTypeId}
+        requiredField={true}
+        canCreateNew={false}
+        prechargedValue={
+          informationForm.compensationType ? informationForm.compensationType : defaultValue
+        }
+      />
     );
   };
 
@@ -310,40 +327,20 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     const defaultPeriodicity = findObject(periodicities, props.formData.compensationPeriodicityId);
     const defaultValue = defaultPeriodicity ? defaultPeriodicity : '';
     return (
-      <FormControl size="small" sx={{ width: '100%' }}>
-        <InputLabel
-          id="periodicity"
-          error={errors.periodicity && !informationForm.compensationPeriodicity}
-        >
-          Periodicidad
-        </InputLabel>
-        <CssSelectInput
-          labelId="periodicity"
-          label="Periodicidad"
-          id="periodicity"
-          value={
-            informationForm.compensationPeriodicity
-              ? informationForm.compensationPeriodicity
-              : defaultValue
-          }
-          error={errors.compensationPeriodicityId && !informationForm.compensationPeriodicity}
-          {...register('compensationPeriodicityId', {
-            required: true,
-            onChange: handlePeriodicityId
-          })}
-        >
-          {periodicities.map((type, index) => {
-            return (
-              <MenuItem key={index} value={type}>
-                {type.name}
-              </MenuItem>
-            );
-          })}
-        </CssSelectInput>
-        {errors.compensationPeriodicityId && !informationForm.compensationPeriodicity && (
-          <FormHelperText error>Campo requerido</FormHelperText>
-        )}
-      </FormControl>
+      <CustomAutoComplete
+        formError={formErrors.compensationPeriodicityId}
+        name="compensationPeriodicityId"
+        label="Periodicidad"
+        optionList={periodicities}
+        elmentCallback={handlePeriodicityId}
+        requiredField={true}
+        canCreateNew={false}
+        prechargedValue={
+          informationForm.compensationPeriodicity
+            ? informationForm.compensationPeriodicity
+            : defaultValue
+        }
+      />
     );
   };
 
@@ -355,9 +352,13 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
       setMounted(true);
       if (Object.keys(props.formData).length) {
         const { formData } = props;
-        calculateAnualCompensation(formData);
         setBillingInformation(formData);
         props.setFormCompleted(true);
+        setInformationForm({
+          ...informationForm,
+          anualCalculatedCompensation: calculateDefaultAnualCompensation(),
+          anualCalculatedRegimeBase: calculateDefaultAnualRegimeBase()
+        });
       }
     }
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
@@ -366,7 +367,7 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
     }
 
     ref.current = validateForm;
-  }, [billingInformation]);
+  }, [billingInformation, informationForm]);
 
   return (
     <Grid container direction={'row'} xs={11} justifyContent={'space-between'} p={2}>
@@ -397,7 +398,11 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               label="Tarifa con factor de compensacion. Anual"
               size="small"
-              value={informationForm.anualCalculatedRegimeBase}
+              value={
+                Object.keys(props.formData).length
+                  ? calculateDefaultAnualRegimeBase()
+                  : informationForm.anualCalculatedRegimeBase
+              }
               InputProps={{
                 readOnly: true
               }}
@@ -467,7 +472,11 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '80%' }}
               size="small"
-              value={informationForm.anualCalculatedCompensation}
+              value={
+                Object.keys(props.formData).length
+                  ? calculateDefaultAnualCompensation()
+                  : informationForm.anualCalculatedCompensation
+              }
               InputProps={{
                 readOnly: true
               }}
@@ -533,7 +542,19 @@ const BillingInformationStepFive = forwardRef((props, ref) => {
               sx={{ width: '100%' }}
               label="Tarifa total Anual"
               size="small"
-              value={getTotalAnualFee()}
+              value={
+                Object.keys(props.formData).length
+                  ? getTotalAnualFee(
+                      calculateDefaultAnualRegimeBase(),
+                      calculateDefaultAnualCompensation(),
+                      props.formData.healthInsuranceAmount
+                    )
+                  : getTotalAnualFee(
+                      informationForm.anualCalculatedRegimeBase,
+                      informationForm.anualCalculatedCompensation,
+                      billingInformation.healthInsuranceAmount
+                    )
+              }
               InputProps={{
                 readOnly: true
               }}
