@@ -236,7 +236,6 @@ describe('EditableCollaborator', () => {
   });
 
   it('Should render correctly', async () => {
-    jest.setTimeout(10000);
     useMessage.mockReturnValue({ handleNewMessage: jest.fn() });
     getAxiosInstance.mockImplementation(() => ({
       get: jest.fn(() => Promise.resolve({}))
