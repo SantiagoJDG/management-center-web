@@ -87,7 +87,6 @@ const PersonalInformation = forwardRef((props, ref) => {
     try {
       const execute = await fetchData();
       getDropdownData();
-      console.log(execute.data);
       setCollaboratorInfo(execute.data);
       setNewValue(execute.data);
     } catch (error) {
