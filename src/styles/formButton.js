@@ -8,6 +8,13 @@ export const CssTextField = styled(TextField)({
     }
   }
 });
+export const CssTextFieldStandard = styled(TextField)({
+  '& .MuiFormControl-root': {
+    '& fieldset': {
+      borderColor: '#2196f3'
+    }
+  }
+});
 
 export const CssMuiFileInput = styled(MuiFileInput)({
   '& .MuiOutlinedInput-root': {
