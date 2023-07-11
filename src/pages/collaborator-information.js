@@ -108,7 +108,7 @@ const CollaboratorInformation = () => {
             }}
           >
             <Typography sx={{ pl: 5, pr: 5 }} color="white">
-              {activeStep === steps.length - 1 ? 'Finalizar' : 'Continuar'}
+              Editar
             </Typography>
           </Button>
           <Button

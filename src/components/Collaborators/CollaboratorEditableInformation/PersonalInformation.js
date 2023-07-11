@@ -7,6 +7,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CustomAutoComplete from 'components/CustomAutoComplete';
 import { getAxiosInstance } from 'utils/axiosClient';
+import useMessage from 'hooks/useMessage';
+
+import useEdit from 'hooks/useEdit';
 
 import moment from 'moment';
 import 'moment/locale/es';
@@ -17,6 +20,12 @@ const PersonalInformation = forwardRef((props, ref) => {
   const memoizedInfo = useMemo(() => collaboratorInfo, [collaboratorInfo]);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
+  const { handleNewMessage } = useMessage();
+  const [edit] = useEdit(`/api/collaborator/${1}`, newValue, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
 
   const [newValue, setNewValue] = useState({
     name: '',
@@ -257,8 +266,24 @@ const PersonalInformation = forwardRef((props, ref) => {
     });
   };
 
-  const editForm = () => {
-    console.log(newValue);
+  const handleExecution = (execution) => {
+    if (execution.status !== 200) {
+      handleNewMessage({
+        text: 'Por favor revisar los campos',
+        severity: 'error'
+      });
+    } else {
+      handleNewMessage({
+        text: 'Excelente! La Informacion personal del colaborador fue editada exitosamente',
+        severity: 'success'
+      });
+    }
+  };
+
+  const editForm = async () => {
+    var execution = undefined;
+    execution = await edit();
+    handleExecution(execution);
     return;
   };
 
