@@ -293,7 +293,7 @@ const CreateCollaboratorSteps = () => {
             }}
           >
             <Typography sx={{ pl: 5, pr: 5 }} color="white">
-              {activeStep === steps.length - 1 ? 'Finalizar' : 'Editar'}
+              {activeStep === steps.length - 1 ? 'Finalizar' : 'Continuar'}
             </Typography>
           </Button>
           {isStepOptionals(activeStep) && (
