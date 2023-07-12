@@ -16,7 +16,7 @@ const CollaboratorInformation = () => {
   const { userToken, waitingUser } = useAuth();
 
   const [activeTab, setActiveTab] = useState(0);
-  const [editMode, setEditMode] = useState(true);
+  const [editMode] = useState(true);
   const [collaboratorId] = useState(sessionStorage.getItem('collaboratorId'));
 
   const formValidate = useRef(null);
@@ -151,7 +151,7 @@ const CollaboratorInformation = () => {
                     aria-label="secondary tabs example"
                   >
                     {optionTabs.map((tab, index) => {
-                      return <Tab value={index} label={tab.label} />;
+                      return <Tab key={tab.id} value={index} label={tab.label} />;
                     })}
                   </Tabs>
                 </Box>
