@@ -363,7 +363,6 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
-    console.log(newCollaborator);
     let execution = undefined;
     handleResidencyErrors();
     const isValid = trigger();
