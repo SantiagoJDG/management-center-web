@@ -18,7 +18,8 @@ const CustomAutoComplete = ({
   requiredField,
   formError,
   prechargedValue,
-  canCreateNew
+  canCreateNew,
+  variant
 }) => {
   const [value, setValue] = useState(multiple ? [] : '');
   const [inputValue, setInputValue] = useState('');
@@ -103,6 +104,8 @@ const CustomAutoComplete = ({
           <TextField
             {...params}
             label={label}
+            focused={variant}
+            variant={variant ? 'standard' : 'outlined'}
             required={requiredField}
             error={formError && formError.error}
             helperText={formError && formError.description}
