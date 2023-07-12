@@ -14,20 +14,18 @@ import { useEffect, useRef, useState } from 'react';
 
 const CollaboratorInformation = () => {
   const { userToken, waitingUser } = useAuth();
-  const [value, setValue] = useState(0);
-  const [activeStep, setActiveStep] = useState(1);
+
+  const [activeTab, setActiveTab] = useState(0);
   const [editMode, setEditMode] = useState(true);
-  const formValidate = useRef(null);
-  const router = useRouter();
   const [collaboratorId] = useState(sessionStorage.getItem('collaboratorId'));
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
+  const formValidate = useRef(null);
+  const router = useRouter();
 
-  const steps = [
+  const optionTabs = [
     {
       id: 1,
+      label: 'Informacion Personal',
       backgroungImg: '/pills-cut-right.png',
       component: (
         <PersonalInformation
@@ -39,26 +37,31 @@ const CollaboratorInformation = () => {
     },
     {
       id: 2,
+      label: 'Contractual',
       backgroungImg: '/pills-orange.png',
       component: <CompanyInformation />
     },
     {
       id: 3,
+      label: 'Pago',
       backgroungImg: '/pills-green.png',
       component: <ContractInformationStepThree ref={formValidate} />
     },
     {
       id: 4,
+      label: 'C&B',
       backgroungImg: '/pills-cyan.png',
       component: <PaymentInformationStepFour ref={formValidate} />
     },
     {
       id: 5,
+      label: 'Estructura Organizacional',
       backgroungImg: '/pills-cut-right.png',
       component: <BillingInformationStepFive ref={formValidate} />
     },
     {
       id: 6,
+      label: 'Identidad Consultec',
       backgroungImg: '/pills-cyan.png',
       component: <RateIncreaseStepSix ref={formValidate} />
     },
@@ -79,18 +82,8 @@ const CollaboratorInformation = () => {
     }
   ];
 
-  const handleNext = () => {
-    setEditMode(false);
-    formValidate.current();
-
-    if (activeStep === steps.length - 1) {
-      router.push('/');
-    }
-  };
-
   const handleChange = (event, newValue) => {
-    setValue(newValue);
-    setActiveStep(newValue);
+    setActiveTab(newValue);
   };
 
   const backSkipNextButtons = () => {
@@ -98,7 +91,6 @@ const CollaboratorInformation = () => {
       <Grid item>
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
           <Button
-            onClick={handleNext}
             size={'small'}
             variant="contained"
             color={'primary'}
@@ -116,12 +108,7 @@ const CollaboratorInformation = () => {
               Editar
             </Typography>
           </Button>
-          <Button
-            variant="outlined"
-            onClick={handleBack}
-            size={'small'}
-            sx={{ borderRadius: 8, mt: 1, mr: 1 }}
-          >
+          <Button variant="outlined" size={'small'} sx={{ borderRadius: 8, mt: 1, mr: 1 }}>
             <Typography sx={{ pl: 5, pr: 5 }}>Volver</Typography>
           </Button>
         </Box>
@@ -142,7 +129,7 @@ const CollaboratorInformation = () => {
         <Paper
           elevation={1}
           sx={{
-            backgroundImage: `url(${steps[value].backgroungImg})`,
+            backgroundImage: `url(${optionTabs[activeTab].backgroungImg})`,
             backgroundPosition: 'bottom right',
             backgroundRepeat: 'no-repeat',
             backgroundSize: '30%',
@@ -157,19 +144,15 @@ const CollaboratorInformation = () => {
               <Grid item>
                 <Box sx={{ width: '100%' }}>
                   <Tabs
-                    value={value}
+                    value={activeTab}
                     onChange={handleChange}
                     textColor="secondary"
                     indicatorColor="secondary"
                     aria-label="secondary tabs example"
                   >
-                    <Tab value={0} label="Informacion Personal" />
-                    <Tab value={1} label="ID Corporativo" />
-                    <Tab value={2} label="Contactual" />
-                    <Tab value={3} label="Pago" />
-                    <Tab value={4} label="C&B" />
-                    <Tab value={5} label="Estructura Organizacional" />
-                    <Tab value={6} label="Identidad Consultec" />
+                    {optionTabs.map((tab, index) => {
+                      return <Tab value={index} label={tab.label} />;
+                    })}
                   </Tabs>
                 </Box>
               </Grid>
@@ -177,7 +160,7 @@ const CollaboratorInformation = () => {
           </Grid>
 
           <Grid item flexGrow={1} xs={10} sx={{ marginLeft: 3 }}>
-            {steps[value].component}
+            {optionTabs[activeTab].component}
           </Grid>
         </Paper>
 
