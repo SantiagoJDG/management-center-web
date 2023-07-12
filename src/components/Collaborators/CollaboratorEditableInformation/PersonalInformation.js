@@ -17,7 +17,6 @@ import moment from 'moment';
 import 'moment/locale/es';
 
 const PersonalInformation = forwardRef((props, ref) => {
-  console.log(props.collaboratorId);
   const [collaboratorInfo, setCollaboratorInfo] = useState(null);
   const [fetchData] = useGet(`/api/collaborator/${props.collaboratorId}`);
   const memoizedInfo = useMemo(() => collaboratorInfo, [collaboratorInfo]);
@@ -92,7 +91,6 @@ const PersonalInformation = forwardRef((props, ref) => {
       getDropdownData();
       setCollaboratorInfo(execute.data);
       setNewValue(execute.data);
-      console.log(execute.data);
       setPhoto(execute.data ? URL.createObjectURL(execute.data.photoAddress) : '');
     } catch (error) {
       console.error('Error fetching collaborator info:', error);

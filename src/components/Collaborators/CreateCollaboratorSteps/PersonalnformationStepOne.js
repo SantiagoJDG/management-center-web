@@ -439,7 +439,6 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { onChange, value } }) => {
-                    console.log(value);
                     return (
                       <CssMuiFileInput
                         size="small"
