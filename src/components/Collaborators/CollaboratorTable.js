@@ -64,6 +64,7 @@ const CollaboratorTable = ({ collaborators }) => {
   const openMenu = Boolean(menuAnchorElement);
 
   const handleOpenMenuByCollaborator = (event, collaboratorId) => {
+    sessionStorage.setItem('collaboratorId', collaboratorId);
     setMenuAnchorElement(event.currentTarget);
     setSelectedCollaboratorMenu(collaboratorId);
   };
@@ -81,7 +82,7 @@ const CollaboratorTable = ({ collaborators }) => {
     }
 
     router.push({
-      pathname: '/collaborator',
+      pathname: '/collaborator-information',
       query: queryParams
     });
   };

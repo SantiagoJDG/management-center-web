@@ -16,11 +16,10 @@ const CollaboratorInformation = () => {
   const { userToken, waitingUser } = useAuth();
   const [value, setValue] = useState(0);
   const [activeStep, setActiveStep] = useState(1);
-
   const [editMode, setEditMode] = useState(true);
-
   const formValidate = useRef(null);
   const router = useRouter();
+  const [collaboratorId] = useState(sessionStorage.getItem('collaboratorId'));
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
@@ -30,7 +29,13 @@ const CollaboratorInformation = () => {
     {
       id: 1,
       backgroungImg: '/pills-cut-right.png',
-      component: <PersonalInformation ref={formValidate} editable={editMode} />
+      component: (
+        <PersonalInformation
+          ref={formValidate}
+          editable={editMode}
+          collaboratorId={collaboratorId}
+        />
+      )
     },
     {
       id: 2,

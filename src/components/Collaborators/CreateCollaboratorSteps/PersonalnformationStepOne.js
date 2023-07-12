@@ -363,6 +363,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   };
 
   const validateForm = () => {
+    console.log(newCollaborator);
     let execution = undefined;
     handleResidencyErrors();
     const isValid = trigger();
@@ -438,6 +439,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
                   control={control}
                   rules={{ required: true }}
                   render={({ field: { onChange, value } }) => {
+                    console.log(value);
                     return (
                       <CssMuiFileInput
                         size="small"

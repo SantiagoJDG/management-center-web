@@ -1,7 +1,9 @@
 import { useEffect, useState, useMemo, forwardRef } from 'react';
 import useGet from 'hooks/useGet';
-import { Grid } from '@mui/material';
+import { Grid, Avatar } from '@mui/material';
 import { CssTextFieldStandard } from '../../../styles/formButton';
+import HailRoundedIcon from '@mui/icons-material/HailRounded';
+
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -15,18 +17,14 @@ import moment from 'moment';
 import 'moment/locale/es';
 
 const PersonalInformation = forwardRef((props, ref) => {
+  console.log(props.collaboratorId);
   const [collaboratorInfo, setCollaboratorInfo] = useState(null);
-  const [fetchData] = useGet(`/api/collaborator/${20}`);
+  const [fetchData] = useGet(`/api/collaborator/${props.collaboratorId}`);
   const memoizedInfo = useMemo(() => collaboratorInfo, [collaboratorInfo]);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const { handleNewMessage } = useMessage();
-  const [edit] = useEdit(`/api/collaborator/${1}`, newValue, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
-
+  const [photo, setPhoto] = useState();
   const [newValue, setNewValue] = useState({
     name: '',
     lastName: '',
@@ -60,6 +58,11 @@ const PersonalInformation = forwardRef((props, ref) => {
       }
     ]
   });
+  const [edit] = useEdit(`/api/collaborator/${1}`, newValue, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
 
   function handleCountry(country) {
     handleAutoCompleteValue(country, 'countryId');
@@ -89,6 +92,8 @@ const PersonalInformation = forwardRef((props, ref) => {
       getDropdownData();
       setCollaboratorInfo(execute.data);
       setNewValue(execute.data);
+      console.log(execute.data);
+      setPhoto(execute.data ? URL.createObjectURL(execute.data.photoAddress) : '');
     } catch (error) {
       console.error('Error fetching collaborator info:', error);
     }
@@ -292,10 +297,23 @@ const PersonalInformation = forwardRef((props, ref) => {
   }, []);
 
   return (
-    <Grid container direction={'row'} xs={12} justifyContent={'space-between'} p={2}>
+    <Grid container direction={'row'} xs={12} justifyContent={'space-between'} p={2} pt={10}>
       <Grid item xs={6} mt={1}>
         <Grid container direction={'column'} spacing={3} p={2}>
           <Grid item xs={12}>
+            <Grid container>
+              <Grid
+                item
+                sx={{
+                  position: 'absolute',
+                  top: 235
+                }}
+              >
+                <Avatar sx={{ height: '60px', width: '60px' }} src={photo}>
+                  <HailRoundedIcon fontSize="large" />
+                </Avatar>
+              </Grid>
+            </Grid>
             <CssTextFieldStandard
               sx={{ width: '100%' }}
               focused
