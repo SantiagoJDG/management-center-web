@@ -438,10 +438,7 @@ const PersonalInformation = forwardRef((props, ref) => {
   const editPersonalInformation = () => {
     return (
       <Grid pt={10}>
-        <PersonalInformationStepOne
-          formData={JSON.parse(sessionStorage.getItem('personal'))}
-          ref={example}
-        />
+        <PersonalInformationStepOne formData={{}} ref={example} />
       </Grid>
     );
   };

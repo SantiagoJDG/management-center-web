@@ -8,7 +8,6 @@ import PaymentInformationStepFour from 'components/Collaborators/CreateCollabora
 import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
 import PersonalInformation from '../components/Collaborators/CollaboratorEditableInformation/PersonalInformation';
 import CompanyInformation from '../components/Collaborators/CollaboratorEditableInformation/CompanyInformation';
-import PersonalInformationStepOne from 'components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
 import useAuth from 'hooks/useAuth';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -28,16 +27,12 @@ const CollaboratorInformation = () => {
       id: 1,
       label: 'Informacion Personal',
       backgroungImg: '/pills-cut-right.png',
-      component: editMode ? (
+      component: (
         <PersonalInformation
           ref={formValidate}
           editable={editMode}
           collaboratorId={collaboratorId}
         />
-      ) : (
-        <Grid pt={10}>
-          <PersonalInformationStepOne formData={{}} ref={formValidate} />
-        </Grid>
       )
     },
     {
