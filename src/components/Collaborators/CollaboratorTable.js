@@ -57,7 +57,6 @@ const CollaboratorTable = ({ collaborators }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [menuAnchorElement, setMenuAnchorElement] = useState(null);
-  const [selectedCollaboratorMenu, setSelectedCollaboratorMenu] = useState(null);
 
   const router = useRouter();
 
@@ -66,24 +65,15 @@ const CollaboratorTable = ({ collaborators }) => {
   const handleOpenMenuByCollaborator = (event, collaboratorId) => {
     sessionStorage.setItem('collaboratorId', collaboratorId);
     setMenuAnchorElement(event.currentTarget);
-    setSelectedCollaboratorMenu(collaboratorId);
   };
 
   const handleCloseMenu = () => {
     setMenuAnchorElement(null);
-    setSelectedCollaboratorMenu(null);
   };
 
-  const handleProfileRouting = (edit) => {
-    let queryParams = { id: selectedCollaboratorMenu };
-
-    if (edit === true) {
-      queryParams = { ...queryParams, edit };
-    }
-
+  const handleProfileRouting = () => {
     router.push({
-      pathname: '/collaborator-information',
-      query: queryParams
+      pathname: '/collaborator-information'
     });
   };
 

@@ -20,6 +20,9 @@ import OrganizationalStructureStepSeven from 'components/Collaborators/CreateCol
 import PaymentInformationStepFour from 'components/Collaborators/CreateCollaboratorSteps/PaymentInformationStepFour';
 import RateIncreaseStepSix from 'components/Collaborators/CreateCollaboratorSteps/RateIncreaseStepSix';
 import PersonalInformationStepOne from '../components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
+import StepContainer from 'components/Collaborators/CreateCollaboratorSteps/StepContainer';
+import { CollaboratorInformationProvider } from 'context/collaboratorInformationProvider';
+
 import useAuth from 'hooks/useAuth';
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -33,17 +36,6 @@ const CreateCollaboratorSteps = () => {
   const formValidate = useRef(null);
   const [newCollaboratorId, setNewCollaboratorId] = useState(null);
   const router = useRouter();
-
-  const [formStepInformationData, setFormStepInformationKepper] = useState({
-    firstStepForm: {},
-    secondStepForm: {},
-    thirdStepForm: {},
-    fourthStepForm: {},
-    fifthStepForm: {},
-    sixthStepForm: {},
-    seventhStepForm: {},
-    eighthStepForm: {}
-  });
 
   const isStepSkipped = (step) => {
     return skipped.has(step);
@@ -78,13 +70,6 @@ const CreateCollaboratorSteps = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const rememberStepFormInformation = (stepName, formInfo) => {
-    setFormStepInformationKepper({
-      ...formStepInformationData,
-      [stepName]: formInfo
-    });
-  };
-
   const steps = [
     {
       id: 1,
@@ -92,16 +77,17 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Agregar Informacion Personal',
       backgroungImg: '/pills-cut-right.png',
       component: (
-        <PersonalInformationStepOne
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          setNewCollaboratorId={setNewCollaboratorId}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'firstStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.firstStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <StepContainer
+            ref={formValidate}
+            ComponentStep={PersonalInformationStepOne}
+            setActiveStep={setActiveStep}
+            setFormCompleted={setFormCompleted}
+            stepName={'firstStepForm'}
+            setNewCollaboratorId={setNewCollaboratorId}
+            newCollaboratorId={newCollaboratorId}
+          />
+        </CollaboratorInformationProvider>
       )
     },
     {
@@ -110,15 +96,16 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Informacion de alta en la empresa',
       backgroungImg: '/pills-orange.png',
       component: (
-        <CompanyInformationStepTwo
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'secondStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.secondStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <StepContainer
+            ref={formValidate}
+            ComponentStep={CompanyInformationStepTwo}
+            setActiveStep={setActiveStep}
+            setFormCompleted={setFormCompleted}
+            stepName={'secondStepForm'}
+            newCollaboratorId={newCollaboratorId}
+          />
+        </CollaboratorInformationProvider>
       )
     },
     {
@@ -127,15 +114,16 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Información de contratación',
       backgroungImg: '/pills-green.png',
       component: (
-        <ContractInformationStepThree
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'thirdStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.thirdStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <ContractInformationStepThree
+            ref={formValidate}
+            ComponentStep={ContractInformationStepThree}
+            setActiveStep={setActiveStep}
+            newCollaboratorId={newCollaboratorId}
+            setFormCompleted={setFormCompleted}
+            stepName={'thirdStepForm'}
+          />
+        </CollaboratorInformationProvider>
       )
     },
     {
@@ -144,15 +132,16 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Información de pago',
       backgroungImg: '/pills-cyan.png',
       component: (
-        <PaymentInformationStepFour
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'fourthStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.fourthStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <PaymentInformationStepFour
+            ref={formValidate}
+            ComponentStep={PaymentInformationStepFour}
+            setActiveStep={setActiveStep}
+            newCollaboratorId={newCollaboratorId}
+            setFormCompleted={setFormCompleted}
+            stepName={'fourthStepForm'}
+          />
+        </CollaboratorInformationProvider>
       )
     },
     {
@@ -161,15 +150,16 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Información de compensación & Beneficios',
       backgroungImg: '/pills-cut-right.png',
       component: (
-        <BillingInformationStepFive
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'fifthStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.fifthStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <BillingInformationStepFive
+            ref={formValidate}
+            ComponentStep={BillingInformationStepFive}
+            setActiveStep={setActiveStep}
+            newCollaboratorId={newCollaboratorId}
+            setFormCompleted={setFormCompleted}
+            stepName={'fifthStepForm'}
+          />
+        </CollaboratorInformationProvider>
       )
     },
     {
@@ -178,32 +168,35 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Información de incremento de tarifa',
       backgroungImg: '/pills-cyan.png',
       component: (
-        <RateIncreaseStepSix
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'sixthStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.sixthStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <RateIncreaseStepSix
+            ref={formValidate}
+            ComponentStep={RateIncreaseStepSix}
+            setActiveStep={setActiveStep}
+            newCollaboratorId={newCollaboratorId}
+            setFormCompleted={setFormCompleted}
+            stepName={'sixthStepForm'}
+          />
+        </CollaboratorInformationProvider>
       )
     },
+
     {
       id: 7,
       title: 'Estructura organizacional',
       stepName: 'Informacion de estructura organizacional',
       backgroungImg: '/pills-orange.png',
       component: (
-        <OrganizationalStructureStepSeven
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'seventhStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.seventhStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <OrganizationalStructureStepSeven
+            ref={formValidate}
+            ComponentStep={OrganizationalStructureStepSeven}
+            setActiveStep={setActiveStep}
+            newCollaboratorId={newCollaboratorId}
+            setFormCompleted={setFormCompleted}
+            stepName={'seventhStepForm'}
+          />
+        </CollaboratorInformationProvider>
       )
     },
     {
@@ -212,17 +205,19 @@ const CreateCollaboratorSteps = () => {
       stepName: 'Información de Identidad Consultec',
       backgroungImg: '/pills-cut-right.png',
       component: (
-        <IdentityInformationStepEight
-          ref={formValidate}
-          setActiveStep={setActiveStep}
-          newCollaboratorId={newCollaboratorId}
-          setFormCompleted={setFormCompleted}
-          stepName={'eighthStepForm'}
-          rememberStepFormInformation={rememberStepFormInformation}
-          formData={formStepInformationData.eighthStepForm}
-        />
+        <CollaboratorInformationProvider>
+          <IdentityInformationStepEight
+            ref={formValidate}
+            setActiveStep={setActiveStep}
+            ComponentStep={IdentityInformationStepEight}
+            newCollaboratorId={newCollaboratorId}
+            setFormCompleted={setFormCompleted}
+            stepName={'eighthStepForm'}
+          />
+        </CollaboratorInformationProvider>
       )
     },
+
     {
       id: 9,
       title: 'Final de contratación',
@@ -241,7 +236,6 @@ const CreateCollaboratorSteps = () => {
 
   const handleNext = () => {
     formValidate.current();
-
     let newSkipped = skipped;
 
     if (isStepSkipped(activeStep)) {

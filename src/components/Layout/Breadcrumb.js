@@ -21,6 +21,7 @@ const BreadCrumb = () => {
   const { pathname } = router;
 
   const segments = pathname.split('/').filter((segment) => segment !== '');
+
   const breadcrumbLinks = segments.map((segment, index) => {
     const path = `/${segments.slice(0, index + 1).join('/')}`;
 
@@ -36,6 +37,8 @@ const BreadCrumb = () => {
           return 'Nuevo Colaborador';
         case 'create-collaborator-steps':
           return 'Agregar nuevo colaborador';
+        case 'collaborator-information':
+          return 'Informacion personal';
       }
     };
 

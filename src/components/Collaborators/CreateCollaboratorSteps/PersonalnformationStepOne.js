@@ -65,11 +65,15 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     ]
   });
 
-  const [edit] = useEdit(`/api/collaborator/${props.formData.newCollaboratorId}`, newCollaborator, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
+  const [edit] = useEdit(
+    `/api/collaborator/${props.newCollaboratorId ? props.newCollaboratorId : undefined}`,
+    newCollaborator,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     }
-  });
+  );
 
   const [create] = useCreate('/api/collaborator', newCollaborator, {
     headers: {
@@ -350,16 +354,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
         text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
         severity: 'success'
       });
-      handlerStepperValidation(execution);
+      props.callBackValidations(execution, newCollaborator);
     }
-  };
-
-  const handlerStepperValidation = (execution) => {
-    const idNewCollaborator = execution.data;
-    props.setNewCollaboratorId(idNewCollaborator);
-    props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    props.setFormCompleted(false);
-    props.rememberStepFormInformation(props.stepName, newCollaborator);
   };
 
   const validateForm = () => {
