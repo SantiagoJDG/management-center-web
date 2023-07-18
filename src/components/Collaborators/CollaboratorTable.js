@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
+  Box,
+  Chip,
+  Menu,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -9,14 +11,12 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  TableSortLabel,
-  Box,
-  Menu,
-  MenuItem,
-  Chip
+  TableSortLabel
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 
 const CollaboratorTable = ({ collaborators }) => {
   const [order, setOrder] = useState('asc');
@@ -26,41 +26,6 @@ const CollaboratorTable = ({ collaborators }) => {
 
   const [menuAnchorElement, setMenuAnchorElement] = useState(null);
   const [selectedCollaboratorMenu, setSelectedCollaboratorMenu] = useState(null);
-
-  const columns = [
-    { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
-    {
-      id: 'admissionDate',
-      label: 'Fecha de Ingreso',
-      minWidth: 170,
-      align: 'center'
-    },
-    {
-      id: `residencyData.countryData.name`,
-      label: 'País de Residencia',
-      minWidth: 170,
-      align: 'center'
-    },
-    {
-      id: 'officeData.name',
-      label: 'País de Contrato',
-      minWidth: 170,
-      align: 'center'
-    },
-    {
-      id: 'salaries[0].amount',
-      label: 'Tarifa mensual bruta',
-      minWidth: 170,
-      align: 'center'
-    },
-    {
-      id: 'supervisorData.name',
-      label: 'Supervisor',
-      minWidth: 170,
-      align: 'center'
-    }
-  ];
-
   const router = useRouter();
 
   const openMenu = Boolean(menuAnchorElement);
@@ -158,7 +123,7 @@ const CollaboratorTable = ({ collaborators }) => {
             <TableBody>
               {stableSort(collaborators, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((collaborator, index) => {
+                .map((collaborator) => {
                   return (
                     <TableRow
                       hover
@@ -175,7 +140,7 @@ const CollaboratorTable = ({ collaborators }) => {
 
                       <TableCell align="center">
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {collaborator.residencies.map((value, index) => (
+                          {collaborator.residencies.map((value) => (
                             <Chip key={value.id} label={value.country.name} />
                           ))}
                         </Box>
