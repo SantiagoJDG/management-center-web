@@ -12,12 +12,21 @@ import {
   TableSortLabel,
   Box,
   Menu,
-  MenuItem
+  MenuItem,
+  Chip
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { useRouter } from 'next/router';
 
 const CollaboratorTable = ({ collaborators }) => {
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [menuAnchorElement, setMenuAnchorElement] = useState(null);
+  const [selectedCollaboratorMenu, setSelectedCollaboratorMenu] = useState(null);
+
   const columns = [
     { id: 'name', label: 'Nombre y apellidos', minWidth: 170, align: 'center' },
     {
@@ -51,13 +60,6 @@ const CollaboratorTable = ({ collaborators }) => {
       align: 'center'
     }
   ];
-  const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('');
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const [menuAnchorElement, setMenuAnchorElement] = useState(null);
-  const [selectedCollaboratorMenu, setSelectedCollaboratorMenu] = useState(null);
 
   const router = useRouter();
 
@@ -135,6 +137,7 @@ const CollaboratorTable = ({ collaborators }) => {
 
   const stableSort = (collaborators, comparator) => {
     const stabilizedThis = collaborators.map((collaborator, index) => [collaborator, index]);
+
     stabilizedThis.sort((firstCollab, nextCollab) => {
       const order = comparator(firstCollab[0], nextCollab[0]);
       if (order !== 0) {
@@ -142,6 +145,7 @@ const CollaboratorTable = ({ collaborators }) => {
       }
       return firstCollab[1] - nextCollab[1];
     });
+
     return stabilizedThis.map((collaborator) => collaborator[0]);
   };
 
@@ -160,24 +164,36 @@ const CollaboratorTable = ({ collaborators }) => {
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={index}
+                      key={collaborator.id}
                       onClick={(event) => handleOpenMenuByCollaborator(event, collaborator.id)}
                     >
-                      {columns.map((column) => {
-                        let value = Object.byString(collaborator, column.id);
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === 'number'
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
+                      <TableCell align="center">
+                        {`${collaborator.name} ${collaborator.lastName}`}
+                      </TableCell>
+
+                      <TableCell align="center">{collaborator.admissionDate}</TableCell>
+
+                      <TableCell align="center">
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {collaborator.residencies.map((value, index) => (
+                            <Chip key={value.id} label={value.country.name} />
+                          ))}
+                        </Box>
+                      </TableCell>
+
+                      <TableCell align="center">{collaborator.contracts[0].office.name}</TableCell>
+
+                      <TableCell align="center">{collaborator.contracts[0].baseAmount}</TableCell>
+
+                      <TableCell align="center">
+                        {`${collaborator.organizational_structure.supervisorData.name} ${collaborator.organizational_structure.supervisorData.lastName}`}
+                      </TableCell>
+
                       <TableCell key={collaborator.id} align="center">
                         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {/*{collaborator.profiles.map((value, index) => (
-                            <Chip key={index} label={value.name} />
-                           ))}*/}
+                          {collaborator.organizational_structure.org_profiles.map((value) => (
+                            <Chip key={value.id} label={value.name} />
+                          ))}
                         </Box>
                       </TableCell>
                     </TableRow>
