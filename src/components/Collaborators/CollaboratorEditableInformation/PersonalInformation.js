@@ -88,11 +88,6 @@ const PersonalInformation = forwardRef((props, ref) => {
     });
   }
 
-  // const fillFormFields = (data) => {
-  //   setNewValue(data);
-  //   setPhoto(data ? URL.createObjectURL(data.photoAddress) : '');
-  // };
-
   const getDropdownData = async () => {
     getDataInformation('/api/residence/countries', setCountries);
     getDataInformation('/api/residence/cities', setStates);
@@ -253,7 +248,6 @@ const PersonalInformation = forwardRef((props, ref) => {
           type="number"
           size="small"
           variant="standard"
-          //   inputRef={secondTextFieldRef}
         />
       </Grid>
     ));
@@ -263,7 +257,6 @@ const PersonalInformation = forwardRef((props, ref) => {
     return residencies?.map((residency, index) => {
       const { country } = residency;
       const countryInfo = findObject(countries, country.id);
-      console.log(countryInfo);
       if (!edit) {
         return (
           <CssTextFieldStandard
@@ -399,7 +392,6 @@ const PersonalInformation = forwardRef((props, ref) => {
             </Grid>
             <Grid item xs={12}>
               {displayDatePicker()}
-
               {displayAge()}
             </Grid>
             <Grid item>{displayEmail()}</Grid>
@@ -438,7 +430,7 @@ const PersonalInformation = forwardRef((props, ref) => {
   const editPersonalInformation = () => {
     return (
       <Grid pt={10}>
-        <PersonalInformationStepOne formData={{}} ref={example} />
+        <PersonalInformationStepOne formData={collaboratorInfo} ref={example} />
       </Grid>
     );
   };
@@ -451,7 +443,6 @@ const PersonalInformation = forwardRef((props, ref) => {
     } else {
       setCollaboratorInfo(storedInfo);
     }
-    console.log(storedInfo);
     ref.current = editForm;
   }, []);
 

@@ -39,7 +39,13 @@ const CollaboratorInformation = () => {
       id: 2,
       label: 'Contractual',
       backgroungImg: '/pills-orange.png',
-      component: <CompanyInformation />
+      component: (
+        <CompanyInformation
+          ref={formValidate}
+          editable={editMode}
+          collaboratorId={collaboratorId}
+        />
+      )
     },
     {
       id: 3,
@@ -83,6 +89,7 @@ const CollaboratorInformation = () => {
   ];
 
   const handleChange = (event, newValue) => {
+    setEditMode(true);
     setActiveTab(newValue);
   };
 

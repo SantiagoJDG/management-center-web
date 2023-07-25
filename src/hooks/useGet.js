@@ -7,7 +7,7 @@ const useGet = (path, callbackMethod) => {
       .get(path)
       .then((response) => {
         sessionStorage.setItem('personal', JSON.stringify(response.data));
-        callbackMethod(response.data);
+        callbackMethod ? callbackMethod(response.data) : '';
       })
       .catch((error) => {
         console.error(`Error while getting data from ${path}`, error);

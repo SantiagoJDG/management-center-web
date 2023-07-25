@@ -73,9 +73,7 @@ const CompanyInformationStepTwo = forwardRef((props, ref) => {
         text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
         severity: 'success'
       });
-      props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
-      props.setFormCompleted(false);
-      props.rememberStepFormInformation(props.stepName, companyInformation);
+      props.callBackValidations(execution, companyInformation);
     }
   };
 

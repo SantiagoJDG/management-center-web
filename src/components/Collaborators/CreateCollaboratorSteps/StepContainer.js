@@ -1,4 +1,6 @@
 import { useRef, forwardRef, useEffect } from 'react';
+import useGet from 'hooks/useGet';
+
 import useCollaboratorInformationKeeper from 'hooks/useCollaboratorInformationKeeper';
 
 const StepContainer = forwardRef(
@@ -17,9 +19,12 @@ const StepContainer = forwardRef(
     const { formStepInformationData, rememberStepFormInformation } =
       useCollaboratorInformationKeeper();
 
+    const [fetchData] = useGet(`/api/collaborator/${newCollaboratorId}`);
+
     const handlerStepperValidation = (execution, newCollaboratorInfo) => {
       const idNewCollaborator = execution.data;
       setNewCollaboratorId(idNewCollaborator);
+      sessionStorage.setItem('collaboratorId', idNewCollaborator);
       setActiveStep((prevActiveStep) => prevActiveStep + 1);
       setFormCompleted(false);
       rememberStepFormInformation(stepName, newCollaboratorInfo);
@@ -28,8 +33,16 @@ const StepContainer = forwardRef(
     const executeRef = () => assingRef.current();
 
     useEffect(() => {
+      if (newCollaboratorId) {
+        const storedInfo = JSON.parse(sessionStorage.getItem('personal'));
+        if (!storedInfo) {
+          fetchData();
+        } else {
+          rememberStepFormInformation(stepName, storedInfo);
+        }
+      }
       ref.current = executeRef;
-    }, []);
+    }, [newCollaboratorId]);
 
     return (
       <ComponentStep

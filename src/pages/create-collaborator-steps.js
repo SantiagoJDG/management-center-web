@@ -103,6 +103,7 @@ const CreateCollaboratorSteps = () => {
             setActiveStep={setActiveStep}
             setFormCompleted={setFormCompleted}
             stepName={'secondStepForm'}
+            setNewCollaboratorId={setNewCollaboratorId}
             newCollaboratorId={newCollaboratorId}
           />
         </CollaboratorInformationProvider>
@@ -115,13 +116,13 @@ const CreateCollaboratorSteps = () => {
       backgroungImg: '/pills-green.png',
       component: (
         <CollaboratorInformationProvider>
-          <ContractInformationStepThree
+          <StepContainer
             ref={formValidate}
             ComponentStep={ContractInformationStepThree}
             setActiveStep={setActiveStep}
-            newCollaboratorId={newCollaboratorId}
             setFormCompleted={setFormCompleted}
             stepName={'thirdStepForm'}
+            newCollaboratorId={newCollaboratorId}
           />
         </CollaboratorInformationProvider>
       )
@@ -314,6 +315,8 @@ const CreateCollaboratorSteps = () => {
   };
 
   useEffect(() => {
+    const storedNewIdCollaborator = sessionStorage.getItem('collaboratorId');
+    if (storedNewIdCollaborator) setNewCollaboratorId(storedNewIdCollaborator);
     if (waitingUser) return;
     if (!userToken) {
       router.replace('/login');
