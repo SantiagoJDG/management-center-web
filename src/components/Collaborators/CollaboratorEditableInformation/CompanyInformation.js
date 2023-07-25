@@ -43,6 +43,7 @@ const CompanyInformation = forwardRef((props, ref) => {
       <CssTextFieldStandard
         size="small"
         label="Codigo de empleado"
+        variant="standard"
         fullWidth
         defaultValue={companyInformation.businessCode}
         focused
@@ -88,6 +89,7 @@ const CompanyInformation = forwardRef((props, ref) => {
         label="Antiguedad"
         value={antiquityCalculation()}
         size={'small'}
+        variant="standard"
         InputProps={{ readOnly: true }}
         fullWidth
         focused
