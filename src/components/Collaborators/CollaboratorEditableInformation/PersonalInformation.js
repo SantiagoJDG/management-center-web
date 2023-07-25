@@ -17,7 +17,7 @@ import { getDataInformation } from '../../../utils/dataUtils';
 
 const PersonalInformation = forwardRef((props, ref) => {
   const [collaboratorInfo, setCollaboratorInfo] = useState();
-  const example = useRef(null);
+  const validationRef = useRef(null);
 
   const [fetchData] = useGet(`/api/collaborator/${props.collaboratorId}`, setCollaboratorInfo);
   const memoizedInfo = useMemo(() => {
@@ -416,11 +416,7 @@ const PersonalInformation = forwardRef((props, ref) => {
             </Grid>
 
             <Grid item>{displayAddress(memoizedInfo?.residencies)}</Grid>
-            <Grid item>
-              {memoizedInfo && props.editable
-                ? displayNationalities(memoizedInfo?.nationalities)
-                : displayNationalities(memoizedInfo?.nationalities)}
-            </Grid>
+            <Grid item>{displayNationalities(memoizedInfo?.nationalities)}</Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -430,7 +426,7 @@ const PersonalInformation = forwardRef((props, ref) => {
   const editPersonalInformation = () => {
     return (
       <Grid pt={10}>
-        <PersonalInformationStepOne formData={collaboratorInfo} ref={example} />
+        <PersonalInformationStepOne formData={collaboratorInfo} ref={validationRef} />
       </Grid>
     );
   };

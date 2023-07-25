@@ -15,7 +15,7 @@ const CompanyInformation = forwardRef((props, ref) => {
     admissionDate: '',
     businessEmail: ''
   });
-  const example = useRef(null);
+  const validationRef = useRef(null);
   const { handleNewMessage } = useMessage();
 
   const editForm = async () => {
@@ -122,7 +122,7 @@ const CompanyInformation = forwardRef((props, ref) => {
   const editCompanyInformation = () => {
     return (
       <Grid pt={10}>
-        <CompanyInformationStepTwo formData={companyInformation} ref={example} />
+        <CompanyInformationStepTwo formData={companyInformation} ref={validationRef} />
       </Grid>
     );
   };
