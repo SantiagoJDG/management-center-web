@@ -65,11 +65,15 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
     ]
   });
 
-  const [edit] = useEdit(`/api/collaborator/${props.formData.newCollaboratorId}`, newCollaborator, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
+  const [edit] = useEdit(
+    `/api/collaborator/${props.newCollaboratorId ? props.newCollaboratorId : undefined}`,
+    newCollaborator,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     }
-  });
+  );
 
   const [create] = useCreate('/api/collaborator', newCollaborator, {
     headers: {
@@ -276,7 +280,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   const displayNationalities = (nationalitiesArray) => {
     return nationalitiesArray.map((value, index) => {
       const { docAdress } = value;
-      const selectedCountry = countries.find((country) => country.id === docAdress.id);
+      const selectedCountry = countries.find((country) => country.id === docAdress?.id);
       const defaultValue = selectedCountry ? selectedCountry : '';
       return (
         <Grid item key={index} sx={{ width: '100%' }}>
@@ -350,16 +354,8 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
         text: 'Excelente! La Informacion personal del colaborador fue creada exitosamente',
         severity: 'success'
       });
-      handlerStepperValidation(execution);
+      props.callBackValidations(execution, newCollaborator);
     }
-  };
-
-  const handlerStepperValidation = (execution) => {
-    const idNewCollaborator = execution.data;
-    props.setNewCollaboratorId(idNewCollaborator);
-    props.setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    props.setFormCompleted(false);
-    props.rememberStepFormInformation(props.stepName, newCollaborator);
   };
 
   const validateForm = () => {
@@ -388,8 +384,10 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   };
 
   const returnedStep = (formData) => {
+    const storedInfo = JSON.parse(sessionStorage.getItem('personal'));
+    formData.file = storedInfo.photoAddress;
     setNewCollaborator(formData);
-    setPhoto(URL.createObjectURL(formData.file));
+    setPhoto(formData.file);
     setValue('file', `${formData.file}`);
     formData.nationalities?.map((nationality, index) => {
       setValue(`nationalities-${index}`, `${nationality}`);
@@ -397,15 +395,16 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
   };
 
   useEffect(() => {
+    const storedInfo = JSON.parse(sessionStorage.getItem('personal'));
     if (!isMounted) {
       getResidenceData();
       setIsMounted(true);
-      if (Object.keys(props.formData).length) {
+
+      if (storedInfo) {
         const { formData } = props;
         returnedStep(formData);
       }
     }
-
     const allFieldsCompleted = Object.values(watchAllFields).every((value) => value !== '');
 
     if (isDirty && allFieldsCompleted) {
@@ -471,7 +470,7 @@ const PersonalInformationStepOne = forwardRef((props, ref) => {
             <CssTextField
               sx={{ width: '100%' }}
               required
-              defaultValue={props.formData ? props.formData.name : ''}
+              defaultValue={props.formData.name}
               name="name"
               size="small"
               placeholder="Nombre completo del Consultor"

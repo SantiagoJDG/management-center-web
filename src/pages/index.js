@@ -78,6 +78,10 @@ export default function Home() {
       router.replace('/login');
       return;
     }
+    const collaboratorId = sessionStorage.getItem('collaboratorId');
+    const collaboratorInfo = sessionStorage.getItem('personal');
+    if (collaboratorId) sessionStorage.removeItem('collaboratorId');
+    if (collaboratorInfo) sessionStorage.removeItem('personal');
   }, [userToken, waitingUser]);
 
   return (
