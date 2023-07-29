@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, forwardRef } from 'react';
+import { useEffect, useState, useMemo, forwardRef, useRef } from 'react';
 import useGet from 'hooks/useGet';
 import { Grid, Avatar } from '@mui/material';
 import { CssTextFieldStandard } from '../../../styles/formButton';
@@ -8,22 +8,25 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CustomAutoComplete from 'components/CustomAutoComplete';
-import { getAxiosInstance } from 'utils/axiosClient';
+import PersonalInformationStepOne from 'components/Collaborators/CreateCollaboratorSteps/PersonalnformationStepOne';
 import useMessage from 'hooks/useMessage';
-
 import useEdit from 'hooks/useEdit';
-
 import moment from 'moment';
 import 'moment/locale/es';
+import { getDataInformation } from '../../../utils/dataUtils';
 
 const PersonalInformation = forwardRef((props, ref) => {
-  const [collaboratorInfo, setCollaboratorInfo] = useState(null);
-  const [fetchData] = useGet(`/api/collaborator/${props.collaboratorId}`);
-  const memoizedInfo = useMemo(() => collaboratorInfo, [collaboratorInfo]);
+  const [collaboratorInfo, setCollaboratorInfo] = useState();
+  const validationRef = useRef(null);
+
+  const [fetchData] = useGet(`/api/collaborator/${props.collaboratorId}`, setCollaboratorInfo);
+  const memoizedInfo = useMemo(() => {
+    return collaboratorInfo;
+  }, [collaboratorInfo]);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const { handleNewMessage } = useMessage();
-  const [photo, setPhoto] = useState();
+  const [photo] = useState();
   const [newValue, setNewValue] = useState({
     name: '',
     lastName: '',
@@ -57,7 +60,7 @@ const PersonalInformation = forwardRef((props, ref) => {
       }
     ]
   });
-  const [edit] = useEdit(`/api/collaborator/${1}`, newValue, {
+  const [edit] = useEdit(`/api/collaborator/${props.collaboratorId}`, newValue, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -85,18 +88,6 @@ const PersonalInformation = forwardRef((props, ref) => {
     });
   }
 
-  const fetchDataAndSetInfo = async () => {
-    try {
-      const execute = await fetchData();
-      getDropdownData();
-      setCollaboratorInfo(execute.data);
-      setNewValue(execute.data);
-      setPhoto(execute.data ? URL.createObjectURL(execute.data.photoAddress) : '');
-    } catch (error) {
-      console.error('Error fetching collaborator info:', error);
-    }
-  };
-
   const getDropdownData = async () => {
     getDataInformation('/api/residence/countries', setCountries);
     getDataInformation('/api/residence/cities', setStates);
@@ -123,15 +114,114 @@ const PersonalInformation = forwardRef((props, ref) => {
 
   const findObject = (array, id) => array.find((each) => each.id === id);
 
-  const getDataInformation = (path, callbackMethod) => {
-    getAxiosInstance()
-      .get(path)
-      .then((response) => {
-        callbackMethod(response.data);
-      })
-      .catch((error) => {
-        console.error(`Error while get Data from ${path}`, error);
-      });
+  const displayPhoto = () => {
+    return (
+      <Grid container>
+        <Grid
+          item
+          sx={{
+            position: 'absolute',
+            top: 235
+          }}
+        >
+          <Avatar sx={{ height: '60px', width: '60px' }} src={photo}>
+            <HailRoundedIcon fontSize="large" />
+          </Avatar>
+        </Grid>
+      </Grid>
+    );
+  };
+
+  const displayName = () => {
+    return (
+      <CssTextFieldStandard
+        sx={{ width: '100%' }}
+        focused
+        id="name"
+        label="Nombre"
+        variant="standard"
+        value={memoizedInfo && props.editable ? memoizedInfo.name : newValue?.name}
+        onChange={(event) => handleChange(event.target.value, 'name')}
+        aria-readonly={props.editable}
+      />
+    );
+  };
+
+  const displayLastName = () => {
+    return (
+      <CssTextFieldStandard
+        sx={{ width: '100%' }}
+        focused
+        label="Apellido"
+        variant="standard"
+        value={memoizedInfo && props.editable ? memoizedInfo.lastName : newValue?.lastName}
+        onChange={(event) => handleChange(event.target.value, 'lastName')}
+        aria-readonly={props.editable}
+      />
+    );
+  };
+
+  const displayDatePicker = () => {
+    return (
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <DatePicker
+          label="Fecha de nacimiento"
+          maxDate={moment().format()}
+          value={
+            memoizedInfo && props.editable
+              ? moment(memoizedInfo.birthdate).format('YYYY-MM-DD') || null
+              : newValue?.birthdate
+          }
+          onChange={(event) => handleChange(event, 'birthdate')}
+          renderInput={(params) => (
+            <CssTextFieldStandard
+              focused
+              {...params}
+              sx={{ width: '45%' }}
+              variant="standard"
+              label={'Fecha de nacimiento'}
+              placeholder="DD/MM/YYYY"
+              name="birthdate"
+            />
+          )}
+        />
+      </LocalizationProvider>
+    );
+  };
+
+  const displayAge = () => {
+    return (
+      <CssTextFieldStandard
+        sx={{ width: '20%', ml: 1 }}
+        label="Edad"
+        focused
+        variant="standard"
+        value={
+          memoizedInfo && props.editable
+            ? moment(moment().format()).diff(moment(memoizedInfo?.birthdate).format(), 'year')
+            : moment(moment().format()).diff(moment(newValue?.birthdate).format(), 'year')
+        }
+        InputProps={{
+          readOnly: true
+        }}
+      />
+    );
+  };
+
+  const displayEmail = () => {
+    return (
+      <CssTextFieldStandard
+        sx={{ width: '100%' }}
+        label="Email Personal"
+        variant="standard"
+        focused
+        value={
+          memoizedInfo && props.editable ? memoizedInfo.personalEmail : newValue?.personalEmail
+        }
+        onChange={(event) => handleChange(event.target.value, 'personalEmail')}
+        aria-readonly={props.editable}
+      />
+    );
   };
 
   const displayPhoneNumber = (contactNumberToBeDisplayed) => {
@@ -158,7 +248,6 @@ const PersonalInformation = forwardRef((props, ref) => {
           type="number"
           size="small"
           variant="standard"
-          //   inputRef={secondTextFieldRef}
         />
       </Grid>
     ));
@@ -289,134 +378,71 @@ const PersonalInformation = forwardRef((props, ref) => {
     return;
   };
 
+  const collaboratorVisualInfo = () => {
+    return (
+      <Grid container direction={'row'} xs={12} justifyContent={'space-between'} p={2} pt={10}>
+        <Grid item xs={6} mt={1}>
+          <Grid container direction={'column'} spacing={3} p={2}>
+            <Grid item xs={12}>
+              {displayPhoto()}
+              {displayName()}
+            </Grid>
+            <Grid item xs={12}>
+              {displayLastName()}
+            </Grid>
+            <Grid item xs={12}>
+              {displayDatePicker()}
+              {displayAge()}
+            </Grid>
+            <Grid item>{displayEmail()}</Grid>
+            <Grid item>
+              {memoizedInfo && props.editable
+                ? displayPhoneNumber(memoizedInfo.contactPhones)
+                : displayPhoneNumber(newValue?.contactPhones)}
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={5} mt={1}>
+          <Grid container direction={'column'} spacing={3} p={2}>
+            <Grid item sx={{ width: '100%' }}>
+              {memoizedInfo && props.editable
+                ? displayDefaultCountries(memoizedInfo.residencies)
+                : displayDefaultCountries(memoizedInfo?.residencies, true)}
+            </Grid>
+            <Grid item>
+              {memoizedInfo && props.editable
+                ? displayDefaultCities(memoizedInfo.residencies)
+                : displayDefaultCities(memoizedInfo?.residencies, true)}
+            </Grid>
+
+            <Grid item>{displayAddress(memoizedInfo?.residencies)}</Grid>
+            <Grid item>{displayNationalities(memoizedInfo?.nationalities)}</Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+  };
+
+  const editPersonalInformation = () => {
+    return (
+      <Grid pt={10}>
+        <PersonalInformationStepOne formData={collaboratorInfo} ref={validationRef} />
+      </Grid>
+    );
+  };
+
   useEffect(() => {
-    fetchDataAndSetInfo();
+    fetchData();
+    const storedInfo = JSON.parse(sessionStorage.getItem('personal'));
+    if (!storedInfo) {
+      getDropdownData();
+    } else {
+      setCollaboratorInfo(storedInfo);
+    }
     ref.current = editForm;
   }, []);
 
-  return (
-    <Grid container direction={'row'} xs={12} justifyContent={'space-between'} p={2} pt={10}>
-      <Grid item xs={6} mt={1}>
-        <Grid container direction={'column'} spacing={3} p={2}>
-          <Grid item xs={12}>
-            <Grid container>
-              <Grid
-                item
-                sx={{
-                  position: 'absolute',
-                  top: 235
-                }}
-              >
-                <Avatar sx={{ height: '60px', width: '60px' }} src={photo}>
-                  <HailRoundedIcon fontSize="large" />
-                </Avatar>
-              </Grid>
-            </Grid>
-            <CssTextFieldStandard
-              sx={{ width: '100%' }}
-              focused
-              id="name"
-              label="Nombre"
-              variant="standard"
-              value={memoizedInfo && props.editable ? memoizedInfo.name : newValue.name}
-              onChange={(event) => handleChange(event.target.value, 'name')}
-              aria-readonly={props.editable}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CssTextFieldStandard
-              sx={{ width: '100%' }}
-              focused
-              label="Apellido"
-              variant="standard"
-              value={memoizedInfo && props.editable ? memoizedInfo.lastName : newValue.lastName}
-              onChange={(event) => handleChange(event.target.value, 'lastName')}
-              aria-readonly={props.editable}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              <DatePicker
-                label="Fecha de nacimiento"
-                maxDate={moment().format()}
-                value={
-                  memoizedInfo && props.editable
-                    ? moment(memoizedInfo.birthdate).format('YYYY-MM-DD') || null
-                    : newValue.birthdate
-                }
-                onChange={(event) => handleChange(event, 'birthdate')}
-                renderInput={(params) => (
-                  <CssTextFieldStandard
-                    focused
-                    {...params}
-                    sx={{ width: '45%' }}
-                    variant="standard"
-                    label={'Fecha de nacimiento'}
-                    placeholder="DD/MM/YYYY"
-                    name="birthdate"
-                  />
-                )}
-              />
-            </LocalizationProvider>
-
-            <CssTextFieldStandard
-              sx={{ width: '20%', ml: 1 }}
-              label="Edad"
-              focused
-              variant="standard"
-              value={
-                memoizedInfo && props.editable
-                  ? moment(moment().format()).diff(moment(memoizedInfo?.birthdate).format(), 'year')
-                  : moment(moment().format()).diff(moment(newValue.birthdate).format(), 'year')
-              }
-              InputProps={{
-                readOnly: true
-              }}
-            />
-          </Grid>
-          <Grid item>
-            <CssTextFieldStandard
-              sx={{ width: '100%' }}
-              label="Email Personal"
-              variant="standard"
-              focused
-              value={
-                memoizedInfo && props.editable ? memoizedInfo.personalEmail : newValue.personalEmail
-              }
-              onChange={(event) => handleChange(event.target.value, 'personalEmail')}
-              aria-readonly={props.editable}
-            />
-          </Grid>
-          <Grid item>
-            {memoizedInfo && props.editable
-              ? displayPhoneNumber(memoizedInfo.contactPhones)
-              : displayPhoneNumber(newValue.contactPhones)}
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={5} mt={1}>
-        <Grid container direction={'column'} spacing={3} p={2}>
-          <Grid item sx={{ width: '100%' }}>
-            {memoizedInfo && props.editable
-              ? displayDefaultCountries(memoizedInfo.residencies)
-              : displayDefaultCountries(memoizedInfo?.residencies, true)}
-          </Grid>
-          <Grid item>
-            {memoizedInfo && props.editable
-              ? displayDefaultCities(memoizedInfo.residencies)
-              : displayDefaultCities(memoizedInfo?.residencies, true)}
-          </Grid>
-
-          <Grid item>{displayAddress(memoizedInfo?.residencies)}</Grid>
-          <Grid item>
-            {memoizedInfo && props.editable
-              ? displayNationalities(memoizedInfo?.nationalities)
-              : displayNationalities(memoizedInfo?.nationalities)}
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  );
+  return props.editable ? collaboratorVisualInfo() : editPersonalInformation();
 });
 PersonalInformation.displayName = 'PersonalInformation';
 
